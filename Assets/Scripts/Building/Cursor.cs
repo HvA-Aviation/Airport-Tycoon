@@ -28,9 +28,13 @@ namespace Building
             var position = _grid.ClampedWorldToGridPosition(clampedValue, 0);
             
             UpdateBuildColor(_grid.IsGridPositionEmpty(position));
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButton(0))
             {
                 _grid.Set(position, 0);
+            }
+            if (Input.GetMouseButton(1))
+            {
+                _grid.Remove(position);
             }
 
             transform.position = clampedValue;
