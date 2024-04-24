@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class RDTreeManager : MonoBehaviour
@@ -12,9 +13,11 @@ public class RDTreeManager : MonoBehaviour
 
     public static RDTreeManager Instance;
 
-    public List<GameObject> Skills { get; private set; }
+    public List<GameObject> Skills = new List<GameObject>();
 
     public List<Skill> SkillsInDevelopment = new List<Skill>();
+
+    public UnityEvent ResearchDoneEvent = new UnityEvent();
 
     private void OnEnable()
     {

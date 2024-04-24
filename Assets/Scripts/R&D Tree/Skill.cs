@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Skill : MonoBehaviour
@@ -15,11 +16,12 @@ public class Skill : MonoBehaviour
     [Header("Objects for UI")]
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private TMP_Text _descriptionText;
-    [SerializeField] private Image _screenImage;
     [SerializeField] private Button _button;
 
     [Header("Next In Tree")]
     [SerializeField] private List<Skill> ConnectedResearchNodes;
+
+    [SerializeField] private List<GameObject> ObjectToUnlock;
 
     public SkillState CurrentSkillState;
 
@@ -32,7 +34,11 @@ public class Skill : MonoBehaviour
     {
         _titleText.text = _title;
         _descriptionText.text = _description;
-        //RDTreeManager.Instance.Skills.Add(gameObject);
+    }
+
+    private void Start()
+    {
+        RDTreeManager.Instance.Skills.Add(gameObject);
     }
 
     public void TimerForInDevelopment()
@@ -42,11 +48,21 @@ public class Skill : MonoBehaviour
         _timer += Time.fixedDeltaTime;
         if(_timer >= _researchTime)
         {
-            Debug.Log($"Finished research of {_title}");
-            RDTreeManager.Instance.SkillsInDevelopment.Remove(this);
-            CurrentSkillState = SkillState.bought;
-            SetNextStatesInTree();
+            RDTreeManager.Instance.ResearchDoneEvent.Invoke();
+            RDTreeManager.Instance.ResearchDoneEvent = new UnityEvent();
         }
+    }
+
+    private void ResearchDone()
+    {
+        Debug.Log($"Finished Research for {_title}");
+        RDTreeManager.Instance.SkillsInDevelopment.Remove(this);
+        CurrentSkillState = SkillState.bought;
+    }
+
+    private void UnlockObjects()
+    {
+        Debug.Log($"Unlocked projects {ObjectToUnlock.Count}");
     }
 
     public void OnClick()
@@ -56,6 +72,10 @@ public class Skill : MonoBehaviour
             CurrentSkillState = SkillState.inDevelopment;
             RDTreeManager.Instance.SkillsInDevelopment.Add(this);
             SetUIForStates();
+
+            RDTreeManager.Instance.ResearchDoneEvent.AddListener(ResearchDone);
+            RDTreeManager.Instance.ResearchDoneEvent.AddListener(SetNextStatesInTree);
+            RDTreeManager.Instance.ResearchDoneEvent.AddListener(UnlockObjects);
         }
     }
 
@@ -65,19 +85,17 @@ public class Skill : MonoBehaviour
         {
             case SkillState.notAvailable:
                 _button.interactable = false;
-                _screenImage.color = new Color(0, 0, 0, 1);
+                gameObject.SetActive(false);
                 break;
             case SkillState.available:
                 _button.interactable = true;
-                _screenImage.color = new Color(0, 0, 0, .5f);
+                gameObject.SetActive(true);
                 break;
             case SkillState.inDevelopment:
                 _button.interactable = false;
-                Destroy(_screenImage.gameObject);
                 break;
             case SkillState.bought:
                 _button.interactable = false;
-                Destroy(_screenImage.gameObject);
                 break;
         }
     }
