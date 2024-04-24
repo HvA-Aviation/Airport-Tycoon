@@ -1,0 +1,34 @@
+{
+    "name": "R&DControls",
+    "maps": [
+        {
+            "name": "R&DControlls",
+            "id": "437a06d1-ea47-4412-97fc-88e5ce50d4be",
+            "actions": [
+                {
+                    "name": "ShowTree",
+                    "type": "Button",
+                    "id": "ade0d289-6427-44ec-9224-f3bfe9797f10",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "83726313-6bc4-48a6-9b2b-dd344f795667",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShowTree",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
