@@ -14,6 +14,8 @@ public class RDTreeManager : MonoBehaviour
 
     public List<GameObject> Skills { get; private set; }
 
+    public List<Skill> SkillsInDevelopment = new List<Skill>();
+
     private void OnEnable()
     {
         _controls.RDControlls.ShowTree.performed += ShowTree;
@@ -31,6 +33,12 @@ public class RDTreeManager : MonoBehaviour
 
         _controls = new RDControls();
         _controls.Enable();
+    }
+
+    private void FixedUpdate()
+    {
+        foreach (var skill in SkillsInDevelopment)
+            skill.TimerForInDevelopment();
     }
 
     private void ShowTree(InputAction.CallbackContext _) => _skillTree.SetActive(!_skillTree.activeSelf);
