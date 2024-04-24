@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class Skill : MonoBehaviour
 {
-    private SkillState _skillState;
-    
     [SerializeField] private string _title;
     [SerializeField] private string _description;
     [SerializeField] private int _cost;
@@ -19,14 +17,55 @@ public class Skill : MonoBehaviour
     [SerializeField] private TMP_Text _descriptionText;
     [SerializeField] private Image _screenImage;
     [SerializeField] private Button _button;
-   
+
+    [Header("Next In Tree")]
+    [SerializeField] private List<Skill> ConnectedResearchNodes;
+
+    public SkillState CurrentSkillState;
+
     private void OnEnable()
-    {        
-        switch (_skillState)
+    {
+        SetUIForStates();
+    }
+
+    private void Awake()
+    {
+        _titleText.text = _title;
+        _descriptionText.text = _description;
+        //RDTreeManager.Instance.Skills.Add(gameObject);
+    }
+
+    public void TimerForInDevelopment()
+    {
+        if (CurrentSkillState != SkillState.inDevelopment) return;
+
+        _timer += Time.fixedDeltaTime;
+        if(_timer >= _researchTime)
+        {
+            Debug.Log($"Finished research of {_title}");
+            RDTreeManager.Instance.SkillsInDevelopment.Remove(this);
+            CurrentSkillState = SkillState.bought;
+            SetNextStatesInTree();
+        }
+    }
+
+    public void OnClick()
+    {
+        if (CurrentSkillState == SkillState.available)
+        {
+            CurrentSkillState = SkillState.inDevelopment;
+            RDTreeManager.Instance.SkillsInDevelopment.Add(this);
+            SetUIForStates();
+        }
+    }
+
+    public void SetUIForStates()
+    {
+        switch (CurrentSkillState)
         {
             case SkillState.notAvailable:
                 _button.interactable = false;
-                _screenImage.color = new Color(0,0,0,1);
+                _screenImage.color = new Color(0, 0, 0, 1);
                 break;
             case SkillState.available:
                 _button.interactable = true;
@@ -41,40 +80,17 @@ public class Skill : MonoBehaviour
                 Destroy(_screenImage.gameObject);
                 break;
         }
-
     }
 
-    private void Awake()
+    private void SetNextStatesInTree()
     {
-        _titleText.text = _title;
-        _descriptionText.text = _description;
+        if(CurrentSkillState != SkillState.bought) return;
 
-        _skillState = SkillState.available;
-    }
-
-    public void TimerForInDevelopment()
-    {
-        if (_skillState != SkillState.inDevelopment) return;
-
-        Debug.Log(_timer);
-
-        _timer += Time.fixedDeltaTime;
-        if(_timer >= _researchTime)
+        foreach(var connectedNode in ConnectedResearchNodes)
         {
-            Debug.Log($"Finished research of {_title}");
-            RDTreeManager.Instance.SkillsInDevelopment.Remove(this);
-            _skillState = SkillState.bought;
+            connectedNode.CurrentSkillState = SkillState.available;
+            connectedNode.SetUIForStates();
         }
     }
-
-    public void OnClick()
-    {
-        if (_skillState == SkillState.available)
-        {
-            _skillState = SkillState.inDevelopment;
-            RDTreeManager.Instance.SkillsInDevelopment.Add(this);
-        }
-    }
-
     public enum SkillState { notAvailable, available, inDevelopment,  bought }
 }
