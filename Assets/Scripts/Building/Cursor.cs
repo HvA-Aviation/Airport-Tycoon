@@ -8,8 +8,8 @@ namespace Building
         [SerializeField] private SpriteRenderer _spriteRenderer;
         private Grid _grid;
 
-        [SerializeField]private Color _validColor;
-        [SerializeField]private Color _invalidColor;
+        [SerializeField] private Color _validColor;
+        [SerializeField] private Color _invalidColor;
 
         private void Start()
         {
@@ -20,33 +20,32 @@ namespace Building
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.K))
+            var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            var clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
+                RoundToMultiple(pos.y, _grid.CellSize));
+
+            var position = _grid.ClampedWorldToGridPosition(clampedValue, 0);
+            
+            UpdateBuildColor(_grid.IsGridPositionEmpty(position));
+            if (Input.GetMouseButtonDown(0))
             {
-                if (_spriteRenderer.color != _validColor)
-                {
-                    _spriteRenderer.color = _validColor;
-                }
-                else
-                {
-                    _spriteRenderer.color = _invalidColor;
-                }
+                _grid.Set(position, 0);
             }
 
-            if (transform.localPosition == Vector3.zero)
-            {
-                _spriteRenderer.color = _invalidColor;
-            }
-            else
+            transform.position = clampedValue;
+        }
+
+        private void UpdateBuildColor(bool isValid)
+        {
+            if (isValid && _spriteRenderer.color != _validColor)
             {
                 _spriteRenderer.color = _validColor;
             }
-
-            var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition) - Camera.main.transform.position;
-
-            Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-
-            transform.position = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
-                RoundToMultiple(pos.y, _grid.CellSize));
+            else if (!isValid)
+            {
+                _spriteRenderer.color = _invalidColor;
+            }
         }
 
         public float RoundToMultiple(float value, float roundTo)

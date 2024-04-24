@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Building.Datatypes;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Grid : MonoBehaviour
 {
@@ -13,22 +14,96 @@ public class Grid : MonoBehaviour
     /// z = z-axis for multiple layers for example floor tile layer and decoration layer
     /// </summary>
     private int[,,] _cells;
+    
+    [SerializeField]private BuildableAtlas _atlas;
+    [SerializeField]private Tilemap _tilemap;
 
     [SerializeField] private GridVector _gridSize;
     [SerializeField] private float _cellSize;
 
     public float CellSize => _cellSize;
-
-    // Start is called before the first frame update
+    
+    
     void Start()
     {
+        if (_atlas == null)
+            Debug.LogError("No atlas is assigned!");
+        
         _cells = new int[_gridSize.x, _gridSize.y, _gridSize.z];
+        PopulateCells();
     }
 
-    // Update is called once per frame
+    private void PopulateCells()
+    {
+        for (int x = 0; x < _gridSize.x; x++)
+        {
+            for (int y = 0; y < _gridSize.y; y++)
+            {
+                for (int z = 0; z < _gridSize.z; z++)
+                {
+                    _cells[x, y, z] = -1;
+                }
+            }
+        }
+    }
+
     void Update()
     {
+    }
+    
+    public void UpdateMap()
+    {
         
+    }
+
+    public int Get(GridVector gridVector)
+    {
+        if (OutOfBounds(gridVector))
+            return 1;
+
+        return _cells[gridVector.x, gridVector.y, gridVector.z];
+    }
+
+    private bool OutOfBounds(GridVector gridVector)
+    {
+        if (gridVector.x < 0 || gridVector.x > _gridSize.x - 1 || gridVector.y < 0 || gridVector.y > _gridSize.y - 1 ||
+            gridVector.z < 0 || gridVector.z > _gridSize.z - 1)
+            return true;
+
+        return false;
+    }
+
+    public bool Set(GridVector gridVector, int buildIndex)
+    {
+        if (Get(gridVector) == -1)
+        {
+            _cells[gridVector.x, gridVector.y, gridVector.z] = buildIndex;
+            UpdateMap();
+
+            Tile tempTile = _atlas.Items[buildIndex].Sprite;
+            _tilemap.SetTile(new Vector3Int(gridVector.x - 1, gridVector.y - 1, gridVector.z - 1), tempTile);
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Converts the clamped world position of the cursor to a grid vector that
+    /// has the values of the position the cursor is on
+    /// </summary>
+    /// <param name="worldPosition">Clamped world position (is rounded to the closest multiple of the cell size)</param>
+    /// <param name="layer">The build layer</param>
+    /// <returns >Grid vector that has the values of the position the cursor is on</returns>
+    public GridVector ClampedWorldToGridPosition(Vector2 worldPosition, int layer)
+    {
+        Vector2 gridPosition = (worldPosition + (Vector2)transform.position) * (1 / _cellSize);
+        return new GridVector((int)gridPosition.x, (int)gridPosition.y, layer);
+    }
+
+    public bool IsGridPositionEmpty(GridVector gridVector)
+    {
+        return Get(gridVector) == -1;
     }
 
     private void OnDrawGizmos()
@@ -42,7 +117,8 @@ public class Grid : MonoBehaviour
         {
             for (int y = 0; y < _gridSize.y; y++)
             {
-                var origin = new Vector2(x, y) * _cellSize - (new Vector2(_gridSize.x, _gridSize.y) * _cellSize / 2 - Vector2.one * _cellSize / 2);
+                //var origin = new Vector2(x, y) * _cellSize - (new Vector2(_gridSize.x, _gridSize.y) * _cellSize / 2 - Vector2.one * _cellSize / 2);
+                Vector2 origin = new Vector2(x, y) * _cellSize - (Vector2)transform.position;
                 var offset = _cellSize / 2;
 
                 Gizmos.color = Color.gray;

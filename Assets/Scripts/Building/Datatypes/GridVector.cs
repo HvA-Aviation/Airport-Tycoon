@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Building.Datatypes
 {
@@ -11,5 +12,17 @@ namespace Building.Datatypes
         public int x;
         public int y;
         public int z;
+
+        public GridVector(int x, int y, int z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public override string ToString()
+        {
+            return "(" + x + ", " + y + ", " + z + ")";
+        }
     }
 }
