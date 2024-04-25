@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -43,10 +42,10 @@ public class Skill : MonoBehaviour
 
     public void TimerForInDevelopment()
     {
-        if (CurrentSkillState != SkillState.inDevelopment) return;
+        if (CurrentSkillState != SkillState.inDevelopment || CurrentSkillState == SkillState.developmentPaused) return;
 
         _timer += Time.fixedDeltaTime;
-        if(_timer >= _researchTime)
+        if (_timer >= _researchTime)
         {
             RDTreeManager.Instance.ResearchDoneEvent.Invoke();
             RDTreeManager.Instance.ResearchDoneEvent = new UnityEvent();
@@ -56,7 +55,6 @@ public class Skill : MonoBehaviour
     private void ResearchDone()
     {
         Debug.Log($"Finished Research for {_title}");
-        RDTreeManager.Instance.SkillsInDevelopment.Remove(this);
         CurrentSkillState = SkillState.bought;
     }
 
@@ -67,15 +65,16 @@ public class Skill : MonoBehaviour
 
     public void OnClick()
     {
-        if (CurrentSkillState == SkillState.available)
+        if (CurrentSkillState == SkillState.available || CurrentSkillState == SkillState.developmentPaused)
         {
             CurrentSkillState = SkillState.inDevelopment;
-            RDTreeManager.Instance.SkillsInDevelopment.Add(this);
+            RDTreeManager.Instance.ChooseNewResearch(this);
             SetUIForStates();
 
             RDTreeManager.Instance.ResearchDoneEvent.AddListener(ResearchDone);
             RDTreeManager.Instance.ResearchDoneEvent.AddListener(SetNextStatesInTree);
             RDTreeManager.Instance.ResearchDoneEvent.AddListener(UnlockObjects);
+            RDTreeManager.Instance.ResearchDoneEvent.AddListener(RemoveResearchFromList);
         }
     }
 
@@ -94,6 +93,9 @@ public class Skill : MonoBehaviour
             case SkillState.inDevelopment:
                 _button.interactable = false;
                 break;
+            case SkillState.developmentPaused:
+                _button.interactable = true;
+                break;
             case SkillState.bought:
                 _button.interactable = false;
                 break;
@@ -102,13 +104,31 @@ public class Skill : MonoBehaviour
 
     private void SetNextStatesInTree()
     {
-        if(CurrentSkillState != SkillState.bought) return;
+        if (CurrentSkillState != SkillState.bought) return;
 
-        foreach(var connectedNode in ConnectedResearchNodes)
+        foreach (var connectedNode in ConnectedResearchNodes)
         {
+            if (connectedNode == null) continue;
+
             connectedNode.CurrentSkillState = SkillState.available;
             connectedNode.SetUIForStates();
         }
     }
-    public enum SkillState { notAvailable, available, inDevelopment,  bought }
+
+    public void PauseResearch()
+    {
+        CurrentSkillState = SkillState.developmentPaused;
+        SetUIForStates();
+    }
+
+    private void RemoveResearchFromList()
+    {
+        if (RDTreeManager.Instance.CurrentResearching != null)
+        {
+            RDTreeManager.Instance.ResearchedDone.Add(this);
+            RDTreeManager.Instance.CurrentResearching = null;
+        }
+    }
+
+    public enum SkillState { notAvailable, available, inDevelopment, developmentPaused, bought }
 }

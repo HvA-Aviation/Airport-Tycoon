@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,7 +13,9 @@ public class RDTreeManager : MonoBehaviour
 
     public List<GameObject> Skills = new List<GameObject>();
 
-    public List<Skill> SkillsInDevelopment = new List<Skill>();
+    public Skill CurrentResearching;
+
+    public List<Skill> ResearchedDone = new List<Skill>();
 
     public UnityEvent ResearchDoneEvent = new UnityEvent();
 
@@ -29,9 +29,9 @@ public class RDTreeManager : MonoBehaviour
         _controls.RDControlls.ShowTree.performed -= ShowTree;
     }
 
-    private void Awake() 
+    private void Awake()
     {
-        if(Instance == null) Instance = this;
+        if (Instance == null) Instance = this;
         else Destroy(Instance);
 
         _controls = new RDControls();
@@ -40,10 +40,16 @@ public class RDTreeManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        foreach (var skill in SkillsInDevelopment)
-            skill.TimerForInDevelopment();
+        CurrentResearching?.TimerForInDevelopment();
     }
 
     private void ShowTree(InputAction.CallbackContext _) => _skillTree.SetActive(!_skillTree.activeSelf);
 
+    public void ChooseNewResearch(Skill newResearch)
+    {
+        if (CurrentResearching != null)
+            CurrentResearching.PauseResearch();
+
+        CurrentResearching = newResearch;
+    }
 }
