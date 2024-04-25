@@ -14,7 +14,9 @@ namespace Building
         [SerializeField] private Color _validColor;
         [SerializeField] private Color _invalidColor;
 
-        private List<Vector3Int> _selectedGroup = new List<Vector3Int>();
+        [SerializeField]private List<Vector3Int> _selectedGroup = new List<Vector3Int>();
+        [SerializeField] private List<Vector3Int> _size = new List<Vector3Int>();
+        
 
         private int _currentMouse;
 
@@ -45,7 +47,7 @@ namespace Building
                 _grid.Remove(position);
             }*/
 
-            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            /*if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             {
                 _currentMouse = Input.GetMouseButtonDown(0) ? 0 : 1;
                 _selectedGroup = new List<Vector3Int>() { position };
@@ -77,6 +79,29 @@ namespace Building
             else
             {
                 Hover(position, new List<Vector3Int>() { Vector3Int.zero, new Vector3Int(1,0, 0)});
+            }*/
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                _grid.SetGroup(_selectedGroup, new List<int>() {0, 0});
+
+            }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                _grid.Remove(position);
+
+            }
+            else
+            {
+                Hover(position, _size);
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                for (int i = 0; i < _size.Count; i++)
+                {
+                    _size[i] = new Vector3Int(_size[i].y, -_size[i].x, _size[i].z);
+                }
             }
         }
 

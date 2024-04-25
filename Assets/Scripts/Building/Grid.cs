@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Building.Datatypes;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -21,6 +22,8 @@ public class Grid : MonoBehaviour
     [SerializeField] private Vector3Int _gridSize;
     [SerializeField] private float _cellSize;
     
+    [SerializeField] private List<List<Vector3Int>> _cellGroup;
+    
     private bool _mapUpdated;
 
     public float CellSize => _cellSize;
@@ -32,6 +35,7 @@ public class Grid : MonoBehaviour
             Debug.LogError("No atlas is assigned!");
 
         _cells = new int[_gridSize.x, _gridSize.y, _gridSize.z];
+        _cellGroup = new List<List<Vector3Int>>();
         PopulateCells();
     }
 
@@ -76,7 +80,6 @@ public class Grid : MonoBehaviour
                     if (_cells[x, y, z] != -1)
                     {
                         tile = _atlas.Items[cell].Sprite;
-                        
                     }
                     
                     _tilemap.SetTile(new Vector3Int(x, y, z) - offset, tile);
@@ -106,11 +109,40 @@ public class Grid : MonoBehaviour
         return false;
     }
     
+    public bool SetGroup(List<Vector3Int> gridVectors, List<int> buildIndices)
+    {
+        foreach (var position in gridVectors)
+        {
+            if (Get(position) != -1)
+                return false;
+        }
+
+        for (int i = 0; i < gridVectors.Count; i++)
+        {
+            _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = buildIndices[i];
+            _mapUpdated = true;
+        }
+        
+        _cellGroup.Add(gridVectors);
+
+        return true;
+    }
+    
     public bool Remove(Vector3Int gridVector)
     {
         if (!OutOfBounds(gridVector) && Get(gridVector) != -1)
         {
-            _cells[gridVector.x, gridVector.y, gridVector.z] = -1;
+            var group = _cellGroup.FirstOrDefault(x => x.Any(j => j == gridVector));
+            if (group == default)
+                group = new List<Vector3Int>() { gridVector };
+
+            foreach (var item in group)
+            {
+                _cells[item.x, item.y, item.z] = -1;
+            }
+
+            _cellGroup.Remove(group);
+            
             _mapUpdated = true;
             return true;
         }
