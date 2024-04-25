@@ -16,6 +16,7 @@ public class Skill : MonoBehaviour
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private TMP_Text _descriptionText;
     [SerializeField] private Button _button;
+    [SerializeField] private Slider _researchBar;
 
     [Header("Next In Tree")]
     [SerializeField] private List<Skill> ConnectedResearchNodes;
@@ -38,6 +39,7 @@ public class Skill : MonoBehaviour
     private void Start()
     {
         RDTreeManager.Instance.Skills.Add(gameObject);
+        _researchBar.maxValue = _researchTime;
     }
 
     public void TimerForInDevelopment()
@@ -45,6 +47,7 @@ public class Skill : MonoBehaviour
         if (CurrentSkillState != SkillState.inDevelopment || CurrentSkillState == SkillState.developmentPaused) return;
 
         _timer += Time.fixedDeltaTime;
+        _researchBar.value = _timer;
         if (_timer >= _researchTime)
         {
             RDTreeManager.Instance.ResearchDoneEvent.Invoke();
