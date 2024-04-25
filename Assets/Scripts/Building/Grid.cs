@@ -69,9 +69,9 @@ public class Grid : MonoBehaviour
                     var cell = _cells[x, y, z];
 
                     Tile tile = null;
-                    Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x + .5f),
-                        Mathf.RoundToInt(_tilemap.transform.position.y + .5f),
-                        Mathf.RoundToInt(_tilemap.transform.position.z + .5f));
+                    Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x),
+                        Mathf.RoundToInt(_tilemap.transform.position.y),
+                        Mathf.RoundToInt(_tilemap.transform.position.z));
                     
                     if (_cells[x, y, z] != -1)
                     {
@@ -93,16 +93,7 @@ public class Grid : MonoBehaviour
 
         return _cells[gridVector.x, gridVector.y, gridVector.z];
     }
-
-    private bool OutOfBounds(Vector3Int gridVector)
-    {
-        if (gridVector.x < 0 || gridVector.x > _gridSize.x - 1 || gridVector.y < 0 || gridVector.y > _gridSize.y - 1 ||
-            gridVector.z < 0 || gridVector.z > _gridSize.z - 1)
-            return true;
-
-        return false;
-    }
-
+    
     public bool Set(Vector3Int gridVector, int buildIndex)
     {
         if (Get(gridVector) == -1)
@@ -114,7 +105,7 @@ public class Grid : MonoBehaviour
 
         return false;
     }
-
+    
     public bool Remove(Vector3Int gridVector)
     {
         if (!OutOfBounds(gridVector) && Get(gridVector) != -1)
@@ -123,6 +114,15 @@ public class Grid : MonoBehaviour
             _mapUpdated = true;
             return true;
         }
+
+        return false;
+    }
+
+    private bool OutOfBounds(Vector3Int gridVector)
+    {
+        if (gridVector.x < 0 || gridVector.x > _gridSize.x - 1 || gridVector.y < 0 || gridVector.y > _gridSize.y - 1 ||
+            gridVector.z < 0 || gridVector.z > _gridSize.z - 1)
+            return true;
 
         return false;
     }
