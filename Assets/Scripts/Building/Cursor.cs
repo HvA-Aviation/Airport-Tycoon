@@ -14,8 +14,7 @@ namespace Building
         [SerializeField] private Color _validColor;
         [SerializeField] private Color _invalidColor;
 
-        private List<Vector3Int> _selectedGroup;
-        private Vector3Int _previousHover;
+        private List<Vector3Int> _selectedGroup = new List<Vector3Int>();
 
         private int _currentMouse;
 
@@ -77,27 +76,43 @@ namespace Building
             }
             else
             {
-                Hover(position);
+                Hover(position, new List<Vector3Int>() { Vector3Int.zero, new Vector3Int(1,0, 0)});
             }
         }
 
-        private void Hover(Vector3Int position)
+        private void Hover(Vector3Int position, List<Vector3Int> shapes)
         {
-            if (_previousHover == position)
-                return;
-
             Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x),
                 Mathf.RoundToInt(_tilemap.transform.position.y),
                 Mathf.RoundToInt(_tilemap.transform.position.z));
 
-            _tilemap.SetTile(_previousHover - offset, null);
+            
+            List<Vector3Int> currentSelectedGroup = new List<Vector3Int>();
+            foreach (var shape in shapes)
+            {
+                currentSelectedGroup.Add(position + shape);
+            }
 
-            Tile tempTile = ScriptableObject.CreateInstance(typeof(Tile)) as Tile;
-            tempTile.sprite = _spriteRenderer.sprite;
-            tempTile.color = _grid.IsGridPositionEmpty(position) ? _validColor : _invalidColor;
-            _tilemap.SetTile(position - offset, tempTile);
+            foreach (var gridPosition in _selectedGroup)
+            {
+                if (!currentSelectedGroup.Contains(gridPosition))
+                {
+                    _tilemap.SetTile(gridPosition - offset, null);
+                }
+            }
 
-            _previousHover = position;
+            foreach (var gridPosition in currentSelectedGroup)
+            {
+                if (!_selectedGroup.Contains(gridPosition))
+                {
+                    Tile tempTile = ScriptableObject.CreateInstance(typeof(Tile)) as Tile;
+                    tempTile.sprite = _spriteRenderer.sprite;
+                    tempTile.color = _grid.IsGridPositionEmpty(position) ? _validColor : _invalidColor;
+                    _tilemap.SetTile(gridPosition - offset, tempTile);
+                }
+            }
+
+            _selectedGroup = currentSelectedGroup;
         }
 
         private void Selection(Vector3Int position)
