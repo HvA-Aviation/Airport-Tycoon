@@ -14,6 +14,9 @@ namespace Building
         [SerializeField] private Color _validColor;
         [SerializeField] private Color _invalidColor;
 
+        private List<Vector3Int> _selectedGroup;
+        private Vector3Int _previousHover;
+
         private int _currentMouse;
 
         private void Start()
@@ -46,11 +49,6 @@ namespace Building
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             {
                 _currentMouse = Input.GetMouseButtonDown(0) ? 0 : 1;
-            }
-
-
-            if (Input.GetMouseButtonDown(_currentMouse))
-            {
                 _selectedGroup = new List<Vector3Int>() { position };
             }
             else if (Input.GetMouseButtonUp(_currentMouse))
@@ -77,12 +75,30 @@ namespace Building
             {
                 Selection(position);
             }
-
-
-            //transform.position = clampedValue;
+            else
+            {
+                Hover(position);
+            }
         }
 
-        private List<Vector3Int> _selectedGroup;
+        private void Hover(Vector3Int position)
+        {
+            if (_previousHover == position)
+                return;
+
+            Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x),
+                Mathf.RoundToInt(_tilemap.transform.position.y),
+                Mathf.RoundToInt(_tilemap.transform.position.z));
+
+            _tilemap.SetTile(_previousHover - offset, null);
+
+            Tile tempTile = ScriptableObject.CreateInstance(typeof(Tile)) as Tile;
+            tempTile.sprite = _spriteRenderer.sprite;
+            tempTile.color = _grid.IsGridPositionEmpty(position) ? _validColor : _invalidColor;
+            _tilemap.SetTile(position - offset, tempTile);
+
+            _previousHover = position;
+        }
 
         private void Selection(Vector3Int position)
         {
