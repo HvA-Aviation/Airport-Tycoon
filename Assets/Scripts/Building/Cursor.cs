@@ -8,7 +8,6 @@ namespace Building
 {
     public class Cursor : MonoBehaviour
     {
-        [SerializeField] private SpriteRenderer _spriteRenderer;
         private Grid _grid;
         [SerializeField] private Tilemap _tilemap;
 
@@ -18,7 +17,9 @@ namespace Building
         [SerializeField] private List<Vector3Int> _selectedGroup = new List<Vector3Int>();
         [SerializeField] private List<Vector3Int> _size = new List<Vector3Int>();
         [SerializeField] private int _rotation = 0;
-        [SerializeField] private BrushType _brush;
+
+        [SerializeField] private BuildableObject _selectedBuilding;
+        [SerializeField] private List<BuildableObject> _buildings;
 
         private int _currentMouse;
 
@@ -38,9 +39,17 @@ namespace Building
 
             var position = _grid.ClampedWorldToGridPosition(clampedValue, 0);
 
-            UpdateBuildColor(_grid.IsGridPositionEmpty(position));
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                ChangeToBuilding(_buildings[0]);
+            }
 
-            if (_brush == BrushType.Multi)
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                ChangeToBuilding(_buildings[1]);
+            }
+
+            if (_selectedBuilding.BrushType == BrushType.Multi)
             {
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
                 {
@@ -82,7 +91,8 @@ namespace Building
                     }
 
                     Hover(Vector3Int.zero, currentSelectedGroup);
-                } else
+                }
+                else
                 {
                     Hover(position, _size);
                 }
@@ -93,7 +103,7 @@ namespace Building
                 {
                     for (int i = 0; i < _size.Count; i++)
                     {
-                        _size[i] = new Vector3Int(-_size[i].y, _size[i].x, _size[i].z);
+                        _size[i] = new Vector3Int(_size[i].y, -_size[i].x, _size[i].z);
                     }
 
                     _rotation++;
@@ -103,7 +113,7 @@ namespace Building
                         _rotation = 0;
                     }
                 }
-                
+
                 if (Input.GetMouseButtonDown(0))
                 {
                     _grid.SetGroup(_selectedGroup, new List<int>() { 0, 0 }, _rotation);
@@ -111,37 +121,15 @@ namespace Building
                 else if (Input.GetMouseButtonDown(1))
                 {
                     _grid.Remove(position);
-                } else
+                }
+                else
                 {
-                    Hover(position, _size);
+                    Hover(position, _size, true);
                 }
             }
-
-            /*if (Input.GetMouseButtonDown(0))
-            {
-                _grid.SetGroup(_selectedGroup, new List<int>() {0, 0});
-
-            }
-            else if (Input.GetMouseButtonDown(1))
-            {
-                _grid.Remove(position);
-
-            }
-            else
-            {
-                Hover(position, _size);
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                for (int i = 0; i < _size.Count; i++)
-                {
-                    _size[i] = new Vector3Int(_size[i].y, -_size[i].x, _size[i].z);
-                }
-            }*/
         }
 
-        private void Hover(Vector3Int position, List<Vector3Int> shapes)
+        private void Hover(Vector3Int position, List<Vector3Int> shapes, bool requireAllAvailable = false)
         {
             Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x),
                 Mathf.RoundToInt(_tilemap.transform.position.y),
@@ -162,15 +150,33 @@ namespace Building
                 }
             }
 
+            bool valid = true;
+            if (requireAllAvailable)
+            {
+                foreach (var gridPosition in currentSelectedGroup)
+                {
+                    if (!_grid.IsGridPositionEmpty(gridPosition))
+                    {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+
             foreach (var gridPosition in currentSelectedGroup)
             {
-                if (!_selectedGroup.Contains(gridPosition))
+                //if (!_selectedGroup.Contains(gridPosition))
+                //{
+                TileChangeData tempTile = new TileChangeData()
                 {
-                    Tile tempTile = ScriptableObject.CreateInstance(typeof(Tile)) as Tile;
-                    tempTile.sprite = _spriteRenderer.sprite;
-                    tempTile.color = _grid.IsGridPositionEmpty(gridPosition) ? _validColor : _invalidColor;
-                    _tilemap.SetTile(gridPosition - offset, tempTile);
-                }
+                    position = gridPosition - offset,
+                    color = valid ? (_grid.IsGridPositionEmpty(gridPosition) ? _validColor : _invalidColor) : _invalidColor
+                };
+
+                tempTile.transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, _rotation * -90));
+                tempTile.tile = _selectedBuilding.Sprite;
+                _tilemap.SetTile(tempTile, true);
+                //}
             }
 
             if (_selectedGroup.Count > 0 && currentSelectedGroup.Contains(_selectedGroup[0]))
@@ -182,68 +188,10 @@ namespace Building
             _selectedGroup = currentSelectedGroup;
         }
 
-        private void Hover(List<Vector3Int> positions)
+        public void ChangeToBuilding(BuildableObject buildableObject)
         {
-            Hover(Vector3Int.zero, positions);
-        }
-
-        private void Selection(Vector3Int position)
-        {
-            var min = Vector3Int.Min(_selectedGroup[0], position);
-            var max = Vector3Int.Max(_selectedGroup[0], position);
-
-            Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x),
-                Mathf.RoundToInt(_tilemap.transform.position.y),
-                Mathf.RoundToInt(_tilemap.transform.position.z));
-
-            List<Vector3Int> currentSelectedGroup = new List<Vector3Int>();
-
-            for (var x = min.x; x < max.x + 1; x++)
-            {
-                for (var y = min.y; y < max.y + 1; y++)
-                {
-                    currentSelectedGroup.Add(new Vector3Int(x, y, 0));
-                }
-            }
-
-            //remove the tiles that aren't selected
-            foreach (var gridPosition in _selectedGroup)
-            {
-                if (!currentSelectedGroup.Contains(gridPosition))
-                {
-                    _tilemap.SetTile(gridPosition - offset, null);
-                }
-            }
-
-            foreach (var gridPosition in currentSelectedGroup)
-            {
-                var tile = _tilemap.GetSprite(gridPosition - offset);
-                if (tile == null)
-                {
-                    Tile tempTile = ScriptableObject.CreateInstance(typeof(Tile)) as Tile;
-                    tempTile.sprite = _spriteRenderer.sprite;
-                    tempTile.color = _grid.IsGridPositionEmpty(gridPosition) ? _validColor : _invalidColor;
-                    _tilemap.SetTile(gridPosition - offset, tempTile);
-                }
-            }
-
-
-            currentSelectedGroup.Remove(_selectedGroup[0]);
-            currentSelectedGroup.Insert(0, _selectedGroup[0]);
-
-            _selectedGroup = currentSelectedGroup;
-        }
-
-        private void UpdateBuildColor(bool isValid)
-        {
-            if (isValid && _spriteRenderer.color != _validColor)
-            {
-                _spriteRenderer.color = _validColor;
-            }
-            else if (!isValid)
-            {
-                _spriteRenderer.color = _invalidColor;
-            }
+            _rotation = 0;
+            _selectedBuilding = buildableObject;
         }
 
         public float RoundToMultiple(float value, float roundTo)

@@ -837,13 +837,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4041a3231c384557bd453694846e8313, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spriteRenderer: {fileID: 1474057264}
   _tilemap: {fileID: 354013457}
   _validColor: {r: 0, g: 1, b: 0, a: 0.39215687}
   _invalidColor: {r: 1, g: 0, b: 0, a: 0.39215687}
   _selectedGroup: []
   _size:
   - {x: 0, y: 0, z: 0}
-  - {x: 1, y: 0, z: 0}
   _rotation: 0
-  _brush: 0
+  _selectedBuilding: {fileID: 11400000, guid: 4240fc810619a194bb03633333b32553, type: 2}
+  _buildings:
+  - {fileID: 11400000, guid: add816ad7c0618e45bc6275e18b3444f, type: 2}
+  - {fileID: 11400000, guid: 4240fc810619a194bb03633333b32553, type: 2}

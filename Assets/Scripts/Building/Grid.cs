@@ -15,7 +15,7 @@ public class Grid : MonoBehaviour
     /// z = z-axis for multiple layers for example floor tile layer and decoration layer
     /// </summary>
     private int[,,] _cells;
-    
+
     private int[,,] _rotations;
 
     [SerializeField] private BuildableAtlas _atlas;
@@ -23,9 +23,9 @@ public class Grid : MonoBehaviour
 
     [SerializeField] private Vector3Int _gridSize;
     [SerializeField] private float _cellSize;
-    
+
     [SerializeField] private List<List<Vector3Int>> _cellGroup;
-    
+
     private bool _mapUpdated;
 
     public float CellSize => _cellSize;
@@ -55,7 +55,7 @@ public class Grid : MonoBehaviour
             }
         }
     }
-    
+
     private void LateUpdate()
     {
         if (_mapUpdated)
@@ -75,31 +75,23 @@ public class Grid : MonoBehaviour
                 {
                     var cell = _cells[x, y, z];
 
-                    Tile tile = null;
                     Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x),
                         Mathf.RoundToInt(_tilemap.transform.position.y),
                         Mathf.RoundToInt(_tilemap.transform.position.z));
-                    
-                    
-                    if (_cells[x, y, z] != -1)
+
+
+                    TileChangeData tile = new TileChangeData()
                     {
-                        var tileTransform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, _rotations[x, y, z] * 90));
-                        
-                        var tileData = new TileChangeData()
-                        {
-                            position = new Vector3Int(x, y, z) - offset,
-                            tile = _atlas.Items[cell].Sprite,
-                            transform = tileTransform
-                        };
-                        
-                        _tilemap.SetTile(tileData, false);
-                    }
-                    else
+                        position = new Vector3Int(x, y, z) - offset,
+                    };
+
+                    if (cell != -1)
                     {
-                        _tilemap.SetTile(new Vector3Int(x, y, z) - offset, null);
+                        tile.transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, _rotations[x, y, z] * -90));
+                        tile.tile = _atlas.Items[cell].Sprite;
                     }
-                    //tile.transform = new Quaternion(0, 0, _rotations[x, y, z] * 90, 0);
-                    
+
+                    _tilemap.SetTile(tile, false);
                 }
             }
         }
@@ -112,19 +104,21 @@ public class Grid : MonoBehaviour
 
         return _cells[gridVector.x, gridVector.y, gridVector.z];
     }
-    
+
     public bool Set(Vector3Int gridVector, int buildIndex)
     {
         if (Get(gridVector) == -1)
         {
             _cells[gridVector.x, gridVector.y, gridVector.z] = buildIndex;
+            _rotations[gridVector.x, gridVector.y, gridVector.z] = 0;
+
             _mapUpdated = true;
             return true;
         }
 
         return false;
     }
-    
+
     public bool SetGroup(List<Vector3Int> gridVectors, List<int> buildIndices, int rotation)
     {
         foreach (var position in gridVectors)
@@ -139,12 +133,12 @@ public class Grid : MonoBehaviour
             _rotations[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = rotation;
             _mapUpdated = true;
         }
-        
+
         _cellGroup.Add(gridVectors);
 
         return true;
     }
-    
+
     public bool Remove(Vector3Int gridVector)
     {
         if (!OutOfBounds(gridVector) && Get(gridVector) != -1)
@@ -159,7 +153,7 @@ public class Grid : MonoBehaviour
             }
 
             _cellGroup.Remove(group);
-            
+
             _mapUpdated = true;
             return true;
         }

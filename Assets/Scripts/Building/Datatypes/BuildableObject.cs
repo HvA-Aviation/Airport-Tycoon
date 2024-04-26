@@ -8,6 +8,6 @@ namespace Building.Datatypes
     {
         public string Name;
         public Tile Sprite;
-        public Vector2Int Size;
+        public BrushType BrushType;
     }
 }
