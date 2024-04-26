@@ -44,7 +44,7 @@ public class Skill : MonoBehaviour
 
     public void TimerForInDevelopment()
     {
-        if (CurrentSkillState != SkillState.inDevelopment || CurrentSkillState == SkillState.developmentPaused) return;
+        if (CurrentSkillState != SkillState.inDevelopment) return;
 
         _timer += Time.fixedDeltaTime;
         _researchBar.value = _timer;
@@ -68,12 +68,13 @@ public class Skill : MonoBehaviour
 
     public void OnClick()
     {
-        if (CurrentSkillState == SkillState.available || CurrentSkillState == SkillState.developmentPaused)
+        if (CurrentSkillState == SkillState.available)
         {
             CurrentSkillState = SkillState.inDevelopment;
             RDTreeManager.Instance.ChooseNewResearch(this);
             SetUIForStates();
 
+            RDTreeManager.Instance.ResearchDoneEvent.RemoveAllListeners();
             RDTreeManager.Instance.ResearchDoneEvent.AddListener(ResearchDone);
             RDTreeManager.Instance.ResearchDoneEvent.AddListener(SetNextStatesInTree);
             RDTreeManager.Instance.ResearchDoneEvent.AddListener(UnlockObjects);
@@ -96,9 +97,6 @@ public class Skill : MonoBehaviour
             case SkillState.inDevelopment:
                 _button.interactable = false;
                 break;
-            case SkillState.developmentPaused:
-                _button.interactable = true;
-                break;
             case SkillState.bought:
                 _button.interactable = false;
                 break;
@@ -120,7 +118,7 @@ public class Skill : MonoBehaviour
 
     public void PauseResearch()
     {
-        CurrentSkillState = SkillState.developmentPaused;
+        CurrentSkillState = SkillState.available;
         SetUIForStates();
     }
 
@@ -133,5 +131,5 @@ public class Skill : MonoBehaviour
         }
     }
 
-    public enum SkillState { notAvailable, available, inDevelopment, developmentPaused, bought }
+    public enum SkillState { notAvailable, available, inDevelopment, bought }
 }
