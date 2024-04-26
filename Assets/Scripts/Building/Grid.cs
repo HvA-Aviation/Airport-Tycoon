@@ -15,6 +15,8 @@ public class Grid : MonoBehaviour
     /// z = z-axis for multiple layers for example floor tile layer and decoration layer
     /// </summary>
     private int[,,] _cells;
+    
+    private int[,,] _rotations;
 
     [SerializeField] private BuildableAtlas _atlas;
     [SerializeField] private Tilemap _tilemap;
@@ -35,6 +37,7 @@ public class Grid : MonoBehaviour
             Debug.LogError("No atlas is assigned!");
 
         _cells = new int[_gridSize.x, _gridSize.y, _gridSize.z];
+        _rotations = new int[_gridSize.x, _gridSize.y, _gridSize.z];
         _cellGroup = new List<List<Vector3Int>>();
         PopulateCells();
     }
@@ -77,13 +80,26 @@ public class Grid : MonoBehaviour
                         Mathf.RoundToInt(_tilemap.transform.position.y),
                         Mathf.RoundToInt(_tilemap.transform.position.z));
                     
+                    
                     if (_cells[x, y, z] != -1)
                     {
-                        tile = _atlas.Items[cell].Sprite;
+                        var tileTransform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, _rotations[x, y, z] * 90));
+                        
+                        var tileData = new TileChangeData()
+                        {
+                            position = new Vector3Int(x, y, z) - offset,
+                            tile = _atlas.Items[cell].Sprite,
+                            transform = tileTransform
+                        };
+                        
+                        _tilemap.SetTile(tileData, false);
                     }
+                    else
+                    {
+                        _tilemap.SetTile(new Vector3Int(x, y, z) - offset, null);
+                    }
+                    //tile.transform = new Quaternion(0, 0, _rotations[x, y, z] * 90, 0);
                     
-                    _tilemap.SetTile(new Vector3Int(x, y, z) - offset, tile);
-
                 }
             }
         }
@@ -109,7 +125,7 @@ public class Grid : MonoBehaviour
         return false;
     }
     
-    public bool SetGroup(List<Vector3Int> gridVectors, List<int> buildIndices)
+    public bool SetGroup(List<Vector3Int> gridVectors, List<int> buildIndices, int rotation)
     {
         foreach (var position in gridVectors)
         {
@@ -120,6 +136,7 @@ public class Grid : MonoBehaviour
         for (int i = 0; i < gridVectors.Count; i++)
         {
             _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = buildIndices[i];
+            _rotations[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = rotation;
             _mapUpdated = true;
         }
         

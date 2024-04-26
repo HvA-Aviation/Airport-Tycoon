@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Building.Datatypes;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -14,9 +15,10 @@ namespace Building
         [SerializeField] private Color _validColor;
         [SerializeField] private Color _invalidColor;
 
-        [SerializeField]private List<Vector3Int> _selectedGroup = new List<Vector3Int>();
+        [SerializeField] private List<Vector3Int> _selectedGroup = new List<Vector3Int>();
         [SerializeField] private List<Vector3Int> _size = new List<Vector3Int>();
-        
+        [SerializeField] private int _rotation = 0;
+        [SerializeField] private BrushType _brush;
 
         private int _currentMouse;
 
@@ -38,50 +40,84 @@ namespace Building
 
             UpdateBuildColor(_grid.IsGridPositionEmpty(position));
 
-            /*if (Input.GetMouseButton(0))
+            if (_brush == BrushType.Multi)
             {
-                _grid.Set(position, 0);
-            }
-            if (Input.GetMouseButton(1))
-            {
-                _grid.Remove(position);
-            }*/
-
-            /*if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
-            {
-                _currentMouse = Input.GetMouseButtonDown(0) ? 0 : 1;
-                _selectedGroup = new List<Vector3Int>() { position };
-            }
-            else if (Input.GetMouseButtonUp(_currentMouse))
-            {
-                if (_currentMouse == 0)
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
                 {
-                    foreach (var selected in _selectedGroup)
-                    {
-                        _grid.Set(selected, 0);
-                    }
+                    _currentMouse = Input.GetMouseButtonDown(0) ? 0 : 1;
                 }
-                else
+                else if (Input.GetMouseButtonUp(_currentMouse))
                 {
-                    foreach (var selected in _selectedGroup)
+                    if (_currentMouse == 0)
                     {
-                        _grid.Remove(selected);
+                        foreach (var selected in _selectedGroup)
+                        {
+                            _grid.Set(selected, 0);
+                        }
                     }
-                }
+                    else
+                    {
+                        foreach (var selected in _selectedGroup)
+                        {
+                            _grid.Remove(selected);
+                        }
+                    }
 
-                _selectedGroup = new List<Vector3Int>();
-                _tilemap.ClearAllTiles();
-            }
-            else if (Input.GetMouseButton(_currentMouse) && _selectedGroup.Count > 0)
-            {
-                Selection(position);
+                    _selectedGroup = new List<Vector3Int>();
+                    _tilemap.ClearAllTiles();
+                }
+                else if (Input.GetMouseButton(_currentMouse) && _selectedGroup.Count > 0)
+                {
+                    var min = Vector3Int.Min(_selectedGroup[0], position);
+                    var max = Vector3Int.Max(_selectedGroup[0], position);
+
+                    List<Vector3Int> currentSelectedGroup = new List<Vector3Int>();
+
+                    for (var x = min.x; x < max.x + 1; x++)
+                    {
+                        for (var y = min.y; y < max.y + 1; y++)
+                        {
+                            currentSelectedGroup.Add(new Vector3Int(x, y, 0));
+                        }
+                    }
+
+                    Hover(Vector3Int.zero, currentSelectedGroup);
+                } else
+                {
+                    Hover(position, _size);
+                }
             }
             else
             {
-                Hover(position, new List<Vector3Int>() { Vector3Int.zero, new Vector3Int(1,0, 0)});
-            }*/
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    for (int i = 0; i < _size.Count; i++)
+                    {
+                        _size[i] = new Vector3Int(-_size[i].y, _size[i].x, _size[i].z);
+                    }
 
-            if (Input.GetMouseButtonDown(0))
+                    _rotation++;
+
+                    if (_rotation > 3)
+                    {
+                        _rotation = 0;
+                    }
+                }
+                
+                if (Input.GetMouseButtonDown(0))
+                {
+                    _grid.SetGroup(_selectedGroup, new List<int>() { 0, 0 }, _rotation);
+                }
+                else if (Input.GetMouseButtonDown(1))
+                {
+                    _grid.Remove(position);
+                } else
+                {
+                    Hover(position, _size);
+                }
+            }
+
+            /*if (Input.GetMouseButtonDown(0))
             {
                 _grid.SetGroup(_selectedGroup, new List<int>() {0, 0});
 
@@ -102,7 +138,7 @@ namespace Building
                 {
                     _size[i] = new Vector3Int(_size[i].y, -_size[i].x, _size[i].z);
                 }
-            }
+            }*/
         }
 
         private void Hover(Vector3Int position, List<Vector3Int> shapes)
@@ -111,7 +147,7 @@ namespace Building
                 Mathf.RoundToInt(_tilemap.transform.position.y),
                 Mathf.RoundToInt(_tilemap.transform.position.z));
 
-            
+
             List<Vector3Int> currentSelectedGroup = new List<Vector3Int>();
             foreach (var shape in shapes)
             {
@@ -132,12 +168,23 @@ namespace Building
                 {
                     Tile tempTile = ScriptableObject.CreateInstance(typeof(Tile)) as Tile;
                     tempTile.sprite = _spriteRenderer.sprite;
-                    tempTile.color = _grid.IsGridPositionEmpty(position) ? _validColor : _invalidColor;
+                    tempTile.color = _grid.IsGridPositionEmpty(gridPosition) ? _validColor : _invalidColor;
                     _tilemap.SetTile(gridPosition - offset, tempTile);
                 }
             }
 
+            if (_selectedGroup.Count > 0 && currentSelectedGroup.Contains(_selectedGroup[0]))
+            {
+                currentSelectedGroup.Remove(_selectedGroup[0]);
+                currentSelectedGroup.Insert(0, _selectedGroup[0]);
+            }
+
             _selectedGroup = currentSelectedGroup;
+        }
+
+        private void Hover(List<Vector3Int> positions)
+        {
+            Hover(Vector3Int.zero, positions);
         }
 
         private void Selection(Vector3Int position)
