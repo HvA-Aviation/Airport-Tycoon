@@ -527,7 +527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _backgroundAudioSource: {fileID: 177885269}
-  _playbackMode: 0
+  _playbackMode: 1
   _interval: 0
   _backgroundMusic:
   - Name: Little
