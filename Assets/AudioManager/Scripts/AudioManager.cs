@@ -7,8 +7,8 @@ public class AudioManager : MonoBehaviour
 {
     public enum PlaybackMode
     {
-        Randomized,
-        Chronologically
+        Chronologically,
+        Randomized
     }
 
     [Serializable]
@@ -19,23 +19,43 @@ public class AudioManager : MonoBehaviour
     }
 
 
+    #region Public bg
     [Header("Background music")]
+    [Space]
+
     [SerializeField] 
     private AudioSource _backgroundAudioSource;
 
+    [Space]
+    [Tooltip("Playback mode for the background audio. Chronologically will play the audioclips in the collection's order. Randomized will randomize the audioclip order.")]
+    [SerializeField]
+    private PlaybackMode _playbackMode;
+
+    [Tooltip("Time between two audio clips in seconds.")]
+    [SerializeField, Range(0, 60)]
+    private uint _interval;
+
+    [Space]
     [SerializeField]
     private AudioFile[] _backgroundMusic;
+    #endregion
+
+    #region Private bg
+    private Queue<AudioFile> _backgroudMusicQueue;
+    #endregion
 
 
+
+    #region Public sfx
     [Header("Sound fx")]
     [SerializeField]
     private AudioSource _soundfxAudioSource;
 
     [SerializeField]
     private AudioFile[] _sfx;
+    #endregion
 
 
-    private Queue<AudioFile> _backgroudMusicQueue;
 
 
     #region Background music
