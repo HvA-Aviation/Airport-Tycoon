@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -32,6 +33,9 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField]
     private AudioFile[] _sfx;
+
+
+    private Queue<AudioFile> _backgroudMusicQueue;
 
 
     #region Background music
@@ -76,7 +80,7 @@ public class AudioManager : MonoBehaviour
 
 
 
-    #region common 
+    #region Common Helper
     /// <summary>
     /// Sets the volume for a given audio source.
     /// </summary>
