@@ -1,7 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 
 public class AudioManager : MonoBehaviour
 {
@@ -23,7 +23,7 @@ public class AudioManager : MonoBehaviour
     [Header("Background music")]
     [Space]
 
-    [SerializeField] 
+    [SerializeField]
     private AudioSource _backgroundAudioSource;
 
     [Space]
@@ -41,7 +41,9 @@ public class AudioManager : MonoBehaviour
     #endregion
 
     #region Private bg
-    private Queue<AudioFile> _backgroudMusicQueue;
+    private Queue<AudioFile> _backgroundMusicQueue = new Queue<AudioFile>();
+
+    private bool _inInterval;
     #endregion
 
 
@@ -71,7 +73,22 @@ public class AudioManager : MonoBehaviour
     /// <returns>Volume value.</returns>
     public float GetBackgroundVolume() => _backgroundAudioSource.volume;
 
+    // Remove this and make it a generic function: ExecuteAfterDelay(interval, function)
+    IEnumerator PlayNextBackgroundClipAfterDelay()
+    {
+        yield return new WaitForSeconds(_interval);
+        PlayNextBackgroundAudioClip();
+    }
 
+    public void PlayNextBackgroundAudioClip()
+    {
+        AudioFile file = _backgroundMusicQueue.Dequeue();
+        _backgroundMusicQueue.Enqueue(file);
+
+        _backgroundAudioSource.clip = file.Clip;
+        _backgroundAudioSource.Play();
+        _inInterval = false;
+    }
     #endregion
 
 
@@ -126,5 +143,58 @@ public class AudioManager : MonoBehaviour
 
         return file.Clip;
     }
+
+    private List<T> ShuffleList<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, i + 1);
+            T temp = list[i];
+            list[i] = list[randomIndex];
+            list[randomIndex] = temp;
+        }
+        return list;
+    }
     #endregion
+
+
+
+    private void Initialize()
+    {
+        if(_playbackMode == PlaybackMode.Chronologically)
+        {
+            foreach (AudioFile file in _backgroundMusic)
+            {
+                _backgroundMusicQueue.Enqueue(file);
+            }
+        }
+        else if(_playbackMode == PlaybackMode.Randomized)
+        {
+            // Shuffle the list of audio files
+            List<AudioFile> shuffledList = ShuffleList(new List<AudioFile>(_backgroundMusic));
+            
+
+            // Enqueue shuffled audio files
+            foreach (AudioFile file in shuffledList)
+            {
+                _backgroundMusicQueue.Enqueue(file);
+            }
+        }
+
+        PlayNextBackgroundAudioClip();
+    }
+
+    private void Update()
+    {
+        if (!_backgroundAudioSource.isPlaying && !_inInterval)
+        {
+            StartCoroutine(PlayNextBackgroundClipAfterDelay());
+            _inInterval = true;
+        }
+    }
+
+    public void Start()
+    {
+        Initialize();
+    }
 }
