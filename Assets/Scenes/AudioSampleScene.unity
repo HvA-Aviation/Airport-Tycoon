@@ -527,6 +527,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _backgroundAudioSource: {fileID: 177885269}
+  _playbackMode: 0
+  _interval: 0
   _backgroundMusic:
   - Name: Little
     Clip: {fileID: 8300000, guid: e637fe7aa1853d248a04cda90f2ca027, type: 3}
