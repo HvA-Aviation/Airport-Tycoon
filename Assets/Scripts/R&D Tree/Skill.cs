@@ -11,12 +11,6 @@ public class Skill : MonoBehaviour
 
     private float _timer;
 
-    [Header("Next In Tree")]
-    [SerializeField] private List<Skill> ConnectedResearchNodes;
-
-    [SerializeField] private List<GameObject> ObjectToUnlock;
-
-
     private UnityEvent _researchDoneEvent = new UnityEvent();
     private ResearchNodeSetting _nodeSetting;
 
@@ -57,12 +51,7 @@ public class Skill : MonoBehaviour
     private void ResearchDone()
     {
         CurrentSkillState = SkillState.bought;
-    }
-
-    private void UnlockObjects()
-    {
-        Debug.Log($"Unlocked projects {ObjectToUnlock.Count}");
-    }
+    }    
 
     public void OnClick()
     {
@@ -77,7 +66,7 @@ public class Skill : MonoBehaviour
     {
         _researchDoneEvent.AddListener(ResearchDone);
         _researchDoneEvent.AddListener(SetNextStatesInTree);
-        _researchDoneEvent.AddListener(UnlockObjects);
+        _researchDoneEvent.AddListener(_nodeSetting.UnlockObjects);
         _researchDoneEvent.AddListener(RemoveResearchFromList);
     }
 
@@ -106,7 +95,7 @@ public class Skill : MonoBehaviour
     {
         if (CurrentSkillState != SkillState.bought) return;
 
-        foreach (var connectedNode in ConnectedResearchNodes)
+        foreach (var connectedNode in _nodeSetting.ConnectedResearchNodes)
         {
             if (connectedNode == null) continue;
 

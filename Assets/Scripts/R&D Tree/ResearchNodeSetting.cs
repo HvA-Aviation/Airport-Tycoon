@@ -15,6 +15,10 @@ public class ResearchNodeSetting : MonoBehaviour
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private TMP_Text _descriptionText;
 
+    [SerializeField] private List<Skill> _connectedResearchNodes;
+    [SerializeField] private List<GameObject> ObjectToUnlock;
+
+    public List<Skill> ConnectedResearchNodes => _connectedResearchNodes;
     public int ResearchCost => _cost;
     public int ResearchTime => _researchTime;
 
@@ -22,5 +26,12 @@ public class ResearchNodeSetting : MonoBehaviour
     {
         _titleText.text = _title;
         _descriptionText.text = _description;
+    }
+
+
+
+    public void UnlockObjects()
+    {
+
     }
 }
