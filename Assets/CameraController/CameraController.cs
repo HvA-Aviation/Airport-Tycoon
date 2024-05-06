@@ -17,12 +17,16 @@ public class CameraController : MonoBehaviour
     private Rect _boundingBox;
 
     [Header("Zoom limits")]
-    [SerializeField]
+    [SerializeField, Tooltip("The furthest the camera can zoom out (Highest FOV).")]
     private float _minZoom;
 
-    [SerializeField]
+    [SerializeField, Tooltip("The furthest the camera can zoom in (Lowest FOV).")]
     private float _maxZoom;
 
+    /// <summary>
+    /// Moves the camera within the movement boundaries.
+    /// </summary>
+    /// <param name="offset">The amount of movement to apply.</param>
     public void Move(Vector2 offset)
     {
         Vector2 delta = offset * _cameraSpeed;
@@ -32,6 +36,10 @@ public class CameraController : MonoBehaviour
         transform.position = newPosition;
     }
 
+    /// <summary>
+    /// Zooms the camera within the zoom boundaries.
+    /// </summary>
+    /// <param name="offset">The amount of zoom to apply.</param>
     public void Zoom(float offset)
     {
         float delta = offset * _zoomSpeed;
