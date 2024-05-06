@@ -14,10 +14,7 @@ public class CameraController : MonoBehaviour
 
     [Header("Movement limits")]
     [SerializeField]
-    private Vector2Int _BoundingBoxOffset;
-
-    [SerializeField]
-    private Vector2Int _BoundingBoxSize;
+    private Rect _boundingBox;
 
     [Header("Zoom limits")]
     [SerializeField]
@@ -28,13 +25,16 @@ public class CameraController : MonoBehaviour
 
     public void Move(Vector2 offset)
     {
-        
+        Vector2 delta = offset * _cameraSpeed;
+        Vector3 newPosition = transform.position + new Vector3(delta.x, 0, delta.y);
+        newPosition.x = Mathf.Clamp(newPosition.x, _boundingBox.position.x, _boundingBox.position.x + _boundingBox.size.x); 
+        newPosition.z = Mathf.Clamp(newPosition.z, _boundingBox.position.y, _boundingBox.position.y + _boundingBox.size.y); 
+        transform.position = newPosition;
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Vector3 center = (Vector2)_BoundingBoxSize * .5f + _BoundingBoxOffset;
-        Gizmos.DrawWireCube(center, (Vector2)_BoundingBoxSize);
+        Gizmos.DrawWireCube(_boundingBox.center, _boundingBox.size);
     }
 }
