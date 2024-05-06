@@ -263,8 +263,8 @@ MonoBehaviour:
     y: -5
     width: 10
     height: 10
-  _minZoom: 0
-  _maxZoom: 0
+  _minZoom: 60
+  _maxZoom: 20
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

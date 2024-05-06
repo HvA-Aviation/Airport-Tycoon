@@ -16,5 +16,7 @@ public class CameraDemo : MonoBehaviour
         if(Input.GetKey(KeyCode.S)) yMovement--;
 
         _controller.Move(new Vector2(xMovement, yMovement) * Time.deltaTime);
+
+        _controller.Zoom(-Input.mouseScrollDelta.y * Time.deltaTime);
     }
 }
