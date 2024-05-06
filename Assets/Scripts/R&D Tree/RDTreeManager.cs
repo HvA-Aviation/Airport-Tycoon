@@ -15,6 +15,8 @@ public class RDTreeManager : MonoBehaviour
 
     public Skill CurrentResearching;
 
+    public List<Skill> ResearchQueue = new List<Skill>();
+
     public List<Skill> ResearchedDone = new List<Skill>();
 
     public UnityEvent ResearchDoneEvent = new UnityEvent();
@@ -40,6 +42,14 @@ public class RDTreeManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (ResearchQueue.Count > 0 && CurrentResearching == null)
+        {
+            CurrentResearching = ResearchQueue[0];
+            ResearchQueue.RemoveAt(0);
+            CurrentResearching.CurrentSkillState = Skill.SkillState.inDevelopment;
+        }
+
+        Debug.Log(CurrentResearching);
         CurrentResearching?.TimerForInDevelopment();
     }
 

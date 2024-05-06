@@ -46,6 +46,7 @@ public class Skill : MonoBehaviour
     {
         if (CurrentSkillState != SkillState.inDevelopment) return;
 
+        AddListenersToEvent();
         _timer += Time.fixedDeltaTime;
         _researchBar.value = _timer;
         if (_timer >= _researchTime)
@@ -73,13 +74,21 @@ public class Skill : MonoBehaviour
             CurrentSkillState = SkillState.inDevelopment;
             RDTreeManager.Instance.ChooseNewResearch(this);
             SetUIForStates();
-
-            RDTreeManager.Instance.ResearchDoneEvent.RemoveAllListeners();
-            RDTreeManager.Instance.ResearchDoneEvent.AddListener(ResearchDone);
-            RDTreeManager.Instance.ResearchDoneEvent.AddListener(SetNextStatesInTree);
-            RDTreeManager.Instance.ResearchDoneEvent.AddListener(UnlockObjects);
-            RDTreeManager.Instance.ResearchDoneEvent.AddListener(RemoveResearchFromList);
         }
+    }
+
+    public void OnClickQueue()
+    {
+        RDTreeManager.Instance.ResearchQueue.Add(this);
+    }
+
+    public void AddListenersToEvent()
+    {
+        RDTreeManager.Instance.ResearchDoneEvent.RemoveAllListeners();
+        RDTreeManager.Instance.ResearchDoneEvent.AddListener(ResearchDone);
+        RDTreeManager.Instance.ResearchDoneEvent.AddListener(SetNextStatesInTree);
+        RDTreeManager.Instance.ResearchDoneEvent.AddListener(UnlockObjects);
+        RDTreeManager.Instance.ResearchDoneEvent.AddListener(RemoveResearchFromList);
     }
 
     public void SetUIForStates()
