@@ -19,8 +19,6 @@ public class RDTreeManager : MonoBehaviour
 
     public List<Skill> ResearchedDone = new List<Skill>();
 
-    public UnityEvent ResearchDoneEvent = new UnityEvent();
-
     private void OnEnable()
     {
         _controls.RDControlls.ShowTree.performed += ShowTree;
@@ -45,6 +43,7 @@ public class RDTreeManager : MonoBehaviour
         if (ResearchQueue.Count > 0 && CurrentResearching == null)
         {
             CurrentResearching = ResearchQueue[0];
+            CurrentResearching.GetComponent<ResearchNodeQueue>().CurrentState = ResearchNodeQueue.States.InQueue;
             ResearchQueue.RemoveAt(0);
             CurrentResearching.CurrentSkillState = Skill.SkillState.inDevelopment;
         }

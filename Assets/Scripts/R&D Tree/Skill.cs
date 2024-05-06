@@ -6,22 +6,19 @@ using UnityEngine.UI;
 
 public class Skill : MonoBehaviour
 {
-    [SerializeField] private string _title;
-    [SerializeField] private string _description;
-    [SerializeField] private int _cost;
-    [SerializeField] private int _researchTime;
-
-    private float _timer;
-    [Header("Objects for UI")]
-    [SerializeField] private TMP_Text _titleText;
-    [SerializeField] private TMP_Text _descriptionText;
     [SerializeField] private Button _button;
     [SerializeField] private Slider _researchBar;
+
+    private float _timer;
 
     [Header("Next In Tree")]
     [SerializeField] private List<Skill> ConnectedResearchNodes;
 
     [SerializeField] private List<GameObject> ObjectToUnlock;
+
+
+    private UnityEvent _researchDoneEvent = new UnityEvent();
+    private ResearchNodeSetting _nodeSetting;
 
     public SkillState CurrentSkillState;
 
@@ -32,33 +29,33 @@ public class Skill : MonoBehaviour
 
     private void Awake()
     {
-        _titleText.text = _title;
-        _descriptionText.text = _description;
+        
     }
 
     private void Start()
     {
         RDTreeManager.Instance.Skills.Add(gameObject);
-        _researchBar.maxValue = _researchTime;
+
+        _nodeSetting = GetComponent<ResearchNodeSetting>();
+
+        _researchBar.maxValue = _nodeSetting.ResearchTime;
+        AddListenersToEvent();
     }
 
     public void TimerForInDevelopment()
     {
         if (CurrentSkillState != SkillState.inDevelopment) return;
 
-        AddListenersToEvent();
         _timer += Time.fixedDeltaTime;
         _researchBar.value = _timer;
-        if (_timer >= _researchTime)
+        if (_timer >= _nodeSetting.ResearchTime)
         {
-            RDTreeManager.Instance.ResearchDoneEvent.Invoke();
-            RDTreeManager.Instance.ResearchDoneEvent = new UnityEvent();
+            _researchDoneEvent.Invoke();
         }
     }
 
     private void ResearchDone()
     {
-        Debug.Log($"Finished Research for {_title}");
         CurrentSkillState = SkillState.bought;
     }
 
@@ -75,20 +72,13 @@ public class Skill : MonoBehaviour
             RDTreeManager.Instance.ChooseNewResearch(this);
             SetUIForStates();
         }
-    }
-
-    public void OnClickQueue()
-    {
-        RDTreeManager.Instance.ResearchQueue.Add(this);
-    }
-
+    }    
     public void AddListenersToEvent()
     {
-        RDTreeManager.Instance.ResearchDoneEvent.RemoveAllListeners();
-        RDTreeManager.Instance.ResearchDoneEvent.AddListener(ResearchDone);
-        RDTreeManager.Instance.ResearchDoneEvent.AddListener(SetNextStatesInTree);
-        RDTreeManager.Instance.ResearchDoneEvent.AddListener(UnlockObjects);
-        RDTreeManager.Instance.ResearchDoneEvent.AddListener(RemoveResearchFromList);
+        _researchDoneEvent.AddListener(ResearchDone);
+        _researchDoneEvent.AddListener(SetNextStatesInTree);
+        _researchDoneEvent.AddListener(UnlockObjects);
+        _researchDoneEvent.AddListener(RemoveResearchFromList);
     }
 
     public void SetUIForStates()
