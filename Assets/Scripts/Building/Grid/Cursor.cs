@@ -39,7 +39,7 @@ namespace Building
             var clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
                 RoundToMultiple(pos.y, _grid.CellSize));
 
-            var position = _grid.ClampedWorldToGridPosition(clampedValue, 0);
+            var position = _grid.ClampedWorldToGridPosition(clampedValue, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer);
 
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
@@ -49,6 +49,11 @@ namespace Building
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
                 ChangeToBuilding(_buildings[1]);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                ChangeToBuilding(_buildings[2]);
             }
 
             if (_selectedBuilding.BrushType == BrushType.Multi)
@@ -64,7 +69,7 @@ namespace Building
                     {
                         foreach (var selected in _selectedGroup)
                         {
-                            _grid.Set(selected.GridPosition, 0);
+                            _grid.Set(selected.GridPosition, _selectedBuilding.BuildItems[0].Tile);
                         }
                     }
                     else
