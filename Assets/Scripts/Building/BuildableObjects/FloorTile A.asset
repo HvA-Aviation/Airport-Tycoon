@@ -14,5 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: FloorTile
   Sprite: {fileID: 11400000, guid: 96db11b5d523f664b9a8f379dde15f0f, type: 2}
-  Size: {x: 0, y: 0}
   BrushType: 1
+  BuildItems:
+  - Tile: {fileID: 11400000, guid: 96db11b5d523f664b9a8f379dde15f0f, type: 2}
+    GridPosition:
+      Position: {x: 0, y: 0}
+      Layer: 0

@@ -5,9 +5,9 @@ using UnityEngine.Tilemaps;
 namespace Building.Datatypes
 {
     [Serializable]
-    public class SubBuildItem
+    public class TileData
     {
         public Tile Tile;
-        public GridPosition GridPosition;
+        //TODO different tile for rotation list
     }
 }

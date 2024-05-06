@@ -5,6 +5,7 @@ using System.Linq;
 using Building.Datatypes;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using TileData = Building.Datatypes.TileData;
 
 public class Grid : MonoBehaviour
 {
@@ -88,7 +89,7 @@ public class Grid : MonoBehaviour
                     if (cell != -1)
                     {
                         tile.transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, _rotations[x, y, z] * -90));
-                        tile.tile = _atlas.Items[cell].Sprite;
+                        tile.tile = _atlas.Items[cell].Tile;
                     }
 
                     _tilemap.SetTile(tile, false);
@@ -119,7 +120,7 @@ public class Grid : MonoBehaviour
         return false;
     }
 
-    public bool SetGroup(List<Vector3Int> gridVectors, List<int> buildIndices, int rotation)
+    public bool SetGroup(List<Vector3Int> gridVectors, List<Tile> tiles, int rotation)
     {
         foreach (var position in gridVectors)
         {
@@ -129,7 +130,15 @@ public class Grid : MonoBehaviour
 
         for (int i = 0; i < gridVectors.Count; i++)
         {
-            _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = buildIndices[i];
+            TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tiles[i]);
+
+            if (tileData == default)
+            {
+                Debug.LogError("Tile \"" + tiles[i].name + "\" not found in Atlas");
+                return false;
+            }
+
+            _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile);
             _rotations[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = rotation;
             _mapUpdated = true;
         }

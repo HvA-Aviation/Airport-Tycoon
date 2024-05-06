@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Tilemaps;
 
 namespace Building.Datatypes
@@ -7,7 +8,8 @@ namespace Building.Datatypes
     public class BuildableObject : ScriptableObject
     {
         public string Name;
-        public Tile Sprite;
+        //public Tile Sprite;
         public BrushType BrushType;
+        public List<SubBuildItem> BuildItems;
     }
 }
