@@ -5,12 +5,18 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    /// <summary>
+    /// Playback mode for the background audio.
+    /// </summary>
     public enum PlaybackMode
     {
         Chronologically,
         Randomized
     }
 
+    /// <summary>
+    /// Struct containing information about audio files.
+    /// </summary>
     [Serializable]
     public struct AudioFile
     {
@@ -80,6 +86,9 @@ public class AudioManager : MonoBehaviour
         PlayNextBackgroundAudioClip();
     }
 
+    /// <summary>
+    /// Plays the next audio clip in the queue.
+    /// </summary>
     public void PlayNextBackgroundAudioClip()
     {
         AudioFile file = _backgroundMusicQueue.Dequeue();
@@ -105,12 +114,21 @@ public class AudioManager : MonoBehaviour
     /// <returns>Volume value.</returns>
     public float GetSFXVolume() => _soundfxAudioSource.volume;
 
+    /// <summary>
+    /// Plays the given sfx audio clip.
+    /// </summary>
+    /// <param name="audioName">Name of the audio clip that should be played.</param>
     public void PlaySFX(string audioName)
     {
         AudioClip clip = GetSFXAudio(audioName);
         _soundfxAudioSource.PlayOneShot(clip);
     }
 
+    /// <summary>
+    /// Retrieves the audio clip with the given name.
+    /// </summary>
+    /// <param name="audioName">Name of the corresponding clip that should be returned.</param>
+    /// <returns>Returns the audio clip from the audio file with the corresponding name.</returns>
     private AudioClip GetSFXAudio(string audioName) => GetAudioClip(audioName, _sfx);
     #endregion
 
@@ -144,6 +162,12 @@ public class AudioManager : MonoBehaviour
         return file.Clip;
     }
 
+    /// <summary>
+    /// Shuffles the content of the given collection.
+    /// </summary>
+    /// <typeparam name="T">Type of the collection.</typeparam>
+    /// <param name="list">Collection that will be shuffled.</param>
+    /// <returns>A shuffled version of the collection.</returns>
     private List<T> ShuffleList<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
@@ -158,7 +182,9 @@ public class AudioManager : MonoBehaviour
     #endregion
 
 
-
+    /// <summary>
+    /// Intialization method for the audio manager.
+    /// </summary>
     private void Initialize()
     {
         if(_playbackMode == PlaybackMode.Chronologically)
