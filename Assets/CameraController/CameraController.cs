@@ -26,9 +26,9 @@ public class CameraController : MonoBehaviour
     public void Move(Vector2 offset)
     {
         Vector2 delta = offset * _cameraSpeed;
-        Vector3 newPosition = transform.position + new Vector3(delta.x, 0, delta.y);
+        Vector3 newPosition = transform.position + (Vector3)delta;
         newPosition.x = Mathf.Clamp(newPosition.x, _boundingBox.position.x, _boundingBox.position.x + _boundingBox.size.x); 
-        newPosition.z = Mathf.Clamp(newPosition.z, _boundingBox.position.y, _boundingBox.position.y + _boundingBox.size.y); 
+        newPosition.y = Mathf.Clamp(newPosition.y, _boundingBox.position.y, _boundingBox.position.y + _boundingBox.size.y); 
         transform.position = newPosition;
     }
 
