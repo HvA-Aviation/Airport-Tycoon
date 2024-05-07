@@ -48,13 +48,13 @@ namespace Building
             {
                 ChangeToBuilding(_buildings[2]);
             }
-            
+
             var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             //clamp to grid positions
             var clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
                 RoundToMultiple(pos.y, _grid.CellSize));
-            
+
             var position =
                 _grid.ClampedWorldToGridPosition(clampedValue, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer);
 
@@ -131,20 +131,38 @@ namespace Building
 
         private void SingleBrush(Vector3Int position)
         {
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
             {
-                //rotate the shape clockwise
-                for (int i = 0; i < _shape.Count; i++)
+                if (Input.GetKeyDown(KeyCode.E))
                 {
-                    var gridPosition = _shape[i].GridPosition.Position;
-                    _shape[i].GridPosition.Position = new Vector2Int(gridPosition.y, -gridPosition.x);
-                }
+                    //rotate the shape clockwise
+                    for (int i = 0; i < _shape.Count; i++)
+                    {
+                        var gridPosition = _shape[i].GridPosition.Position;
+                        _shape[i].GridPosition.Position = new Vector2Int(gridPosition.y, -gridPosition.x);
+                    }
 
-                _rotation++;
+                    _rotation++;
+                }
+                else
+                {
+                    //rotate the shape counter clockwise
+                    for (int i = 0; i < _shape.Count; i++)
+                    {
+                        var gridPosition = _shape[i].GridPosition.Position;
+                        _shape[i].GridPosition.Position = new Vector2Int(-gridPosition.y, gridPosition.x);
+                    }
+
+                    _rotation--;
+                }
 
                 if (_rotation > 3)
                 {
                     _rotation = 0;
+                }
+                else if (_rotation < 0)
+                {
+                    _rotation = 3;
                 }
             }
 
