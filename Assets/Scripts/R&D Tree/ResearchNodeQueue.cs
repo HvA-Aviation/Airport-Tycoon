@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,16 +14,18 @@ public class ResearchNodeQueue : MonoBehaviour
     private void Start()
     {
         _researchNodeSettings = GetComponent<ResearchNodeSetting>();
+
+        _skill.ResearchDoneEvent.AddListener(RemoveFromQueue);
     }
 
     private void FixedUpdate()
     {
-        if (_skill.CurrentSkillState == Skill.SkillState.bought) 
-        { 
+        if (_skill.CurrentSkillState == Skill.SkillState.bought)
+        {
             _queueButton.interactable = false;
-            return; 
+            return;
         }
-        NodeQueueState();        
+        NodeQueueState();
     }
 
     private void NodeQueueState()
@@ -49,5 +49,13 @@ public class ResearchNodeQueue : MonoBehaviour
         CurrentState = States.InQueue;
     }
 
-    public enum States { NotInQueue, InQueue}
+    private void RemoveFromQueue()
+    {
+        if (!RDTreeManager.Instance.ResearchQueue.Contains(_skill)) return;
+
+        RDTreeManager.Instance.ResearchQueue.Remove(_skill);
+
+    }
+
+    public enum States { NotInQueue, InQueue }
 }

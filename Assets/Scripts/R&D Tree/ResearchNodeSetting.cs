@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ResearchNodeSetting : MonoBehaviour
 {
@@ -27,8 +25,6 @@ public class ResearchNodeSetting : MonoBehaviour
         _titleText.text = _title;
         _descriptionText.text = _description;
     }
-
-
 
     public void UnlockObjects()
     {

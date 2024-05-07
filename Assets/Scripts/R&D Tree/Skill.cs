@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -11,7 +9,8 @@ public class Skill : MonoBehaviour
 
     private float _timer;
 
-    private UnityEvent _researchDoneEvent = new UnityEvent();
+    public UnityEvent ResearchDoneEvent = new UnityEvent();
+
     private ResearchNodeSetting _nodeSetting;
 
     public SkillState CurrentSkillState;
@@ -23,7 +22,7 @@ public class Skill : MonoBehaviour
 
     private void Awake()
     {
-        
+
     }
 
     private void Start()
@@ -44,14 +43,19 @@ public class Skill : MonoBehaviour
         _researchBar.value = _timer;
         if (_timer >= _nodeSetting.ResearchTime)
         {
-            _researchDoneEvent.Invoke();
+            ResearchDoneEvent.Invoke();
         }
     }
 
     private void ResearchDone()
     {
         CurrentSkillState = SkillState.bought;
-    }    
+
+        if (RDTreeManager.Instance.CurrentResearching != null)
+        {
+            RDTreeManager.Instance.CurrentResearching = null;
+        }
+    }
 
     public void OnClick()
     {
@@ -61,13 +65,12 @@ public class Skill : MonoBehaviour
             RDTreeManager.Instance.ChooseNewResearch(this);
             SetUIForStates();
         }
-    }    
+    }
     public void AddListenersToEvent()
     {
-        _researchDoneEvent.AddListener(ResearchDone);
-        _researchDoneEvent.AddListener(SetNextStatesInTree);
-        _researchDoneEvent.AddListener(_nodeSetting.UnlockObjects);
-        _researchDoneEvent.AddListener(RemoveResearchFromList);
+        ResearchDoneEvent.AddListener(ResearchDone);
+        ResearchDoneEvent.AddListener(SetNextStatesInTree);
+        ResearchDoneEvent.AddListener(_nodeSetting.UnlockObjects);
     }
 
     public void SetUIForStates()
@@ -108,15 +111,6 @@ public class Skill : MonoBehaviour
     {
         CurrentSkillState = SkillState.available;
         SetUIForStates();
-    }
-
-    private void RemoveResearchFromList()
-    {
-        if (RDTreeManager.Instance.CurrentResearching != null)
-        {
-            RDTreeManager.Instance.ResearchedDone.Add(this);
-            RDTreeManager.Instance.CurrentResearching = null;
-        }
     }
 
     public enum SkillState { notAvailable, available, inDevelopment, bought }

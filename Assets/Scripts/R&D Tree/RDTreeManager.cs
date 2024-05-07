@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class RDTreeManager : MonoBehaviour
@@ -11,13 +10,14 @@ public class RDTreeManager : MonoBehaviour
 
     public static RDTreeManager Instance;
 
+
     public List<GameObject> Skills = new List<GameObject>();
+
+
 
     public Skill CurrentResearching;
 
     public List<Skill> ResearchQueue = new List<Skill>();
-
-    public List<Skill> ResearchedDone = new List<Skill>();
 
     private void OnEnable()
     {
@@ -43,16 +43,11 @@ public class RDTreeManager : MonoBehaviour
         if (ResearchQueue.Count > 0 && CurrentResearching == null)
         {
             CurrentResearching = ResearchQueue[0];
-            CurrentResearching.GetComponent<ResearchNodeQueue>().CurrentState = ResearchNodeQueue.States.InQueue;
-            ResearchQueue.RemoveAt(0);
             CurrentResearching.CurrentSkillState = Skill.SkillState.inDevelopment;
         }
 
-        Debug.Log(CurrentResearching);
         CurrentResearching?.TimerForInDevelopment();
     }
-
-    private void ShowTree(InputAction.CallbackContext _) => _skillTree.SetActive(!_skillTree.activeSelf);
 
     public void ChooseNewResearch(Skill newResearch)
     {
@@ -61,4 +56,6 @@ public class RDTreeManager : MonoBehaviour
 
         CurrentResearching = newResearch;
     }
+
+    private void ShowTree(InputAction.CallbackContext _) => _skillTree.SetActive(!_skillTree.activeSelf);
 }
