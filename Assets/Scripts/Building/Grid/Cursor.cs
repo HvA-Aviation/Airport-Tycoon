@@ -177,7 +177,7 @@ namespace Building
             {
                 foreach (var gridPosition in currentSelectedGroup)
                 {
-                    if (!_grid.IsGridPositionEmpty(gridPosition.GridPosition))
+                    if (!_grid.IsEmpty(gridPosition.GridPosition))
                     {
                         valid = false;
                         break;
@@ -192,7 +192,7 @@ namespace Building
                 {
                     position = gridPosition.GridPosition - offset,
                     color = valid
-                        ? (_grid.IsGridPositionEmpty(gridPosition.GridPosition) ? _validColor : _invalidColor)
+                        ? (_grid.IsEmpty(gridPosition.GridPosition) ? _validColor : _invalidColor)
                         : _invalidColor
                 };
 
