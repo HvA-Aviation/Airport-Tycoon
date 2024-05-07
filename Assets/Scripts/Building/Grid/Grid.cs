@@ -27,11 +27,13 @@ public class Grid : MonoBehaviour
 
     [SerializeField] private List<List<Vector3Int>> _cellGroup;
 
+    /// <summary>
+    /// If true the map will be updated at the end of the frame and set to false
+    /// </summary>
     private bool _mapUpdated;
 
     public float CellSize => _cellSize;
-
-
+    
     void Start()
     {
         if (_atlas == null)
