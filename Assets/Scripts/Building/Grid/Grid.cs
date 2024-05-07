@@ -323,7 +323,7 @@ public class Grid : MonoBehaviour
                 Gizmos.DrawLine(origin + new Vector2(-offset, offset), origin + new Vector2(-offset, -offset));
 
                 Gizmos.color = untraversable[x, y] ? Color.red : Color.green;
-                Gizmos.DrawSphere(origin, _cellSize / 4);
+                Gizmos.DrawSphere(origin, _cellSize / 10);
             }
         }
     }

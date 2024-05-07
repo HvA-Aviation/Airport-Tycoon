@@ -30,6 +30,8 @@ namespace Building
             _grid = FindObjectOfType<Grid>();
 
             transform.localScale = Vector3.one * _grid.CellSize;
+            
+            ChangeToBuilding(_selectedBuilding);
         }
 
         private void Update()
@@ -133,27 +135,24 @@ namespace Building
         {
             if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
             {
+                Vector2Int direction = Vector2Int.one;
+
                 if (Input.GetKeyDown(KeyCode.E))
                 {
-                    //rotate the shape clockwise
-                    for (int i = 0; i < _shape.Count; i++)
-                    {
-                        var gridPosition = _shape[i].GridPosition.Position;
-                        _shape[i].GridPosition.Position = new Vector2Int(gridPosition.y, -gridPosition.x);
-                    }
-
+                    direction.y = -1;
                     _rotation++;
                 }
                 else
                 {
-                    //rotate the shape counter clockwise
-                    for (int i = 0; i < _shape.Count; i++)
-                    {
-                        var gridPosition = _shape[i].GridPosition.Position;
-                        _shape[i].GridPosition.Position = new Vector2Int(-gridPosition.y, gridPosition.x);
-                    }
-
+                    direction.x = -1;
                     _rotation--;
+                }
+
+                //rotate the shape clockwise
+                for (int i = 0; i < _shape.Count; i++)
+                {
+                    var gridPosition = _shape[i].GridPosition.Position;
+                    _shape[i].GridPosition.Position = new Vector2Int(gridPosition.y, gridPosition.x) * direction;
                 }
 
                 if (_rotation > 3)

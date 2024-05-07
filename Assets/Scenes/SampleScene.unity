@@ -785,8 +785,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tilemap: {fileID: 354013457}
-  _validColor: {r: 0, g: 1, b: 0, a: 0.39215687}
-  _invalidColor: {r: 1, g: 0, b: 0, a: 0.39215687}
+  _validColor: {r: 0, g: 1, b: 0, a: 0.78431374}
+  _invalidColor: {r: 1, g: 0, b: 0, a: 0.78431374}
   _selectedGroup: []
   _shape: []
   _origin: {x: 0, y: 0, z: 0}
