@@ -19,7 +19,7 @@ public class EnableUI : MonoBehaviour
     /// <summary>
     /// When the activate button is pressed the UI will be shown
     /// </summary>
-    private void ShowUI() => _menuGFX.SetActive(!_menuGFX.activeSelf);
+    private void ShowUI() => _menuGFX.SetActive(true);
     
     /// <summary>
     /// Set the childpos to the last of the children so it is ontop of everything
@@ -27,7 +27,7 @@ public class EnableUI : MonoBehaviour
     private void PutScreenOnTop() => transform.SetAsLastSibling();
     
     /// <summary>
-    /// When the ui is enabled make all the other menus not interactable
+    /// When the UI is enabled make all the other menus not interactable
     /// </summary>
     private void DeactivateInteractables()
     {
