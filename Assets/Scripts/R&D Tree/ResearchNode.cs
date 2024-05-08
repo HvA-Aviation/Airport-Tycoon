@@ -35,6 +35,8 @@ public class ResearchNode : MonoBehaviour
     {
         if (CurrentSkillState != SkillState.inDevelopment) return;
 
+        ///TODO: Check if there is enough money
+
         _timer += Time.fixedDeltaTime;
         _researchBar.value = _timer;
         if (_timer >= _nodeSetting.ResearchTime)

@@ -14,9 +14,6 @@ public class ResearchNodeSetting : MonoBehaviour
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private TMP_Text _descriptionText;
 
-    [SerializeField] private Button _button;
-    [SerializeField] private Slider _researchBar;
-
     [SerializeField] private List<ResearchNode> _connectedResearchNodes;
     [SerializeField] private List<GameObject> _objectsToUnlock;
 
