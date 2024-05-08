@@ -5,7 +5,7 @@ public class ResearchNodeQueue : MonoBehaviour
 {
 
     [SerializeField] private Button _queueButton;
-    [SerializeField] private Skill _skill;
+    [SerializeField] private ResearchNode _skill;
 
     private ResearchNodeSetting _researchNodeSettings;
 
@@ -20,7 +20,7 @@ public class ResearchNodeQueue : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_skill.CurrentSkillState == Skill.SkillState.bought)
+        if (_skill.CurrentSkillState == ResearchNode.SkillState.bought)
         {
             _queueButton.interactable = false;
             return;

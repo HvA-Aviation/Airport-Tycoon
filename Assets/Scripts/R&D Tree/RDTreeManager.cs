@@ -15,9 +15,9 @@ public class RDTreeManager : MonoBehaviour
 
 
 
-    public Skill CurrentResearching;
+    public ResearchNode CurrentResearching;
 
-    public List<Skill> ResearchQueue = new List<Skill>();
+    public List<ResearchNode> ResearchQueue = new List<ResearchNode>();
 
     private void OnEnable()
     {
@@ -43,13 +43,13 @@ public class RDTreeManager : MonoBehaviour
         if (ResearchQueue.Count > 0 && CurrentResearching == null)
         {
             CurrentResearching = ResearchQueue[0];
-            CurrentResearching.CurrentSkillState = Skill.SkillState.inDevelopment;
+            CurrentResearching.CurrentSkillState = ResearchNode.SkillState.inDevelopment;
         }
 
         CurrentResearching?.TimerForInDevelopment();
     }
 
-    public void ChooseNewResearch(Skill newResearch)
+    public void ChooseNewResearch(ResearchNode newResearch)
     {
         if (CurrentResearching != null)
             CurrentResearching.PauseResearch();

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class Skill : MonoBehaviour
+public class ResearchNode : MonoBehaviour
 {
     [SerializeField] private Button _button;
     [SerializeField] private Slider _researchBar;
