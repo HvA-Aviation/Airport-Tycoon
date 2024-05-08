@@ -13,7 +13,7 @@ public class ResearchNode : MonoBehaviour
 
     public ResearchNodeSetting NodeSetting {  get; private set; }
 
-    public SkillState CurrentSkillState { get; private set; }
+    public SkillState CurrentSkillState { get;  set; }
 
     private void Start()
     {

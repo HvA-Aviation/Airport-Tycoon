@@ -17,9 +17,12 @@ public class ResearchNodeQueue : MonoBehaviour
     /// Call this function when you want to add the node to the queue
     /// </summary>
     public void AddNodeToQueue() 
-    { 
+    {
         _treeManager.ResearchQueue.Add(_researchNode);
         CurrentState = QueueStates.InQueue;
+        _researchNode.CurrentSkillState = ResearchNode.SkillState.inDevelopment;
+        if (_treeManager.CurrentResearching == null)
+            _treeManager.ResearchFinished();
     }
 
     /// <summary>
