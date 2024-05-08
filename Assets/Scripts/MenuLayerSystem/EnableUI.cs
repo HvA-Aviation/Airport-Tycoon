@@ -7,6 +7,7 @@ public class EnableUI : MonoBehaviour
 {
     [SerializeField] private KeyCode _dissableEnableScreen;
     [SerializeField] private GameObject _menuGFX;
+    [SerializeField] private CanvasGroup _canvasGroup;
 
     public UnityEvent PressEnableUIButton = new UnityEvent();
 
@@ -14,6 +15,12 @@ public class EnableUI : MonoBehaviour
     {
         PressEnableUIButton.AddListener(ActivateUI);
         PressEnableUIButton.AddListener(SetChildPos);
+        PressEnableUIButton.AddListener(DeactivateInteractables);
+    }
+
+    private void Start()
+    {
+        UIManager.Instance.CanvasGroups.Add(_canvasGroup);
     }
 
     private void Update()
@@ -32,4 +39,14 @@ public class EnableUI : MonoBehaviour
     /// </summary>
     private void SetChildPos() => transform.SetAsLastSibling();
     
+    /// <summary>
+    /// When the ui is enabled make all the other menus not interactable
+    /// </summary>
+    private void DeactivateInteractables()
+    {
+        foreach (CanvasGroup group in UIManager.Instance.CanvasGroups)
+            group.interactable = false;
+
+        _canvasGroup.interactable = true;                   
+    }
 }
