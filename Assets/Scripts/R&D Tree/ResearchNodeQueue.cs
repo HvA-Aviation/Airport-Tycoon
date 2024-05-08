@@ -40,7 +40,10 @@ public class ResearchNodeQueue : MonoBehaviour
                 break;
         }
     }
-
+    
+    /// <summary>
+    /// This function is called when the queue button is clicked.
+    /// </summary>
     public void OnClick()
     {
         if (CurrentState == States.InQueue) return;
@@ -49,6 +52,9 @@ public class ResearchNodeQueue : MonoBehaviour
         CurrentState = States.InQueue;
     }
 
+    /// <summary>
+    /// This function will be called when the research is done.
+    /// </summary>
     private void RemoveFromQueue()
     {
         if (!RDTreeManager.Instance.ResearchQueue.Contains(_skill)) return;

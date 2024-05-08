@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ResearchNodeSetting : MonoBehaviour
 {
@@ -13,8 +14,11 @@ public class ResearchNodeSetting : MonoBehaviour
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private TMP_Text _descriptionText;
 
+    [SerializeField] private Button _button;
+    [SerializeField] private Slider _researchBar;
+
     [SerializeField] private List<ResearchNode> _connectedResearchNodes;
-    [SerializeField] private List<GameObject> ObjectToUnlock;
+    [SerializeField] private List<GameObject> _objectsToUnlock;
 
     public List<ResearchNode> ConnectedResearchNodes => _connectedResearchNodes;
     public int ResearchCost => _cost;
@@ -26,6 +30,9 @@ public class ResearchNodeSetting : MonoBehaviour
         _descriptionText.text = _description;
     }
 
+    /// <summary>
+    /// Call this function when the research is done and the objects needs to be unlocked
+    /// </summary>
     public void UnlockObjects()
     {
 

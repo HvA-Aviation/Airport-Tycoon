@@ -10,11 +10,6 @@ public class RDTreeManager : MonoBehaviour
 
     public static RDTreeManager Instance;
 
-
-    public List<GameObject> Skills = new List<GameObject>();
-
-
-
     public ResearchNode CurrentResearching;
 
     public List<ResearchNode> ResearchQueue = new List<ResearchNode>();
@@ -49,6 +44,10 @@ public class RDTreeManager : MonoBehaviour
         CurrentResearching?.TimerForInDevelopment();
     }
 
+    /// <summary>
+    /// This method will pause the research of the one that is currently researching and then it will set the new research.
+    /// </summary>
+    /// <param name="newResearch"></param>
     public void ChooseNewResearch(ResearchNode newResearch)
     {
         if (CurrentResearching != null)

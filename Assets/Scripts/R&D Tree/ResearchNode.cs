@@ -20,21 +20,17 @@ public class ResearchNode : MonoBehaviour
         SetUIForStates();
     }
 
-    private void Awake()
-    {
-
-    }
-
     private void Start()
     {
-        RDTreeManager.Instance.Skills.Add(gameObject);
-
         _nodeSetting = GetComponent<ResearchNodeSetting>();
 
         _researchBar.maxValue = _nodeSetting.ResearchTime;
         AddListenersToEvent();
     }
 
+    /// <summary>
+    /// This function is called when the researchnode started to be researched
+    /// </summary>
     public void TimerForInDevelopment()
     {
         if (CurrentSkillState != SkillState.inDevelopment) return;
@@ -47,6 +43,9 @@ public class ResearchNode : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// This function is called when the research is done
+    /// </summary>
     private void ResearchDone()
     {
         CurrentSkillState = SkillState.bought;
@@ -57,6 +56,9 @@ public class ResearchNode : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// This function is called when the start research button is clicked
+    /// </summary>
     public void OnClick()
     {
         if (CurrentSkillState == SkillState.available)
@@ -66,6 +68,10 @@ public class ResearchNode : MonoBehaviour
             SetUIForStates();
         }
     }
+
+    /// <summary>
+    /// This function is called in the start to add all the listeners to the UnityEvent
+    /// </summary>
     public void AddListenersToEvent()
     {
         ResearchDoneEvent.AddListener(ResearchDone);
@@ -73,6 +79,9 @@ public class ResearchNode : MonoBehaviour
         ResearchDoneEvent.AddListener(_nodeSetting.UnlockObjects);
     }
 
+    /// <summary>
+    /// This function is called to update the UI for the node
+    /// </summary>
     public void SetUIForStates()
     {
         switch (CurrentSkillState)
@@ -94,6 +103,9 @@ public class ResearchNode : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// This function is called to set the next nodes active when the research is done
+    /// </summary>
     private void SetNextStatesInTree()
     {
         if (CurrentSkillState != SkillState.bought) return;
@@ -107,6 +119,9 @@ public class ResearchNode : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// This function is called to pause the research
+    /// </summary>
     public void PauseResearch()
     {
         CurrentSkillState = SkillState.available;
