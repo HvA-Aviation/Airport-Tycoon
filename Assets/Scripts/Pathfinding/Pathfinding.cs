@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using Unity.Jobs;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using Unity.Collections;
-using System.Linq;
 
 public struct AStar : IJob
 {
@@ -51,7 +49,7 @@ public struct AStar : IJob
             for (int i = 0; i < neighbourOffsets.Length; i++)
             {
                 if (closedList.ContainsKey(currentNode.position + neighbourOffsets[i]) ||
-                    !gridNodes.ContainsKey(currentNode.position)) continue;
+                    !gridNodes.ContainsKey(currentNode.position + neighbourOffsets[i])) continue;
 
                 Node neighbour = new Node
                 {
@@ -105,9 +103,7 @@ public struct AStar : IJob
         float xCost = Mathf.Abs(endNodePosition.x - currentNodePosition.x);
         float yCost = Mathf.Abs(endNodePosition.y - currentNodePosition.y);
 
-        if (xCost > yCost)
-            return 14 * yCost + 10 * (xCost - yCost);
-        return 14 * xCost + 10 * (yCost - xCost);
+        return xCost * xCost + yCost * yCost;
     }
 
     /// <summary>
@@ -119,7 +115,6 @@ public struct AStar : IJob
         Node currentNode = new Node();
         foreach (var item in nodeList)
         {
-            if (item.Value.position == Vector3Int.zero) break;
             if (item.Value.fCost < lowestFcost)
             {
                 lowestFcost = item.Value.fCost;
@@ -128,9 +123,4 @@ public struct AStar : IJob
         }
         return currentNode;
     }
-}
-
-public class Pathfinding : MonoBehaviour
-{
-
 }

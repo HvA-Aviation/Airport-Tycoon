@@ -12,6 +12,8 @@ public class NPCController : MonoBehaviour
     public List<Vector3Int> untraversableTiles = new List<Vector3Int>();
     public Node[,,] grid;
     public List<Node> backtrackedPath = new List<Node>();
+    public List<Node> openList = new List<Node>();
+    public List<Node> closedList = new List<Node>();
 
     [Header("Dependecies")]
     [SerializeField] private Grid _grid;
@@ -29,19 +31,27 @@ public class NPCController : MonoBehaviour
         gridWidth = _grid.GridSize.x;
         gridHeight = _grid.GridSize.y;
     }
+    public float RoundToMultiple(float value, float roundTo)
+    {
+        return Mathf.RoundToInt(value / roundTo) * roundTo;
+    }
 
     void Update()
     {
+        var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //clamp to grid positions
+        var clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
+            RoundToMultiple(pos.y, _grid.CellSize));
+
         if (Input.GetKeyDown(KeyCode.P))
         {
             CreateGrid();
-            
+
             backtrackedPath.Clear();
-            Vector3 screenToWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            
-            Debug.Log(new Vector3Int((int)screenToWorld.x, (int)screenToWorld.y, 0));
-            
-            FindPath(new Vector3Int((int)screenToWorld.x, (int)screenToWorld.y, 0));
+            openList.Clear();
+            closedList.Clear();
+
+            FindPath(new Vector3Int((int)clampedValue.x, (int)clampedValue.y, 0));
             StartCoroutine(MoveToTarget(backtrackedPath));
         }
     }
@@ -95,6 +105,16 @@ public class NPCController : MonoBehaviour
         // retrieve the backtracked path from the job
         backtrackedPath = _backtrackedPath.ToList();
 
+        foreach (var item in _closedList)
+        {
+            closedList.Add(item.Value);
+        }
+
+        foreach (var item in _openList)
+        {
+            openList.Add(item.Value);
+        }
+
         // Dispose all the NativeContainers to avoid memory leaks
         _gridNodes.Dispose();
         _openList.Dispose();
@@ -123,23 +143,27 @@ public class NPCController : MonoBehaviour
                 grid[x, y, 0] = node;
             }
         }
-
-        grid[startNode.x, startNode.y, startNode.z].isStartNode = true;
-        grid[endNode.x, endNode.y, endNode.z].isEndNode = true;
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireCube(new Vector3(gridWidth / 2, gridHeight / 2, 0), new Vector3(gridWidth, gridHeight));
 
-        Gizmos.color = Color.green;
-        Gizmos.DrawCube(startNode, Vector3.one);
-        Gizmos.color = Color.red;
-        Gizmos.DrawCube(endNode, Vector3.one);
-
         Gizmos.color = Color.cyan;
         foreach (var item in backtrackedPath)
         {
+            Gizmos.DrawCube(item.position, Vector3.one);
+        }
+
+        foreach (var item in openList)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawCube(item.position, Vector3.one);
+        }
+
+        foreach (var item in closedList)
+        {
+            Gizmos.color = Color.yellow;
             Gizmos.DrawCube(item.position, Vector3.one);
         }
     }

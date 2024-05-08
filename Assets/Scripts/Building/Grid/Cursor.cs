@@ -67,12 +67,12 @@ namespace Building
                     break;
             }
         }
-        
+
         public void Rotate(int direction)
         {
             if (_selectedBuilding.BrushType != BrushType.Single)
                 return;
-            
+
             if (direction != 0)
             {
                 Vector2Int dir = Vector2Int.one;
@@ -165,7 +165,7 @@ namespace Building
                 Hover(position, _shape);
             }
         }
-        
+
         private void OutlineBrushSelect(Vector3Int position)
         {
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
@@ -213,7 +213,7 @@ namespace Building
                     currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
                         new Vector3Int(x, max.y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
                 }
-                
+
                 for (var y = min.y; y < max.y + 1; y++)
                 {
                     currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
