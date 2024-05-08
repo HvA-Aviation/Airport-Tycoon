@@ -929,6 +929,8 @@ MonoBehaviour:
       m_Image: {fileID: 1775020938, guid: 862095459d95f1449a30135b9b662060, type: 3}
     - m_Text: Wall
       m_Image: {fileID: 21300000, guid: 17373be14ce236247b835dcf32e280a4, type: 3}
+    - m_Text: Door
+      m_Image: {fileID: 21300000, guid: f6a22b56bdc365449b029b97d142627b, type: 3}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -987,6 +989,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: add816ad7c0618e45bc6275e18b3444f, type: 2}
   - {fileID: 11400000, guid: 4240fc810619a194bb03633333b32553, type: 2}
   - {fileID: 11400000, guid: 8010ef2a2abc1c2488ba6493a5a30fd1, type: 2}
+  - {fileID: 11400000, guid: 614598fcdcd206e4c90eab112bfbd081, type: 2}
   _cursor: {fileID: 1474057266}
 --- !u!1 &410087039
 GameObject:
@@ -1805,6 +1808,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1474057265}
   - component: {fileID: 1474057266}
+  - component: {fileID: 1474057267}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Untagged
@@ -1849,6 +1853,19 @@ MonoBehaviour:
   _rotation: 0
   _eventSystem: {fileID: 857422073}
   _selectedBuilding: {fileID: 11400000, guid: add816ad7c0618e45bc6275e18b3444f, type: 2}
+--- !u!114 &1474057267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474057263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc32a649330844438e4ff74bc9142ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cursor: {fileID: 1474057266}
 --- !u!1 &1814351887
 GameObject:
   m_ObjectHideFlags: 0

@@ -51,12 +51,13 @@ namespace Building
             if (!_tilemap.gameObject.activeSelf)
                 return;
 
-            HandleRotation();
-
             switch (_selectedBuilding.BrushType)
             {
                 case BrushType.Multi:
                     MultiBrushSelect(position);
+                    break;
+                case BrushType.Outline:
+                    OutlineBrushSelect(position);
                     break;
                 case BrushType.Drag:
                     DragBrush(position);
@@ -66,21 +67,24 @@ namespace Building
                     break;
             }
         }
-
-        public void HandleRotation()
+        
+        public void Rotate(int direction)
         {
-            if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
+            if (_selectedBuilding.BrushType != BrushType.Single)
+                return;
+            
+            if (direction != 0)
             {
-                Vector2Int direction = Vector2Int.one;
+                Vector2Int dir = Vector2Int.one;
 
-                if (Input.GetKeyDown(KeyCode.E))
+                if (direction == 1)
                 {
-                    direction.y = -1;
+                    dir.y = -1;
                     _rotation++;
                 }
                 else
                 {
-                    direction.x = -1;
+                    dir.x = -1;
                     _rotation--;
                 }
 
@@ -88,7 +92,7 @@ namespace Building
                 for (int i = 0; i < _shape.Count; i++)
                 {
                     var gridPosition = _shape[i].GridPosition.Position;
-                    _shape[i].GridPosition.Position = new Vector2Int(gridPosition.y, gridPosition.x) * direction;
+                    _shape[i].GridPosition.Position = new Vector2Int(gridPosition.y, gridPosition.x) * dir;
                 }
 
                 if (_rotation > 3)
@@ -154,6 +158,71 @@ namespace Building
                 }
 
                 Hover(Vector3Int.zero, currentSelectedGroup);
+            }
+            else
+            {
+                //hover in the default shape
+                Hover(position, _shape);
+            }
+        }
+        
+        private void OutlineBrushSelect(Vector3Int position)
+        {
+            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            {
+                //starts selection and sets the origin of the selection
+                _currentMouse = Input.GetMouseButtonDown(0) ? 0 : 1;
+                _origin = position;
+            }
+            else if (Input.GetMouseButtonUp(_currentMouse))
+            {
+                //place or remove. This ends the selection
+                if (_currentMouse == 0)
+                {
+                    foreach (var selected in _selectedGroup)
+                    {
+                        _grid.Set(selected.GridPosition, _selectedBuilding.BuildItems[0].Tile);
+                    }
+                }
+                else
+                {
+                    foreach (var selected in _selectedGroup)
+                    {
+                        _grid.Remove(selected.GridPosition);
+                    }
+                }
+
+                //resets the selection 
+                _selectedGroup = new List<SubBuildItem>();
+                _tilemap.ClearAllTiles();
+            }
+            else if (Input.GetMouseButton(_currentMouse) && _selectedGroup.Count > 0)
+            {
+                //gets selection
+                //get the min and the max of the position
+                var min = Vector3Int.Min(_origin, position);
+                var max = Vector3Int.Max(_origin, position);
+
+                List<SubBuildItem> currentSelectedGroup = new List<SubBuildItem>();
+
+                //get all tiles between the min and the max position
+                for (var x = min.x; x < max.x + 1; x++)
+                {
+                    currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
+                        new Vector3Int(x, min.y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
+                    currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
+                        new Vector3Int(x, max.y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
+                }
+                
+                for (var y = min.y; y < max.y + 1; y++)
+                {
+                    currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
+                        new Vector3Int(min.x, y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
+                    currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
+                        new Vector3Int(max.x, y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
+                }
+
+                Hover(Vector3Int.zero, currentSelectedGroup, true);
             }
             else
             {

@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29d11b396c214f51a51ce3fe8885b523, type: 3}
-  m_Name: Wall
+  m_Name: Door
   m_EditorClassIdentifier: 
-  Name: Wall
-  BrushType: 3
+  Name: Door
+  BrushType: 0
   BuildItems:
-  - Tile: {fileID: 11400000, guid: fbfe88272625d5c47979b613d9233838, type: 2}
+  - Tile: {fileID: 11400000, guid: 188e4c7d9c6ce694a8392e304280d246, type: 2}
     GridPosition:
       Position: {x: 0, y: 0}
       Layer: 1

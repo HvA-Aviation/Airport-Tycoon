@@ -21,3 +21,5 @@ MonoBehaviour:
     UnTraversable: 0
   - Tile: {fileID: 11400000, guid: 29fa9a4e0e09c14478da003d3f391e1c, type: 2}
     UnTraversable: 0
+  - Tile: {fileID: 11400000, guid: 188e4c7d9c6ce694a8392e304280d246, type: 2}
+    UnTraversable: 0

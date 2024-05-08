@@ -4,6 +4,7 @@
     {
         Single,
         Multi,
-        Drag
+        Drag,
+        Outline,
     }
 }
