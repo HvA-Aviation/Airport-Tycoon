@@ -23,7 +23,6 @@ namespace Building
 
         [SerializeField] private EventSystem _eventSystem;
         [SerializeField] private BuildableObject _selectedBuilding;
-        [SerializeField] private List<BuildableObject> _buildings;
 
         private int _currentMouse;
 
@@ -52,6 +51,8 @@ namespace Building
             if (!_tilemap.gameObject.activeSelf)
                 return;
 
+            HandleRotation();
+
             switch (_selectedBuilding.BrushType)
             {
                 case BrushType.Multi:
@@ -63,6 +64,41 @@ namespace Building
                 case BrushType.Single:
                     SingleBrush(position);
                     break;
+            }
+        }
+
+        public void HandleRotation()
+        {
+            if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
+            {
+                Vector2Int direction = Vector2Int.one;
+
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    direction.y = -1;
+                    _rotation++;
+                }
+                else
+                {
+                    direction.x = -1;
+                    _rotation--;
+                }
+
+                //rotate the shape clockwise
+                for (int i = 0; i < _shape.Count; i++)
+                {
+                    var gridPosition = _shape[i].GridPosition.Position;
+                    _shape[i].GridPosition.Position = new Vector2Int(gridPosition.y, gridPosition.x) * direction;
+                }
+
+                if (_rotation > 3)
+                {
+                    _rotation = 0;
+                }
+                else if (_rotation < 0)
+                {
+                    _rotation = 3;
+                }
             }
         }
 
@@ -128,38 +164,6 @@ namespace Building
 
         private void SingleBrush(Vector3Int position)
         {
-            if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.E))
-            {
-                Vector2Int direction = Vector2Int.one;
-
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    direction.y = -1;
-                    _rotation++;
-                }
-                else
-                {
-                    direction.x = -1;
-                    _rotation--;
-                }
-
-                //rotate the shape clockwise
-                for (int i = 0; i < _shape.Count; i++)
-                {
-                    var gridPosition = _shape[i].GridPosition.Position;
-                    _shape[i].GridPosition.Position = new Vector2Int(gridPosition.y, gridPosition.x) * direction;
-                }
-
-                if (_rotation > 3)
-                {
-                    _rotation = 0;
-                }
-                else if (_rotation < 0)
-                {
-                    _rotation = 3;
-                }
-            }
-
             if (Input.GetMouseButtonDown(0))
             {
                 //place the tiles in the shape of the selection
@@ -185,22 +189,22 @@ namespace Building
             }
         }
 
+        /// <summary>
+        /// Creates a tile on the positions the mouse is hold down
+        /// </summary>
+        /// <param name="position"></param>
         private void DragBrush(Vector3Int position)
         {
+            Hover(position, _shape);
+
             if (Input.GetMouseButton(0))
             {
-                Hover(position, _shape, true);
                 _grid.Set(position, _selectedBuilding.BuildItems[0].Tile);
             }
             else if (Input.GetMouseButton(1))
             {
                 //remove the tiles in the shape of the selection
                 _grid.Remove(position);
-            }
-            else
-            {
-                //hover and require all spaces to be free
-                Hover(position, _shape);
             }
         }
 

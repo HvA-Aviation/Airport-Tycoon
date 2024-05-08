@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 using Cursor = Building.Cursor;
 
-public class CursorSelector : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CursorSelectorDemo : MonoBehaviour
 {
     [SerializeField] private List<BuildableObject> _buildable;
     [SerializeField] private Cursor _cursor;
@@ -16,7 +16,6 @@ public class CursorSelector : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private void Start()
     {
         GetComponent<TMP_Dropdown>().onValueChanged.AddListener(Select);
-        
     }
 
     private void Select(int index)
@@ -24,13 +23,4 @@ public class CursorSelector : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         _cursor.ChangeToBuilding(_buildable[index]);
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        _cursor.DisableCursor();
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        _cursor.EnableCursor();
-    }
 }
