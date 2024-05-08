@@ -4,40 +4,27 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class EnableUI : MonoBehaviour
-{
-    [SerializeField] private KeyCode _dissableEnableScreen;
+{    
     [SerializeField] private GameObject _menuGFX;
-    [SerializeField] private CanvasGroup _canvasGroup;
 
-    public UnityEvent PressEnableUIButton = new UnityEvent();
+    [HideInInspector]public UnityEvent PressEnableUIButton = new UnityEvent();
 
     private void Awake()
     {
-        PressEnableUIButton.AddListener(ActivateUI);
-        PressEnableUIButton.AddListener(SetChildPos);
+        PressEnableUIButton.AddListener(ShowUI);
+        PressEnableUIButton.AddListener(PutScreenOnTop);
         PressEnableUIButton.AddListener(DeactivateInteractables);
-    }
-
-    private void Start()
-    {
-        UIManager.Instance.CanvasGroups.Add(_canvasGroup);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(_dissableEnableScreen))
-            PressEnableUIButton.Invoke();
-    }
+    }    
 
     /// <summary>
     /// When the activate button is pressed the UI will be shown
     /// </summary>
-    private void ActivateUI() => _menuGFX.SetActive(!_menuGFX.activeSelf);
+    private void ShowUI() => _menuGFX.SetActive(!_menuGFX.activeSelf);
     
     /// <summary>
     /// Set the childpos to the last of the children so it is ontop of everything
     /// </summary>
-    private void SetChildPos() => transform.SetAsLastSibling();
+    private void PutScreenOnTop() => transform.SetAsLastSibling();
     
     /// <summary>
     /// When the ui is enabled make all the other menus not interactable
@@ -46,7 +33,8 @@ public class EnableUI : MonoBehaviour
     {
         foreach (CanvasGroup group in UIManager.Instance.CanvasGroups)
             group.interactable = false;
-
-        _canvasGroup.interactable = true;                   
+                 
+        if(TryGetComponent<CanvasGroup>(out CanvasGroup thisGroup))
+            thisGroup.interactable= true;
     }
 }
