@@ -3,9 +3,8 @@ using UnityEngine.UI;
 
 public class ResearchNodeQueue : MonoBehaviour
 {
-
-    [SerializeField] private Button _queueButton;
-    [SerializeField] private ResearchNode _skill;
+    [SerializeField] private ResearchNode _researchNode;
+    [SerializeField] private RDTreeManager _treeManager;
 
     private ResearchNodeSetting _researchNodeSettings;
 
@@ -15,52 +14,16 @@ public class ResearchNodeQueue : MonoBehaviour
     {
         _researchNodeSettings = GetComponent<ResearchNodeSetting>();
 
-        _skill.ResearchDoneEvent.AddListener(RemoveFromQueue);
-    }
-
-    private void FixedUpdate()
-    {
-        if (_skill.CurrentSkillState == ResearchNode.SkillState.bought)
-        {
-            _queueButton.interactable = false;
-            return;
-        }
-        NodeQueueState();
-    }
-
-    private void NodeQueueState()
-    {
-        switch (CurrentState)
-        {
-            case States.NotInQueue:
-                _queueButton.interactable = true;
-                break;
-            case States.InQueue:
-                _queueButton.interactable = false;
-                break;
-        }
-    }
+        _researchNode.ResearchDone += RemoveFromQueue;
+    }  
     
-    /// <summary>
-    /// This function is called when the queue button is clicked.
-    /// </summary>
-    public void OnClick()
-    {
-        if (CurrentState == States.InQueue) return;
-
-        RDTreeManager.Instance.ResearchQueue.Add(_skill);
-        CurrentState = States.InQueue;
-    }
-
     /// <summary>
     /// This function will be called when the research is done.
     /// </summary>
     private void RemoveFromQueue()
     {
-        if (!RDTreeManager.Instance.ResearchQueue.Contains(_skill)) return;
-
-        RDTreeManager.Instance.ResearchQueue.Remove(_skill);
-
+        if (!_treeManager.ResearchQueue.Contains(_researchNode)) return;
+        _treeManager.ResearchQueue.Remove(_researchNode);
     }
 
     public enum States { NotInQueue, InQueue }

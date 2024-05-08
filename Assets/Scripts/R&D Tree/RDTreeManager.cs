@@ -1,49 +1,29 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class RDTreeManager : MonoBehaviour
 {
-    [SerializeField] private GameObject _skillTree;
-
-    private RDControls _controls;
-
-    public static RDTreeManager Instance;
-
-    public ResearchNode CurrentResearching;
+    public ResearchNode CurrentResearching { get; private set; }
 
     public List<ResearchNode> ResearchQueue = new List<ResearchNode>();
 
-    private void OnEnable()
-    {
-        _controls.RDControlls.ShowTree.performed += ShowTree;
-    }
-
-    private void OnDisable()
-    {
-        _controls.RDControlls.ShowTree.performed -= ShowTree;
-    }
-
-    private void Awake()
-    {
-        if (Instance == null) Instance = this;
-        else Destroy(Instance);
-
-        _controls = new RDControls();
-        _controls.Enable();
-    }
-
     private void FixedUpdate()
     {
-        if (ResearchQueue.Count > 0 && CurrentResearching == null)
-        {
-            CurrentResearching = ResearchQueue[0];
-            CurrentResearching.CurrentSkillState = ResearchNode.SkillState.inDevelopment;
-        }
-
-        CurrentResearching?.TimerForInDevelopment();
+        CurrentResearching?.AddTime(Time.fixedDeltaTime);
     }
 
+    /// <summary>
+    /// Checks if there is an node in the queue and returns that node
+    /// </summary>
+    /// <returns></returns>
+    public ResearchNode NextInQueue()
+    {
+        if (ResearchQueue.Count > 0 && CurrentResearching == null)
+            return ResearchQueue[0];
+        else
+            return null;
+    }    
+    
     /// <summary>
     /// This method will pause the research of the one that is currently researching and then it will set the new research.
     /// </summary>
@@ -54,7 +34,16 @@ public class RDTreeManager : MonoBehaviour
             CurrentResearching.PauseResearch();
 
         CurrentResearching = newResearch;
+        CurrentResearching.ResearchDone += ResearchFinished;
     }
 
-    private void ShowTree(InputAction.CallbackContext _) => _skillTree.SetActive(!_skillTree.activeSelf);
+    /// <summary>
+    /// Call this function when the research is finished researching
+    /// It will look if there is a node in the queue and set the research to that node
+    /// </summary>
+    public void ResearchFinished() 
+    { 
+        CurrentResearching = NextInQueue();
+        CurrentResearching.ResearchDone += ResearchFinished;
+    }
 }

@@ -10,22 +10,14 @@ public class ResearchNodeSetting : MonoBehaviour
     [SerializeField] private int _cost;
     [SerializeField] private int _researchTime;
 
-    [Header("Objects for UI")]
-    [SerializeField] private TMP_Text _titleText;
-    [SerializeField] private TMP_Text _descriptionText;
-
     [SerializeField] private List<ResearchNode> _connectedResearchNodes;
     [SerializeField] private List<GameObject> _objectsToUnlock;
 
-    public List<ResearchNode> ConnectedResearchNodes => _connectedResearchNodes;
+    public string Title => _title;
+    public string Description => _description;
     public int ResearchCost => _cost;
     public int ResearchTime => _researchTime;
-
-    private void Awake()
-    {
-        _titleText.text = _title;
-        _descriptionText.text = _description;
-    }
+    public List<ResearchNode> ConnectedResearchNodes => _connectedResearchNodes;
 
     /// <summary>
     /// Call this function when the research is done and the objects needs to be unlocked

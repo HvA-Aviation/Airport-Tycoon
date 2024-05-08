@@ -1,107 +1,47 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class ResearchNode : MonoBehaviour
 {
-    [SerializeField] private Button _button;
-    [SerializeField] private Slider _researchBar;
+    public float ResearchTimer { get; private set; }
 
-    private float _timer;
+    public delegate void ResearchDoneEvent();
 
-    public UnityEvent ResearchDoneEvent = new UnityEvent();
+    public ResearchDoneEvent ResearchDone { get; set; }
 
     private ResearchNodeSetting _nodeSetting;
 
     public SkillState CurrentSkillState;
 
-    private void OnEnable()
-    {
-        SetUIForStates();
-    }
-
     private void Start()
     {
         _nodeSetting = GetComponent<ResearchNodeSetting>();
 
-        _researchBar.maxValue = _nodeSetting.ResearchTime;
-        AddListenersToEvent();
+        ResearchDone += ResearchBought;
+        ResearchDone += SetNextStatesInTree;
+        ResearchDone += _nodeSetting.UnlockObjects;
     }
 
-    /// <summary>
-    /// This function is called when the researchnode started to be researched
-    /// </summary>
-    public void TimerForInDevelopment()
-    {
-        if (CurrentSkillState != SkillState.inDevelopment) return;
-
-        ///TODO: Check if there is enough money
-
-        _timer += Time.fixedDeltaTime;
-        _researchBar.value = _timer;
-        if (_timer >= _nodeSetting.ResearchTime)
-        {
-            ResearchDoneEvent.Invoke();
-        }
-    }
-
+    private void FixedUpdate() => CheckIfResearchIsDone();
+    
     /// <summary>
     /// This function is called when the research is done
     /// </summary>
-    private void ResearchDone()
+    private void ResearchBought()
     {
-        CurrentSkillState = SkillState.bought;
-
-        if (RDTreeManager.Instance.CurrentResearching != null)
-        {
-            RDTreeManager.Instance.CurrentResearching = null;
-        }
+        CurrentSkillState = SkillState.bought;        
     }
 
     /// <summary>
-    /// This function is called when the start research button is clicked
+    /// Call this function in the fixedUpdate to check if the research is done
     /// </summary>
-    public void OnClick()
+    private void CheckIfResearchIsDone()
     {
-        if (CurrentSkillState == SkillState.available)
+        if(ResearchTimer >= _nodeSetting.ResearchTime)
         {
-            CurrentSkillState = SkillState.inDevelopment;
-            RDTreeManager.Instance.ChooseNewResearch(this);
-            SetUIForStates();
-        }
-    }
-
-    /// <summary>
-    /// This function is called in the start to add all the listeners to the UnityEvent
-    /// </summary>
-    public void AddListenersToEvent()
-    {
-        ResearchDoneEvent.AddListener(ResearchDone);
-        ResearchDoneEvent.AddListener(SetNextStatesInTree);
-        ResearchDoneEvent.AddListener(_nodeSetting.UnlockObjects);
-    }
-
-    /// <summary>
-    /// This function is called to update the UI for the node
-    /// </summary>
-    public void SetUIForStates()
-    {
-        switch (CurrentSkillState)
-        {
-            case SkillState.notAvailable:
-                _button.interactable = false;
-                gameObject.SetActive(false);
-                break;
-            case SkillState.available:
-                _button.interactable = true;
-                gameObject.SetActive(true);
-                break;
-            case SkillState.inDevelopment:
-                _button.interactable = false;
-                break;
-            case SkillState.bought:
-                _button.interactable = false;
-                break;
+            ResearchDone?.Invoke();
         }
     }
 
@@ -117,18 +57,23 @@ public class ResearchNode : MonoBehaviour
             if (connectedNode == null) continue;
 
             connectedNode.CurrentSkillState = SkillState.available;
-            connectedNode.SetUIForStates();
         }
+    }
+
+    /// <summary>
+    /// Call this function when you want the research to be developed
+    /// </summary>
+    /// <param name="value">The value you want to add to the time</param>
+    public void AddTime(float value)
+    {
+        if (CurrentSkillState != SkillState.inDevelopment) return;
+        ResearchTimer += value;
     }
 
     /// <summary>
     /// This function is called to pause the research
     /// </summary>
-    public void PauseResearch()
-    {
-        CurrentSkillState = SkillState.available;
-        SetUIForStates();
-    }
+    public void PauseResearch() => CurrentSkillState = SkillState.available;    
 
     public enum SkillState { notAvailable, available, inDevelopment, bought }
 }
