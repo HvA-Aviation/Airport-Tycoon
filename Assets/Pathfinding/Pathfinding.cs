@@ -3,6 +3,7 @@ using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Unity.Collections;
+using System.Linq;
 
 public struct AStar : IJob
 {
@@ -10,6 +11,7 @@ public struct AStar : IJob
 
     public NativeHashMap<Vector3Int, Node> openList;
     public NativeHashMap<Vector3Int, Node> closedList;
+    public NativeArray<Node> backtrackedPath;
 
     public NativeArray<Vector3Int> neighbourOffsets;
 
@@ -34,12 +36,18 @@ public struct AStar : IJob
 
         while (openList.Count() != 0)
         {
+            // Assign current node to lowest F cost in open list
             currentNode = LowestFCostInList(openList);
             closedList.TryAdd(currentNode.position, currentNode);
 
+            // Exit out of loop if we reached the end node
             if (currentNode.position == endNode.position)
+            {
+                BacktrackPath();
                 break;
+            }
 
+            // Check all neighbours of the current node
             for (int i = 0; i < neighbourOffsets.Length; i++)
             {
                 if (closedList.ContainsKey(currentNode.position + neighbourOffsets[i]) ||
@@ -50,9 +58,12 @@ public struct AStar : IJob
                     position = currentNode.position + neighbourOffsets[i],
                     parent = currentNode.position,
                     gCost = currentNode.gCost + i < 4 ? 10 : 14,
-                    hCost = CalculateHCost(currentNode.position + neighbourOffsets[i], endNode.position)
+                    hCost = CalculateHCost(currentNode.position + neighbourOffsets[i], endNode.position),
+                    traversable = gridNodes[currentNode.position + neighbourOffsets[i]].traversable
                 };
                 neighbour.CalculateFCost();
+
+                if (neighbour.traversable) continue;
 
                 if (openList.ContainsKey(neighbour.position) && neighbour.gCost < openList[neighbour.position].gCost)
                 {
@@ -64,6 +75,25 @@ public struct AStar : IJob
                 }
             }
             openList.Remove(currentNode.position);
+        }
+    }
+
+    /// <summary>
+    /// Backtrack the path from endnode to startnode
+    /// </summary>
+    void BacktrackPath()
+    {
+        if (closedList.ContainsKey(endNode.position))
+        {
+            Node _currentNode = closedList[endNode.position];
+            backtrackedPath[0] = _currentNode;
+            int index = 0;
+            while (true)
+            {
+                _currentNode = closedList[_currentNode.parent];
+                backtrackedPath[index++] = _currentNode;
+                if (_currentNode.position == startNode.position) break;
+            }
         }
     }
 
@@ -89,6 +119,7 @@ public struct AStar : IJob
         Node currentNode = new Node();
         foreach (var item in nodeList)
         {
+            if (item.Value.position == Vector3Int.zero) break;
             if (item.Value.fCost < lowestFcost)
             {
                 lowestFcost = item.Value.fCost;
@@ -103,51 +134,79 @@ public class Pathfinding : MonoBehaviour
 {
     [Header("Lists")]
     public List<Vector3Int> untraversableTiles = new List<Vector3Int>();
-    public HashSet<Node> closedList = new HashSet<Node>();
-    public HashSet<Node> openList = new HashSet<Node>();
-    public List<Node> calculatedPath = new List<Node>();
-    public Node[,,] Grid;
+    public Node[,,] grid;
+    public List<Node> backtrackedPath = new List<Node>();
 
     [Header("Dependecies")]
-    [SerializeField] Tilemap _collisionMap;
+    [SerializeField] Tilemap collisionMap;
 
     [Header("Start | End")]
     public Vector3Int startNode;
     public Vector3Int endNode;
-    public Node currentNode;
 
     [Header("Grid settings")]
     public int gridWidth;
     public int gridHeight;
 
-    Vector3Int[] _neighbours = new Vector3Int[8]{
-        Vector3Int.up,
-        Vector3Int.left,
-        Vector3Int.right,
-        Vector3Int.down,
-        Vector3Int.up + Vector3Int.right,
-        Vector3Int.up + Vector3Int.left,
-        Vector3Int.down + Vector3Int.right,
-        Vector3Int.down + Vector3Int.left,
-    };
-
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        GetCollisionData();
         CreateGrid();
-        //AStar(Grid[startNode.x, startNode.y, startNode.z], Grid[endNode.x, endNode.y, endNode.z]);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            openList.Clear();
-            closedList.Clear();
-            calculatedPath.Clear();
-            AStar(Grid[startNode.x, startNode.y, startNode.z], Grid[endNode.x, endNode.y, endNode.z]);
+            backtrackedPath.Clear();
+            FindPath();
         }
+    }
+
+    /// <summary>
+    /// Declare the variables and send them to the AStar job
+    /// </summary>
+    void FindPath()
+    {
+        int arraySize = gridHeight * gridWidth;
+
+        // Declare the variables
+        NativeHashMap<Vector3Int, Node> _gridNodes = new NativeHashMap<Vector3Int, Node>(arraySize, Allocator.TempJob);
+        NativeHashMap<Vector3Int, Node> _openList = new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
+        NativeHashMap<Vector3Int, Node> _closedList = new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
+        NativeArray<Vector3Int> _neighbourOffsets = new NativeArray<Vector3Int>(8, Allocator.TempJob);
+        NativeArray<Node> _backtrackedPath = new NativeArray<Node>(200, Allocator.TempJob);
+
+        // Add all nodes in the generated grid to the NativeHashMap (Replace this with cody's grid system)
+        foreach (var item in grid)
+        {
+            _gridNodes.Add(item.position, item);
+        }
+
+        // Create a new instance of the AStar job and assign its variables
+        AStar aStar = new AStar
+        {
+            gridNodes = _gridNodes,
+            openList = _openList,
+            closedList = _closedList,
+            neighbourOffsets = _neighbourOffsets,
+            startNode = grid[startNode.x, startNode.y, startNode.z],
+            endNode = grid[endNode.x, endNode.y, endNode.z],
+            backtrackedPath = _backtrackedPath
+        };
+
+        // Schedule the job and complete it
+        JobHandle handle = aStar.Schedule();
+        handle.Complete();
+
+        // retrieve the backtracked path from the job
+        backtrackedPath = _backtrackedPath.ToList();
+
+        // Dispose all the NativeContainers to avoid memory leaks
+        _gridNodes.Dispose();
+        _openList.Dispose();
+        _closedList.Dispose();
+        _neighbourOffsets.Dispose();
+        _backtrackedPath.Dispose();
     }
 
     /// <summary>
@@ -155,147 +214,39 @@ public class Pathfinding : MonoBehaviour
     /// </summary>
     void CreateGrid()
     {
-        Grid = new Node[gridWidth, gridHeight, 1];
+        grid = new Node[gridWidth, gridHeight, 1];
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
             {
+                Vector3Int _pos = new Vector3Int(x, y, 0);
+
                 Node node = new Node()
                 {
                     position = new Vector3Int(x, y, 0),
-                    traversable = untraversableTiles.Contains(new Vector3Int(x, y, 0))
+                    traversable = collisionMap.GetTile(_pos)
                 };
-                Grid[x, y, 0] = node;
+                grid[x, y, 0] = node;
             }
         }
 
-        Grid[startNode.x, startNode.y, startNode.z].isStartNode = true;
-        Grid[endNode.x, endNode.y, endNode.z].isEndNode = true;
+        grid[startNode.x, startNode.y, startNode.z].isStartNode = true;
+        grid[endNode.x, endNode.y, endNode.z].isEndNode = true;
     }
 
-    /// <summary>
-    /// A* algorithm to decide the best path from the start node to the end node
-    /// </summary>
-    void AStar(Node startNode, Node endNode)
+    private void OnDrawGizmosSelected()
     {
-        closedList.Add(startNode);
-        openList = GetNeighbours(startNode);
+        Gizmos.DrawWireCube(new Vector3(gridWidth / 2, gridHeight / 2, 0), new Vector3(gridWidth, gridHeight));
 
-        while (openList.Count > 0)
+        Gizmos.color = Color.green;
+        Gizmos.DrawCube(startNode, Vector3.one);
+        Gizmos.color = Color.red;
+        Gizmos.DrawCube(endNode, Vector3.one);
+
+        Gizmos.color = Color.cyan;
+        foreach (var item in backtrackedPath)
         {
-            currentNode = LowestFCostInList(openList);
-            openList.Remove(currentNode);
-            closedList.Add(currentNode);
-
-            if (currentNode.isEndNode)
-            {
-                BacktrackPath();
-                break;
-            }
-
-            HashSet<Node> neighbours = GetNeighbours(currentNode);
-
-            foreach (Node item in neighbours)
-            {
-                openList.Add(item);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Get the lowest f cost in a given list of nodes
-    /// </summary>
-    Node LowestFCostInList(HashSet<Node> nodeList)
-    {
-        float lowestFcost = float.MaxValue;
-        Node currentNode = new Node();
-        foreach (var item in nodeList)
-        {
-            if (item.fCost < lowestFcost)
-            {
-                lowestFcost = item.fCost;
-                currentNode = item;
-            }
-        }
-        return currentNode;
-    }
-
-    /// <summary>
-    /// Get neighbours of tile
-    /// </summary>
-    HashSet<Node> GetNeighbours(Node currentNode)
-    {
-        HashSet<Node> neighbours = new HashSet<Node>();
-        for (int i = 0; i < _neighbours.Length; i++)
-        {
-            Vector3Int _neighbourPos = currentNode.position + _neighbours[i];
-
-            // check if within bounds of the grid
-            if (_neighbourPos.x > gridWidth - 1 || _neighbourPos.x < 0 || _neighbourPos.y > gridHeight - 1 || _neighbourPos.y < 0)
-            {
-                print("we continue the loop");
-                continue;
-            }
-
-            Node _neighbour = Grid[_neighbourPos.x, _neighbourPos.y, _neighbourPos.z];
-
-            // check if the neighbour does not exist in our open/closed/untraversable lists
-            if (openList.Contains(_neighbour)) continue;
-            if (closedList.Contains(_neighbour)) continue;
-            if (untraversableTiles.Contains(_neighbour.position)) continue;
-
-            // set the neighbours variables
-            _neighbour.position = _neighbourPos;
-            _neighbour.parent = currentNode.position;
-            _neighbour.hCost = CalculateHCost(_neighbourPos, endNode);
-            _neighbour.gCost = i < 4 ? currentNode.gCost + 10 : currentNode.gCost + 14;
-            _neighbour.CalculateFCost();
-            neighbours.Add(_neighbour);
-        }
-        return neighbours;
-    }
-
-    /// <summary>
-    /// Calculate the H cost for a node from point to endnode
-    /// </summary>
-    float CalculateHCost(Vector3Int currentNodePosition, Vector3Int endNodePosition)
-    {
-        float xCost = Mathf.Abs(endNodePosition.x - currentNodePosition.x);
-        float yCost = Mathf.Abs(endNodePosition.y - currentNodePosition.y);
-
-        if (xCost > yCost)
-            return 14 * yCost + 10 * (xCost - yCost);
-        return 14 * xCost + 10 * (yCost - xCost);
-    }
-
-    /// <summary>
-    /// Backtrack the path from the last node in the closed list which should be the end node
-    /// </summary>
-    void BacktrackPath()
-    {
-        Node currentNode = Grid[endNode.x, endNode.y, endNode.z];
-        while (currentNode.position != Grid[startNode.x, startNode.y, startNode.z].position)
-        {
-            calculatedPath.Add(currentNode);
-            currentNode = Grid[currentNode.parent.x, currentNode.parent.y, currentNode.parent.z];
-        }
-    }
-
-    /// <summary>
-    /// Retrieve the Collision data from a given grid
-    /// </summary>
-    void GetCollisionData()
-    {
-        for (int x = -_collisionMap.size.x; x < _collisionMap.size.x; x++)
-        {
-            for (int y = -_collisionMap.size.y; y < _collisionMap.size.y; y++)
-            {
-                Vector3Int _pos = new Vector3Int(x, y, 0);
-                if (_collisionMap.GetTile(_pos))
-                {
-                    untraversableTiles.Add(_pos);
-                }
-            }
+            Gizmos.DrawCube(item.position, Vector3.one);
         }
     }
 }
