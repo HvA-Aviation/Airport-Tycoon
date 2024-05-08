@@ -31,6 +31,8 @@ public class Grid : MonoBehaviour
     /// </summary>
     private bool _mapUpdated;
 
+
+    public Vector3Int GridSize => _gridSize;
     public float CellSize => _cellSize;
 
     void Start()

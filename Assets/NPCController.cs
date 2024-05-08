@@ -14,7 +14,7 @@ public class NPCController : MonoBehaviour
     public List<Node> backtrackedPath = new List<Node>();
 
     [Header("Dependecies")]
-    [SerializeField] Tilemap collisionMap;
+    [SerializeField] private Grid _grid;
 
     [Header("Start | End")]
     public Vector3Int startNode;
@@ -26,15 +26,21 @@ public class NPCController : MonoBehaviour
 
     private void Start()
     {
-        CreateGrid();
+        gridWidth = _grid.GridSize.x;
+        gridHeight = _grid.GridSize.y;
     }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.P))
         {
+            CreateGrid();
+            
             backtrackedPath.Clear();
             Vector3 screenToWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            
+            Debug.Log(new Vector3Int((int)screenToWorld.x, (int)screenToWorld.y, 0));
+            
             FindPath(new Vector3Int((int)screenToWorld.x, (int)screenToWorld.y, 0));
             StartCoroutine(MoveToTarget(backtrackedPath));
         }
@@ -103,16 +109,16 @@ public class NPCController : MonoBehaviour
     void CreateGrid()
     {
         grid = new Node[gridWidth, gridHeight, 1];
+
+        var untraversable = _grid.UnTraversable();
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
             {
-                Vector3Int _pos = new Vector3Int(x, y, 0);
-
                 Node node = new Node()
                 {
                     position = new Vector3Int(x, y, 0),
-                    traversable = collisionMap.GetTile(_pos)
+                    traversable = untraversable[x, y]
                 };
                 grid[x, y, 0] = node;
             }
