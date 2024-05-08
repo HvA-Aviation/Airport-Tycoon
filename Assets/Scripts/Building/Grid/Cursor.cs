@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Building.Datatypes;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
 namespace Building
@@ -30,7 +31,7 @@ namespace Building
             _grid = FindObjectOfType<Grid>();
 
             transform.localScale = Vector3.one * _grid.CellSize;
-            
+
             ChangeToBuilding(_selectedBuilding);
         }
 
@@ -59,6 +60,9 @@ namespace Building
 
             var position =
                 _grid.ClampedWorldToGridPosition(clampedValue, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer);
+
+            if (!_tilemap.gameObject.activeSelf)
+                return;
 
             switch (_selectedBuilding.BrushType)
             {
@@ -260,6 +264,16 @@ namespace Building
                 _shape.Add(new SubBuildItem(item.Tile,
                     new GridPosition(item.GridPosition.Position, item.GridPosition.Layer)));
             }
+        }
+
+        public void DisableCursor()
+        {
+            _tilemap.gameObject.SetActive(false);
+        }
+
+        public void EnableCursor()
+        {
+            _tilemap.gameObject.SetActive(true);
         }
 
         public float RoundToMultiple(float value, float roundTo)
