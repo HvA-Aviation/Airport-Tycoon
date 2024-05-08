@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wall
   m_EditorClassIdentifier: 
   Name: Wall
-  BrushType: 0
+  BrushType: 2
   BuildItems:
   - Tile: {fileID: 11400000, guid: fbfe88272625d5c47979b613d9233838, type: 2}
     GridPosition:

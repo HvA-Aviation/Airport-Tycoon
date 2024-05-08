@@ -3,6 +3,7 @@
     public enum BrushType
     {
         Single,
-        Multi
+        Multi,
+        Drag
     }
 }

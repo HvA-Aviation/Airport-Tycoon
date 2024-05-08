@@ -21,6 +21,7 @@ namespace Building
         [SerializeField] private Vector3Int _origin;
         [SerializeField] private int _rotation = 0;
 
+        [SerializeField] private EventSystem _eventSystem;
         [SerializeField] private BuildableObject _selectedBuilding;
         [SerializeField] private List<BuildableObject> _buildings;
 
@@ -37,21 +38,6 @@ namespace Building
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                ChangeToBuilding(_buildings[0]);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                ChangeToBuilding(_buildings[1]);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                ChangeToBuilding(_buildings[2]);
-            }
-
             var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             //clamp to grid positions
@@ -61,6 +47,8 @@ namespace Building
             var position =
                 _grid.ClampedWorldToGridPosition(clampedValue, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer);
 
+            _tilemap.gameObject.SetActive(!_eventSystem.IsPointerOverGameObject());
+
             if (!_tilemap.gameObject.activeSelf)
                 return;
 
@@ -68,6 +56,9 @@ namespace Building
             {
                 case BrushType.Multi:
                     MultiBrushSelect(position);
+                    break;
+                case BrushType.Drag:
+                    DragBrush(position);
                     break;
                 case BrushType.Single:
                     SingleBrush(position);
@@ -191,6 +182,25 @@ namespace Building
             {
                 //hover and require all spaces to be free
                 Hover(position, _shape, true);
+            }
+        }
+
+        private void DragBrush(Vector3Int position)
+        {
+            if (Input.GetMouseButton(0))
+            {
+                Hover(position, _shape, true);
+                _grid.Set(position, _selectedBuilding.BuildItems[0].Tile);
+            }
+            else if (Input.GetMouseButton(1))
+            {
+                //remove the tiles in the shape of the selection
+                _grid.Remove(position);
+            }
+            else
+            {
+                //hover and require all spaces to be free
+                Hover(position, _shape);
             }
         }
 
