@@ -30,6 +30,8 @@ public class ResearchNodeQueue : MonoBehaviour
     /// </summary>
     private void RemoveFromQueue()
     {
+        Debug.Log("Test");
+        if (CurrentState != QueueStates.InQueue) return;
         if (!_treeManager.ResearchQueue.Contains(_researchNode)) return;
         _treeManager.ResearchQueue.Remove(_researchNode);
         CurrentState= QueueStates.FinishedQueue;

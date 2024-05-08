@@ -41,7 +41,8 @@ public class RDTreeManager : MonoBehaviour
     /// It will look if there is a node in the queue and set the research to that node
     /// </summary>
     public void ResearchFinished() 
-    { 
+    {
+        CurrentResearching = null;
         CurrentResearching = NextInQueue();
     }
 }
