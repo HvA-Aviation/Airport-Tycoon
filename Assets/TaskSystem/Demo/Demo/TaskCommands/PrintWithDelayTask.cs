@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using UnityEngine;
 
 
 public class PrintWithDelayTask : TaskCommand<DebugWorker>
@@ -14,13 +12,10 @@ public class PrintWithDelayTask : TaskCommand<DebugWorker>
 
     protected override void ExecuteInternal(DebugWorker worker, Action onTaskDone)
     {
-        // Start coroutine
-    }
-
-    private IEnumerator RunWithDelay(DebugWorker worker, Action onTaskDone)
-    {
-        yield return new WaitForSeconds(4);
-        worker.Print(message);
-        onTaskDone();
+        FunctionTimer.Create(() =>
+        {
+            worker.Print(message);
+            onTaskDone();
+        }, 5);
     }
 }
