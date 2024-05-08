@@ -582,6 +582,7 @@ GameObject:
   - component: {fileID: 5417723483575884939}
   - component: {fileID: 4918524161634474595}
   - component: {fileID: 2944279349900298504}
+  - component: {fileID: 1579861060593764006}
   m_Layer: 5
   m_Name: ResearchNode
   m_TagString: Untagged
@@ -668,8 +669,8 @@ MonoBehaviour:
   _description: This is the description for the research
   _cost: 0
   _researchTime: 10
-  _titleText: {fileID: 4918524161188986038}
-  _descriptionText: {fileID: 4918524161070769772}
+  _connectedResearchNodes: []
+  _objectsToUnlock: []
 --- !u!114 &4918524161634474595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -682,13 +683,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fe489ab3bf6eb74fbd81157e2746fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _button: {fileID: 7249884333295130336}
-  _researchBar: {fileID: 4918524161388179895}
-  ConnectedResearchNodes:
-  - {fileID: 0}
-  - {fileID: 0}
-  ObjectToUnlock: []
-  CurrentSkillState: 1
 --- !u!114 &2944279349900298504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,9 +695,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc40cdf5a5364154da2abe38b143cf32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _queueButton: {fileID: 1882372212417117199}
-  _skill: {fileID: 4918524161634474595}
-  CurrentState: 0
+  _researchNode: {fileID: 0}
+  _treeManager: {fileID: 0}
+--- !u!114 &1579861060593764006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4918524161634474606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b4b8aaba3f9a9b48b222327fd5d2fb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ActivateButton: {fileID: 7249884333295130336}
+  QueueButton: {fileID: 1882372212417117199}
+  slider: {fileID: 4918524161388179895}
+  researchNode: {fileID: 4918524161634474595}
+  researchQueue: {fileID: 2944279349900298504}
+  treeManager: {fileID: 0}
 --- !u!1 &8896265731945673516
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,17 +6,22 @@ public class ResearchNodeQueue : MonoBehaviour
     [SerializeField] private ResearchNode _researchNode;
     [SerializeField] private RDTreeManager _treeManager;
 
-    private ResearchNodeSetting _researchNodeSettings;
-
-    public States CurrentState;
+    public QueueStates CurrentState { get; private set; }
 
     private void Start()
     {
-        _researchNodeSettings = GetComponent<ResearchNodeSetting>();
-
         _researchNode.ResearchDone += RemoveFromQueue;
-    }  
-    
+    }
+
+    /// <summary>
+    /// Call this function when you want to add the node to the queue
+    /// </summary>
+    public void AddNodeToQueue() 
+    { 
+        _treeManager.ResearchQueue.Add(_researchNode);
+        CurrentState = QueueStates.InQueue;
+    }
+
     /// <summary>
     /// This function will be called when the research is done.
     /// </summary>
@@ -24,7 +29,8 @@ public class ResearchNodeQueue : MonoBehaviour
     {
         if (!_treeManager.ResearchQueue.Contains(_researchNode)) return;
         _treeManager.ResearchQueue.Remove(_researchNode);
+        CurrentState= QueueStates.FinishedQueue;
     }
 
-    public enum States { NotInQueue, InQueue }
+    public enum QueueStates { NotInQueue, InQueue, FinishedQueue }
 }

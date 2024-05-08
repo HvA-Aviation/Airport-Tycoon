@@ -5,23 +5,24 @@ using UnityEngine.UI;
 
 public class ResearchNode : MonoBehaviour
 {
+    [SerializeField] private RDTreeManager _treeManager;
     public float ResearchTimer { get; private set; }
 
     public delegate void ResearchDoneEvent();
-
     public ResearchDoneEvent ResearchDone { get; set; }
 
-    private ResearchNodeSetting _nodeSetting;
+    public ResearchNodeSetting NodeSetting {  get; private set; }
 
-    public SkillState CurrentSkillState;
+    public SkillState CurrentSkillState { get; private set; }
 
     private void Start()
     {
-        _nodeSetting = GetComponent<ResearchNodeSetting>();
+        NodeSetting = GetComponent<ResearchNodeSetting>();
 
         ResearchDone += ResearchBought;
         ResearchDone += SetNextStatesInTree;
-        ResearchDone += _nodeSetting.UnlockObjects;
+        ResearchDone += NodeSetting.UnlockObjects;
+        ResearchDone += _treeManager.ResearchFinished;
     }
 
     private void FixedUpdate() => CheckIfResearchIsDone();
@@ -29,19 +30,20 @@ public class ResearchNode : MonoBehaviour
     /// <summary>
     /// This function is called when the research is done
     /// </summary>
-    private void ResearchBought()
-    {
-        CurrentSkillState = SkillState.bought;        
-    }
-
+    private void ResearchBought() => CurrentSkillState = SkillState.bought;        
+    
     /// <summary>
     /// Call this function in the fixedUpdate to check if the research is done
     /// </summary>
     private void CheckIfResearchIsDone()
     {
-        if(ResearchTimer >= _nodeSetting.ResearchTime)
+        if (CurrentSkillState == SkillState.inDevelopment)
         {
-            ResearchDone?.Invoke();
+            if (ResearchTimer >= NodeSetting.ResearchTime)
+            {
+                if (ResearchDone != null)
+                    ResearchDone();
+            }
         }
     }
 
@@ -50,13 +52,12 @@ public class ResearchNode : MonoBehaviour
     /// </summary>
     private void SetNextStatesInTree()
     {
-        if (CurrentSkillState != SkillState.bought) return;
-
-        foreach (var connectedNode in _nodeSetting.ConnectedResearchNodes)
+        foreach (var connectedNode in NodeSetting.ConnectedResearchNodes)
         {
             if (connectedNode == null) continue;
 
             connectedNode.CurrentSkillState = SkillState.available;
+            connectedNode.GetComponent<TreeNodeDemo>().NodeStates();
         }
     }
 
@@ -73,7 +74,20 @@ public class ResearchNode : MonoBehaviour
     /// <summary>
     /// This function is called to pause the research
     /// </summary>
-    public void PauseResearch() => CurrentSkillState = SkillState.available;    
+    [ContextMenu("Available")]public void PauseResearch() => CurrentSkillState = SkillState.available;
 
+    /// <summary>
+    /// This function is called when you want to start the research
+    /// </summary>
+    public void StartResearch() 
+    {
+        if(CurrentSkillState != SkillState.available) return;
+        _treeManager.ChooseNewResearch(this);
+        CurrentSkillState = SkillState.inDevelopment; 
+    }
+
+    /// <summary>
+    /// All the states from the research
+    /// </summary>
     public enum SkillState { notAvailable, available, inDevelopment, bought }
 }

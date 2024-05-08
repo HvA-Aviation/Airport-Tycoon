@@ -34,7 +34,6 @@ public class RDTreeManager : MonoBehaviour
             CurrentResearching.PauseResearch();
 
         CurrentResearching = newResearch;
-        CurrentResearching.ResearchDone += ResearchFinished;
     }
 
     /// <summary>
@@ -44,6 +43,5 @@ public class RDTreeManager : MonoBehaviour
     public void ResearchFinished() 
     { 
         CurrentResearching = NextInQueue();
-        CurrentResearching.ResearchDone += ResearchFinished;
     }
 }
