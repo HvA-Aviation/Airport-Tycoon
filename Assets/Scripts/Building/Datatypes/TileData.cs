@@ -8,7 +8,7 @@ namespace Building.Datatypes
     public class TileData
     {
         public Tile Tile;
-        public bool Traversable = true;
+        public bool UnTraversable = false;
         //TODO different tile for rotation list
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Building;
 using Building.Datatypes;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -15,9 +16,7 @@ public class Grid : MonoBehaviour
     /// y = y-axis
     /// z = z-axis for multiple layers for example floor tile layer and decoration layer
     /// </summary>
-    private int[,,] _cells;
-
-    private int[,,] _rotations;
+    private CellData[,,] _cells;
 
     [SerializeField] private BuildableAtlas _atlas;
     [SerializeField] private Tilemap _tilemap;
@@ -33,14 +32,13 @@ public class Grid : MonoBehaviour
     private bool _mapUpdated;
 
     public float CellSize => _cellSize;
-    
+
     void Start()
     {
         if (_atlas == null)
             Debug.LogError("No atlas is assigned!");
 
-        _cells = new int[_gridSize.x, _gridSize.y, _gridSize.z];
-        _rotations = new int[_gridSize.x, _gridSize.y, _gridSize.z];
+        _cells = new CellData[_gridSize.x, _gridSize.y, _gridSize.z];
         _cellGroup = new List<List<Vector3Int>>();
         PopulateCells();
     }
@@ -48,7 +46,7 @@ public class Grid : MonoBehaviour
     /// <summary>
     /// Creates a flattend 2d array to see if it is traversable
     /// </summary>
-    /// <returns>A flattend 2d bool array with false as traverable</returns>
+    /// <returns>A flattend 2d bool array with false as traversable</returns>
     public bool[,] UnTraversable()
     {
         bool[,] unTraversable = new bool[_gridSize.x, _gridSize.y];
@@ -59,10 +57,10 @@ public class Grid : MonoBehaviour
             {
                 for (int y = 0; y < _gridSize.y; y++)
                 {
-                    if (unTraversable[x, y] || _cells[x, y, z] == -1)
+                    if (unTraversable[x, y] || _cells[x, y, z].Tile == CellData.empty.Tile)
                         continue;
 
-                    unTraversable[x, y] = !_atlas.Items[_cells[x, y, z]].Traversable;
+                    unTraversable[x, y] = _atlas.Items[_cells[x, y, z].Tile].UnTraversable;
                 }
             }
         }
@@ -81,7 +79,7 @@ public class Grid : MonoBehaviour
             {
                 for (int z = 0; z < _gridSize.z; z++)
                 {
-                    _cells[x, y, z] = -1;
+                    _cells[x, y, z] = CellData.empty;
                 }
             }
         }
@@ -123,11 +121,10 @@ public class Grid : MonoBehaviour
                         position = new Vector3Int(x, y, z) - offset,
                     };
 
-                    //if tile exists add rotation and a tile
-                    if (cell != -1)
+                    if (cell.Tile != CellData.empty.Tile)
                     {
-                        tile.transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, _rotations[x, y, z] * -90));
-                        tile.tile = _atlas.Items[cell].Tile;
+                        tile.transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cell.Rotation * -90));
+                        tile.tile = _atlas.Items[cell.Tile].Tile;
                     }
 
                     _tilemap.SetTile(tile, false);
@@ -147,7 +144,7 @@ public class Grid : MonoBehaviour
         if (OutOfBounds(gridVector))
             return 1;
 
-        return _cells[gridVector.x, gridVector.y, gridVector.z];
+        return _cells[gridVector.x, gridVector.y, gridVector.z].Tile;
     }
 
     /// <summary>
@@ -160,8 +157,12 @@ public class Grid : MonoBehaviour
     {
         if (Get(gridVector) == -1)
         {
-            _cells[gridVector.x, gridVector.y, gridVector.z] = buildIndex;
-            _rotations[gridVector.x, gridVector.y, gridVector.z] = 0;
+            var cellData = _cells[gridVector.x, gridVector.y, gridVector.z];
+
+            cellData.Tile = buildIndex;
+            cellData.Rotation = 0;
+
+            _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
 
             _mapUpdated = true;
             return true;
@@ -217,9 +218,13 @@ public class Grid : MonoBehaviour
                 return false;
             }
 
-            _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] =
-                Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile);
-            _rotations[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = rotation;
+            var cellData = _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z];
+
+            cellData.Tile = Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile);
+            cellData.Rotation = rotation;
+
+            _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
+
             _mapUpdated = true;
         }
 
@@ -245,7 +250,8 @@ public class Grid : MonoBehaviour
             //Remove from array
             foreach (var item in group)
             {
-                _cells[item.x, item.y, item.z] = -1;
+                _cells[item.x, item.y, item.z].Tile = -1;
+                _cells[item.x, item.y, item.z].Rotation = 0;
             }
 
             //remove from group
@@ -271,7 +277,7 @@ public class Grid : MonoBehaviour
 
         return false;
     }
-    
+
     /// <summary>
     /// Easy way of checking if a tile is empty. This is a seperate method, because we could easily change this in the future
     /// </summary>
@@ -302,10 +308,9 @@ public class Grid : MonoBehaviour
     {
         if (_cells == null)
         {
-            _cells = new int[_gridSize.x, _gridSize.y, _gridSize.z];
+            _cells = new CellData[_gridSize.x, _gridSize.y, _gridSize.z];
         }
 
-        var untraversable = UnTraversable();
 
         for (int x = 0; x < _gridSize.x; x++)
         {
@@ -321,9 +326,22 @@ public class Grid : MonoBehaviour
 
                 Gizmos.DrawLine(origin + new Vector2(offset, offset), origin + new Vector2(offset, -offset));
                 Gizmos.DrawLine(origin + new Vector2(-offset, offset), origin + new Vector2(-offset, -offset));
+            }
+        }
 
-                Gizmos.color = untraversable[x, y] ? Color.red : Color.green;
-                Gizmos.DrawSphere(origin, _cellSize / 10);
+        if (Application.isPlaying)
+        {
+            var untraversable = UnTraversable();
+
+            for (int x = 0; x < _gridSize.x; x++)
+            {
+                for (int y = 0; y < _gridSize.y; y++)
+                {
+                    Vector2 origin = new Vector2(x, y) * _cellSize - (Vector2)transform.position;
+
+                    Gizmos.color = untraversable[x, y] ? Color.red : Color.green;
+                    Gizmos.DrawSphere(origin, _cellSize / 10);
+                }
             }
         }
     }
