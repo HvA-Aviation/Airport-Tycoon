@@ -10,6 +10,7 @@ public struct AStar : IJob
     public NativeHashMap<Vector3Int, Node> openList;
     public NativeHashMap<Vector3Int, Node> closedList;
     public NativeArray<Node> backtrackedPath;
+    public NativeArray<int> backTrackedPathLength;
 
     public NativeArray<Vector3Int> neighbourOffsets;
 
@@ -22,6 +23,7 @@ public struct AStar : IJob
         currentNode.hCost = CalculateHCost(currentNode.position, endNode.position);
         currentNode.CalculateFCost();
         openList.Add(currentNode.position, currentNode);
+        int openListCount = 1;
 
         neighbourOffsets[0] = Vector3Int.up;
         neighbourOffsets[1] = Vector3Int.left;
@@ -35,15 +37,8 @@ public struct AStar : IJob
         while (openList.Count() != 0)
         {
             // Assign current node to lowest F cost in open list
-            currentNode = LowestFCostInList(openList);
+            currentNode = LowestFCostInList(openList, openListCount);
             closedList.TryAdd(currentNode.position, currentNode);
-
-            // Exit out of loop if we reached the end node
-            if (currentNode.position == endNode.position)
-            {
-                BacktrackPath();
-                break;
-            }
 
             // Check all neighbours of the current node
             for (int i = 0; i < neighbourOffsets.Length; i++)
@@ -70,9 +65,18 @@ public struct AStar : IJob
                 else if (!openList.ContainsKey(neighbour.position))
                 {
                     openList.TryAdd(neighbour.position, neighbour);
+                    openListCount++;
                 }
             }
             openList.Remove(currentNode.position);
+            openListCount--;
+
+            // Exit out of loop if we reached the end node
+            if (currentNode.position == endNode.position)
+            {
+                BacktrackPath();
+                break;
+            }
         }
     }
 
@@ -85,13 +89,15 @@ public struct AStar : IJob
         {
             Node _currentNode = closedList[endNode.position];
             backtrackedPath[0] = _currentNode;
-            int index = 0;
+            int index = 1;
             while (true)
             {
                 _currentNode = closedList[_currentNode.parent];
-                backtrackedPath[index++] = _currentNode;
+                backtrackedPath[index] = _currentNode;
+                index++;
                 if (_currentNode.position == startNode.position) break;
             }
+            backTrackedPathLength[0] = index;
         }
     }
 
@@ -109,10 +115,12 @@ public struct AStar : IJob
     /// <summary>
     /// Get the lowest f cost in a given list of nodes
     /// </summary>
-    Node LowestFCostInList(NativeHashMap<Vector3Int, Node> nodeList)
+    Node LowestFCostInList(NativeHashMap<Vector3Int, Node> nodeList, int nodeListCount)
     {
+        int count = 0;
         float lowestFcost = float.MaxValue;
         Node currentNode = new Node();
+
         foreach (var item in nodeList)
         {
             if (item.Value.fCost < lowestFcost)
@@ -120,6 +128,8 @@ public struct AStar : IJob
                 lowestFcost = item.Value.fCost;
                 currentNode = item.Value;
             }
+            if (count > nodeListCount) break;
+            count++;
         }
         return currentNode;
     }
