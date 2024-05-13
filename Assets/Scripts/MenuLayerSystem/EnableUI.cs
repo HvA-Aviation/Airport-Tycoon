@@ -31,7 +31,7 @@ public class EnableUI : MonoBehaviour
     /// </summary>
     private void DeactivateInteractables()
     {
-        foreach (CanvasGroup group in _uiManager.CanvasGroups)
+        foreach (CanvasGroup group in _uiManager.Interactables)
             group.interactable = false;
                  
         if(TryGetComponent<CanvasGroup>(out CanvasGroup thisGroup))

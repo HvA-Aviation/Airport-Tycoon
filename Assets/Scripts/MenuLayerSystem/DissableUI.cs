@@ -31,7 +31,7 @@ public class DissableUI : MonoBehaviour
     /// </summary>
     private void SetNewInteractable()
     {
-        var child = transform.parent.GetChild(_uiManager.CanvasGroups.Count - 1);
+        var child = transform.parent.GetChild(_uiManager.Interactables.Count - 1);
 
         if (child.TryGetComponent<CanvasGroup>(out CanvasGroup thisGroup))
             thisGroup.interactable = true;

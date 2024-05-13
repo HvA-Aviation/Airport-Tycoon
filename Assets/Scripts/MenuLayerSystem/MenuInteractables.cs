@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class MenuInteractables : MonoBehaviour
+public class MenuInteractables : MonoBehaviour, IInteractable
 {
     [SerializeField] private UIManager _uiManager;
     private CanvasGroup _canvasGroup;
@@ -12,6 +12,10 @@ public class MenuInteractables : MonoBehaviour
     {
         _canvasGroup = GetComponent<CanvasGroup>();
 
-        _uiManager.CanvasGroups.Add(_canvasGroup);
+        _uiManager.Interactables.Add(this);
     }
+
+    public void DissableInteraction() => _canvasGroup.interactable = false;
+    
+    public void EnableInteraction() => _canvasGroup.interactable = true;    
 }

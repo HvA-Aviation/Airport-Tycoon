@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    public List<CanvasGroup> CanvasGroups { get; set; }
+    public List<IInteractable> Interactables { get; set; }
 
     private void Awake()
-    {        
-        CanvasGroups = new List<CanvasGroup>();
+    {
+        Interactables = new List<IInteractable>();
     }
 }
