@@ -52,11 +52,6 @@ namespace Managers
             _eventDictionary[eventId].Remove(eventHandler);
         }
 
-        private void Update()
-        {
-            //Debug.Log();
-        }
-
         public void TriggerEvent(EventId eventId, EventArgs eventArgs = null)
         {
             if (eventArgs == null)
