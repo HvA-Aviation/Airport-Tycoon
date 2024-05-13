@@ -121,9 +121,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4918524161634474595}
-        m_TargetAssemblyTypeName: Skill, Assembly-CSharp
-        m_MethodName: OnClick
+      - m_Target: {fileID: 1579861060593764006}
+        m_TargetAssemblyTypeName: TreeNodeDemo, Assembly-CSharp
+        m_MethodName: ClickActivateButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -837,9 +837,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2944279349900298504}
-        m_TargetAssemblyTypeName: ResearchNodeQueue, Assembly-CSharp
-        m_MethodName: OnClick
+      - m_Target: {fileID: 1579861060593764006}
+        m_TargetAssemblyTypeName: TreeNodeDemo, Assembly-CSharp
+        m_MethodName: ClickQueueButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
