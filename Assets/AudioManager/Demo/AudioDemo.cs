@@ -1,22 +1,20 @@
+using Managers;
 using UnityEngine;
 
 public class AudioDemo : MonoBehaviour
 {
-    [SerializeField]
-    private AudioManager _manager;
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
-            _manager.PlaySFX("Complete");
+            GameManager.Instance.AudioManager.PlaySFX("Complete");
 
         if (Input.GetKeyDown(KeyCode.W))
-            _manager.PlaySFX("Bling");
+            GameManager.Instance.AudioManager.PlaySFX("Bling");
 
         if (Input.GetKeyDown(KeyCode.E))
-            _manager.PlaySFX("Tab");
+            GameManager.Instance.AudioManager.PlaySFX("Tab");
 
         if (Input.GetKeyDown(KeyCode.R))
-            _manager.PlaySFX("Bonus");
+            GameManager.Instance.AudioManager.PlaySFX("Bonus");
     }
 }
