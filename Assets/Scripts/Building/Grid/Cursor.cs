@@ -24,8 +24,6 @@ namespace Building
         [SerializeField] private EventSystem _eventSystem;
         [SerializeField] private BuildableObject _selectedBuilding;
 
-        private int _currentMouse;
-
         private void Start()
         {
             _grid = FindObjectOfType<Grid>();
@@ -51,28 +49,35 @@ namespace Building
             if (!_tilemap.gameObject.activeSelf)
                 return;
 
-            switch (_selectedBuilding.BrushType)
+            if (Input.GetMouseButton(1) || Input.GetMouseButtonUp(1))
             {
-                case BrushType.Multi:
-                    MultiBrushSelect(position);
-                    break;
-                case BrushType.Outline:
-                    OutlineBrushSelect(position);
-                    break;
-                case BrushType.Drag:
-                    DragBrush(position);
-                    break;
-                case BrushType.Single:
-                    SingleBrush(position);
-                    break;
+                MultiBrushSelect(position, 1);
+            }
+            else
+            {
+                switch (_selectedBuilding.BrushType)
+                {
+                    case BrushType.Multi:
+                        MultiBrushSelect(position, 0);
+                        break;
+                    case BrushType.Outline:
+                        OutlineBrushSelect(position);
+                        break;
+                    case BrushType.Drag:
+                        DragBrush(position);
+                        break;
+                    case BrushType.Single:
+                        SingleBrush(position);
+                        break;
+                }
             }
         }
-        
+
         public void Rotate(int direction)
         {
             if (_selectedBuilding.BrushType != BrushType.Single)
                 return;
-            
+
             if (direction != 0)
             {
                 Vector2Int dir = Vector2Int.one;
@@ -108,18 +113,17 @@ namespace Building
 
         #region brushes
 
-        private void MultiBrushSelect(Vector3Int position)
+        private void MultiBrushSelect(Vector3Int position, int cursor)
         {
-            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(cursor))
             {
                 //starts selection and sets the origin of the selection
-                _currentMouse = Input.GetMouseButtonDown(0) ? 0 : 1;
                 _origin = position;
             }
-            else if (Input.GetMouseButtonUp(_currentMouse))
+            else if (Input.GetMouseButtonUp(cursor))
             {
                 //place or remove. This ends the selection
-                if (_currentMouse == 0)
+                if (cursor == 0)
                 {
                     foreach (var selected in _selectedGroup)
                     {
@@ -138,7 +142,7 @@ namespace Building
                 _selectedGroup = new List<SubBuildItem>();
                 _tilemap.ClearAllTiles();
             }
-            else if (Input.GetMouseButton(_currentMouse) && _selectedGroup.Count > 0)
+            else if (Input.GetMouseButton(cursor) && _selectedGroup.Count > 0)
             {
                 //gets selection
                 //get the min and the max of the position
@@ -157,46 +161,34 @@ namespace Building
                     }
                 }
 
-                Hover(Vector3Int.zero, currentSelectedGroup);
+                Hover(Vector3Int.zero, currentSelectedGroup, flipColors: cursor == 1);
             }
             else
             {
                 //hover in the default shape
-                Hover(position, _shape);
+                Hover(position, _shape, flipColors: cursor == 1);
             }
         }
-        
+
         private void OutlineBrushSelect(Vector3Int position)
         {
-            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(0))
             {
-                //starts selection and sets the origin of the selection
-                _currentMouse = Input.GetMouseButtonDown(0) ? 0 : 1;
                 _origin = position;
             }
-            else if (Input.GetMouseButtonUp(_currentMouse))
+            else if (Input.GetMouseButtonUp(0))
             {
                 //place or remove. This ends the selection
-                if (_currentMouse == 0)
-                {
                     foreach (var selected in _selectedGroup)
                     {
                         _grid.Set(selected.GridPosition, _selectedBuilding.BuildItems[0].Tile);
                     }
-                }
-                else
-                {
-                    foreach (var selected in _selectedGroup)
-                    {
-                        _grid.Remove(selected.GridPosition);
-                    }
-                }
 
                 //resets the selection 
                 _selectedGroup = new List<SubBuildItem>();
                 _tilemap.ClearAllTiles();
             }
-            else if (Input.GetMouseButton(_currentMouse) && _selectedGroup.Count > 0)
+            else if (Input.GetMouseButton(0) && _selectedGroup.Count > 0)
             {
                 //gets selection
                 //get the min and the max of the position
@@ -213,7 +205,7 @@ namespace Building
                     currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
                         new Vector3Int(x, max.y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
                 }
-                
+
                 for (var y = min.y; y < max.y + 1; y++)
                 {
                     currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
@@ -222,7 +214,7 @@ namespace Building
                         new Vector3Int(max.x, y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
                 }
 
-                Hover(Vector3Int.zero, currentSelectedGroup, true);
+                Hover(Vector3Int.zero, currentSelectedGroup);
             }
             else
             {
@@ -279,7 +271,7 @@ namespace Building
 
         #endregion
 
-        private void Hover(Vector3Int position, List<SubBuildItem> shapes, bool requireAllAvailable = false)
+        private void Hover(Vector3Int position, List<SubBuildItem> shapes, bool requireAllAvailable = false, bool flipColors = false)
         {
             //Sets the offset of the whole grid
             Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x),
@@ -316,6 +308,9 @@ namespace Building
                 }
             }
 
+            var validColor = !flipColors ? _validColor : _invalidColor;
+            var invalidColor = !flipColors ? _invalidColor : _validColor;
+            
             //set the tile on the tilemap
             foreach (var gridPosition in currentSelectedGroup)
             {
@@ -323,8 +318,8 @@ namespace Building
                 {
                     position = gridPosition.GridPosition - offset,
                     color = valid
-                        ? (_grid.IsEmpty(gridPosition.GridPosition) ? _validColor : _invalidColor)
-                        : _invalidColor
+                        ? (_grid.IsEmpty(gridPosition.GridPosition) ? validColor : invalidColor)
+                        : invalidColor
                 };
 
                 tempTile.transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, _rotation * -90));
