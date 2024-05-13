@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
-using Managers;
+using Features.Managers;
+using Implementation.Pathfinding.Scripts;
+using Implementation.TaskSystem;
 using UnityEngine;
+using Grid = Features.Building.Scripts.Grid.Grid;
 
 namespace Implementation.Workers
 {

@@ -1,25 +1,27 @@
 using System;
-using Implementation.Workers;
-using Managers;
+using Implementation.TaskSystem;
 using UnityEngine;
 
 // Command containing task to print an log.
 
 // Create a class deriving from TaskCommand and the worker it's aimed at.
 
-public class BuildTask : TaskCommand<BuilderWorker>
+namespace Implementation.Workers.TaskCommands
 {
-    private Vector3Int _targetPosition;
-
-    // Set task data.
-    public BuildTask(Vector3Int targetPosition)
+    public class BuildTask : TaskCommand<BuilderWorker>
     {
-        _targetPosition = targetPosition;
-    }
+        private Vector3Int _targetPosition;
 
-    // Set task instructions.
-    protected override void ExecuteInternal(BuilderWorker worker, Action onTaskDone)
-    {
-        worker.MoveTo(_targetPosition, () => { worker.Build(_targetPosition, onTaskDone); }, onTaskDone);
+        // Set task data.
+        public BuildTask(Vector3Int targetPosition)
+        {
+            _targetPosition = targetPosition;
+        }
+
+        // Set task instructions.
+        protected override void ExecuteInternal(BuilderWorker worker, Action onTaskDone)
+        {
+            worker.MoveTo(_targetPosition, () => { worker.Build(_targetPosition, onTaskDone); }, onTaskDone);
+        }
     }
 }
