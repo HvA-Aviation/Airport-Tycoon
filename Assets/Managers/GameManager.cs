@@ -8,6 +8,7 @@ namespace Managers
         public static GameManager Instance;
         
         public AudioManager AudioManager;
+        public EventManager EventManager;
         public TaskManager TaskManager;
 
         private void Awake()
