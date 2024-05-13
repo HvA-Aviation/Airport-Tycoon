@@ -19,7 +19,7 @@ public class ResearchNode : MonoBehaviour
     private void Start()
     {
         NodeSetting = GetComponent<ResearchNodeSetting>();
-        _treeManager.AllNodes.Add(this);    
+        _treeManager.AddNodeToList(this);   
     }   
 
     /// <summary>
@@ -28,7 +28,7 @@ public class ResearchNode : MonoBehaviour
     public void ResearchDone()
     {
         ResearchDoneEvent?.Invoke();
-        SetResearchBought();
+        SetResearchStatus(ResearchStates.bought);
         SetNextStatesInTree();
         RemoveResearchFromQueue();
         _treeManager.ResearchFinished();
@@ -67,18 +67,13 @@ public class ResearchNode : MonoBehaviour
             ResearchDone();
     }
     
-    public void SetResearchNotAvailable() => CurrentResearchState = ResearchStates.notAvailable;
 
-    public void SetAvailableAvailable() => CurrentResearchState = ResearchStates.available;
-       
-    public void SetResearchInDevelopment() => CurrentResearchState = ResearchStates.inDevelopment;
-       
-    public void SetResearchBought() => CurrentResearchState = ResearchStates.bought;
+    public void SetResearchStatus(ResearchStates state) => CurrentResearchState = state;
 
     /// <summary>
     /// This function is called when you want to start the research
     /// </summary>
-    public void StartResearch() => _treeManager.StartNewResearch(this);
+    public void StartResearch() => _treeManager.ChooseNewResearch(this);
 
     /// <summary>
     /// This function is called when the research is finished
