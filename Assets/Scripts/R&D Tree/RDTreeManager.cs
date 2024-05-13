@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class RDTreeManager : MonoBehaviour
@@ -60,12 +59,28 @@ public class RDTreeManager : MonoBehaviour
     /// This method needs to be called when you want to add the research to the queue
     /// </summary>zs
     /// <param name="research">The research that needs to be addeed to the queue</param>
-    public void AddResearchToQueue(ResearchNode research)
+    public void AddResearchToQueue(ResearchNodeQueue research)
     {
-        if (ResearchQueue.Contains(research)) return;
-        
-        ResearchQueue.Add(research);
+        if (ResearchQueue.Contains(research.ThisResearchNode)) return;        
+        ResearchQueue.Add(research.ThisResearchNode);
+
+        research.CurrentState = ResearchNodeQueue.QueueStates.InQueue;        
+        if(CurrentResearching == null)
+            ResearchFinished();
     }
+
+    /// <summary>
+    /// This method nees to be called when you want to remove a researchnode from the queue
+    /// </summary>
+    /// <param name="research"></param>
+    public void RemoveResearchFromQueue(ResearchNodeQueue research)
+    {
+        if (research.CurrentState != ResearchNodeQueue.QueueStates.InQueue && !ResearchQueue.Contains(research.ThisResearchNode))return;
+
+        ResearchQueue.Remove(research.ThisResearchNode);
+        research.CurrentState = ResearchNodeQueue.QueueStates.FinishedQueue;
+    }
+
     /// <summary>
     /// Call this function when the research is finished researching
     /// It will look if there is a node in the queue and set the research to that node
