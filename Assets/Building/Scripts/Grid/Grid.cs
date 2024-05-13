@@ -62,7 +62,8 @@ public class Grid : MonoBehaviour
                     if (unTraversable[x, y] || _cells[x, y, z].Tile == CellData.empty.Tile)
                         continue;
 
-                    unTraversable[x, y] = _atlas.Items[_cells[x, y, z].Tile].UnTraversable;
+                    if (_cells[x, y, z].BuildPercentage == 1f)
+                        unTraversable[x, y] = _atlas.Items[_cells[x, y, z].Tile].UnTraversable;
                 }
             }
         }
@@ -127,12 +128,41 @@ public class Grid : MonoBehaviour
                     {
                         tile.transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cell.Rotation * -90));
                         tile.tile = _atlas.Items[cell.Tile].Tile;
+
+                        float buildAmount = cell.BuildPercentage;
+                        tile.color = new Color(1, 1, 1, buildAmount);
                     }
 
-                    _tilemap.SetTile(tile, false);
+                    _tilemap.SetTile(tile, true);
                 }
             }
         }
+    }
+
+    public bool BuildTile(Vector3Int gridVector, float speed)
+    {
+        var buildTiles = new List<Vector3Int>() { gridVector };
+        for (int i = 0; i < _cellGroup.Count; i++)
+        {
+            if (_cellGroup[i].Contains(gridVector))
+            {
+                foreach (var child in _cellGroup[i])
+                {
+                    if (child != buildTiles[0])
+                        buildTiles.Add(child);
+                }
+            }
+        }
+
+        bool isFinished = false;
+        foreach (var tile in buildTiles)
+        {
+            isFinished = _cells[tile.x, tile.y, tile.z].Build(speed * Time.deltaTime);
+        }
+
+        _mapUpdated = true;
+
+        return isFinished;
     }
 
     /// <summary>

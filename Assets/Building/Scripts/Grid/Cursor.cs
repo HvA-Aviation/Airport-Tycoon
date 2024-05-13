@@ -49,6 +49,12 @@ namespace Building
             if (!_tilemap.gameObject.activeSelf)
                 return;
 
+            if (Input.GetKey(KeyCode.B))
+            {
+                _grid.BuildTile(position, 1f);
+                return;
+            }
+
             if (Input.GetMouseButton(1) || Input.GetMouseButtonUp(1))
             {
                 MultiBrushSelect(position, 1);
