@@ -6,61 +6,46 @@ using System.Collections;
 
 public class NPCController : MonoBehaviour
 {
-    [Header("Lists")]
-    List<Vector3Int> untraversableTiles = new List<Vector3Int>();
-    Node[,,] grid;
-    List<Node> backtrackedPath = new List<Node>();
-    List<Node> openList = new List<Node>();
-    List<Node> closedList = new List<Node>();
-
     [Header("Dependecies")]
     [SerializeField] private Grid _grid;
 
-    [Header("Start | End")]
-    public Vector3Int startNode;
-    public Vector3Int endNode;
-
-    [Header("Grid settings")]
-    public int gridWidth;
-    public int gridHeight;
-
-    [Header("Display gizmos")]
-    public bool displayGizmos;
+    Node[,,] _nodeGrid;
+    List<Node> _backtrackedPath = new List<Node>();
+    Vector3Int _endNode;
+    int _gridWidth;
+    int _gridHeight;
 
     private void Start()
     {
-        gridWidth = _grid.GridSize.x;
-        gridHeight = _grid.GridSize.y;
-        CreateGrid();
-    }
-
-    public float RoundToMultiple(float value, float roundTo)
-    {
-        return Mathf.RoundToInt(value / roundTo) * roundTo;
+        _gridWidth = _grid.GridSize.x;
+        _gridHeight = _grid.GridSize.y;
     }
 
     void Update()
     {
         var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
         //clamp to grid positions
         var clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
             RoundToMultiple(pos.y, _grid.CellSize));
 
         if (Input.GetKeyDown(KeyCode.P))
         {
+            CreateGrid();
             StopAllCoroutines();
 
-            backtrackedPath.Clear();
-            openList.Clear();
-            closedList.Clear();
+            _backtrackedPath.Clear();
 
-            endNode = new Vector3Int((int)clampedValue.x, (int)clampedValue.y, 0);
+            _endNode = new Vector3Int((int)clampedValue.x, (int)clampedValue.y, 0);
 
-            FindPath(endNode);
-            StartCoroutine(MoveToTarget(backtrackedPath));
+            FindPath(_endNode);
+            StartCoroutine(MoveToTarget(_backtrackedPath));
         }
     }
 
+    /// <summary>
+    /// Move the NPC to the target (This is just for visualisation purposes, needs to be replanced with actual movement system)
+    /// </summary>
     IEnumerator MoveToTarget(List<Node> path)
     {
         for (int i = path.Count - 1; i >= 0; i--)
@@ -70,9 +55,12 @@ public class NPCController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Find the path from current position to the end node
+    /// </summary>
     void FindPath(Vector3Int destination)
     {
-        int arraySize = gridHeight * gridWidth;
+        int arraySize = _gridHeight * _gridWidth;
 
         // Declare the variables
         NativeHashMap<Vector3Int, Node> _gridNodes = new NativeHashMap<Vector3Int, Node>(arraySize, Allocator.TempJob);
@@ -83,7 +71,7 @@ public class NPCController : MonoBehaviour
         NativeArray<int> _backtrackedPathLength = new NativeArray<int>(1, Allocator.TempJob);
 
         // Add all nodes in the generated grid to the NativeHashMap (Replace this with cody's grid system)
-        foreach (var item in grid)
+        foreach (var item in _nodeGrid)
         {
             _gridNodes.Add(item.position, item);
         }
@@ -95,8 +83,8 @@ public class NPCController : MonoBehaviour
             openList = _openList,
             closedList = _closedList,
             neighbourOffsets = _neighbourOffsets,
-            startNode = grid[(int)transform.position.x, (int)transform.position.y, (int)transform.position.z],
-            endNode = grid[destination.x, destination.y, destination.z],
+            startNode = _nodeGrid[(int)transform.position.x, (int)transform.position.y, (int)transform.position.z],
+            endNode = _nodeGrid[destination.x, destination.y, destination.z],
             backtrackedPath = _backtrackedPath,
             backTrackedPathLength = _backtrackedPathLength
         };
@@ -108,18 +96,7 @@ public class NPCController : MonoBehaviour
         // retrieve the backtracked path from the job
         for (int i = 0; i < _backtrackedPathLength[0]; i++)
         {
-            backtrackedPath.Add(_backtrackedPath[i]);
-        }
-
-        // retrieve closed and openlist data for debugging
-        foreach (var item in _closedList)
-        {
-            closedList.Add(item.Value);
-        }
-
-        foreach (var item in _openList)
-        {
-            openList.Add(item.Value);
+            this._backtrackedPath.Add(_backtrackedPath[i]);
         }
 
         // Dispose all the NativeContainers to avoid memory leaks
@@ -136,45 +113,25 @@ public class NPCController : MonoBehaviour
     /// </summary>
     void CreateGrid()
     {
-        grid = new Node[gridWidth, gridHeight, 1];
+        _nodeGrid = new Node[_gridWidth, _gridHeight, 1];
 
         var untraversable = _grid.UnTraversable();
-        for (int x = 0; x < gridWidth; x++)
+        for (int x = 0; x < _gridWidth; x++)
         {
-            for (int y = 0; y < gridHeight; y++)
+            for (int y = 0; y < _gridHeight; y++)
             {
                 Node node = new Node()
                 {
                     position = new Vector3Int(x, y, 0),
-                    traversable = untraversable[x, y]
+                    traversable = !untraversable[x, y]
                 };
-                grid[x, y, 0] = node;
+                _nodeGrid[x, y, 0] = node;
             }
         }
     }
 
-    private void OnDrawGizmosSelected()
+    public float RoundToMultiple(float value, float roundTo)
     {
-        if (!displayGizmos) return;
-
-        Gizmos.DrawWireCube(new Vector3(gridWidth / 2, gridHeight / 2, 0), new Vector3(gridWidth, gridHeight));
-
-        Gizmos.color = Color.cyan;
-        foreach (var item in backtrackedPath)
-        {
-            Gizmos.DrawCube(item.position, Vector3.one);
-        }
-
-        foreach (var item in openList)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawCube(item.position, Vector3.one);
-        }
-
-        foreach (var item in closedList)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawCube(item.position, Vector3.one);
-        }
+        return Mathf.RoundToInt(value / roundTo) * roundTo;
     }
 }

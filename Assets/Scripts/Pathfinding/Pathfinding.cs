@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Unity.Jobs;
 using UnityEngine;
 using Unity.Collections;
@@ -19,11 +18,10 @@ public struct AStar : IJob
 
     public void Execute()
     {
-        Node currentNode = startNode;
-        currentNode.hCost = CalculateHCost(currentNode.position, endNode.position);
-        currentNode.CalculateFCost();
-        openList.Add(currentNode.position, currentNode);
-        int openListCount = 1;
+        Node _currentNode = startNode;
+        _currentNode.hCost = CalculateHCost(_currentNode.position, endNode.position);
+        _currentNode.CalculateFCost();
+        openList.Add(_currentNode.position, _currentNode);
 
         neighbourOffsets[0] = Vector3Int.up;
         neighbourOffsets[1] = Vector3Int.left;
@@ -37,26 +35,26 @@ public struct AStar : IJob
         while (openList.Count() != 0)
         {
             // Assign current node to lowest F cost in open list
-            currentNode = LowestFCostInList(openList, openListCount);
-            closedList.TryAdd(currentNode.position, currentNode);
+            _currentNode = LowestFCostInList(openList);
+            closedList.TryAdd(_currentNode.position, _currentNode);
 
             // Check all neighbours of the current node
             for (int i = 0; i < neighbourOffsets.Length; i++)
             {
-                if (closedList.ContainsKey(currentNode.position + neighbourOffsets[i]) ||
-                    !gridNodes.ContainsKey(currentNode.position + neighbourOffsets[i])) continue;
+                if (closedList.ContainsKey(_currentNode.position + neighbourOffsets[i]) ||
+                    !gridNodes.ContainsKey(_currentNode.position + neighbourOffsets[i])) continue;
 
                 Node neighbour = new Node
                 {
-                    position = currentNode.position + neighbourOffsets[i],
-                    parent = currentNode.position,
-                    gCost = currentNode.gCost + i < 4 ? 10 : 14,
-                    hCost = CalculateHCost(currentNode.position + neighbourOffsets[i], endNode.position),
-                    traversable = gridNodes[currentNode.position + neighbourOffsets[i]].traversable
+                    position = _currentNode.position + neighbourOffsets[i],
+                    parent = _currentNode.position,
+                    gCost = _currentNode.gCost + i < 4 ? 10 : 14,
+                    hCost = CalculateHCost(_currentNode.position + neighbourOffsets[i], endNode.position),
+                    traversable = gridNodes[_currentNode.position + neighbourOffsets[i]].traversable
                 };
                 neighbour.CalculateFCost();
 
-                if (neighbour.traversable) continue;
+                if (!neighbour.traversable) continue;
 
                 if (openList.ContainsKey(neighbour.position) && neighbour.gCost < openList[neighbour.position].gCost)
                 {
@@ -65,14 +63,12 @@ public struct AStar : IJob
                 else if (!openList.ContainsKey(neighbour.position))
                 {
                     openList.TryAdd(neighbour.position, neighbour);
-                    openListCount++;
                 }
             }
-            openList.Remove(currentNode.position);
-            openListCount--;
+            openList.Remove(_currentNode.position);
 
             // Exit out of loop if we reached the end node
-            if (currentNode.position == endNode.position)
+            if (_currentNode.position == endNode.position)
             {
                 BacktrackPath();
                 break;
@@ -93,8 +89,7 @@ public struct AStar : IJob
             while (true)
             {
                 _currentNode = closedList[_currentNode.parent];
-                backtrackedPath[index] = _currentNode;
-                index++;
+                backtrackedPath[index++] = _currentNode;
                 if (_currentNode.position == startNode.position) break;
             }
             backTrackedPathLength[0] = index;
@@ -115,9 +110,8 @@ public struct AStar : IJob
     /// <summary>
     /// Get the lowest f cost in a given list of nodes
     /// </summary>
-    Node LowestFCostInList(NativeHashMap<Vector3Int, Node> nodeList, int nodeListCount)
+    Node LowestFCostInList(NativeHashMap<Vector3Int, Node> nodeList)
     {
-        int count = 0;
         float lowestFcost = float.MaxValue;
         Node currentNode = new Node();
 
@@ -128,8 +122,6 @@ public struct AStar : IJob
                 lowestFcost = item.Value.fCost;
                 currentNode = item.Value;
             }
-            if (count > nodeListCount) break;
-            count++;
         }
         return currentNode;
     }
