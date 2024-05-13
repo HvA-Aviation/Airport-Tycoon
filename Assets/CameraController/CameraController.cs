@@ -43,9 +43,9 @@ public class CameraController : MonoBehaviour
     public void Zoom(float offset)
     {
         float delta = offset * _zoomSpeed;
-        float newZoom = _camera.fieldOfView + delta;
+        float newZoom = _camera.orthographicSize + delta;
         newZoom = Mathf.Clamp(newZoom, _maxZoom, _minZoom);
-        _camera.fieldOfView = newZoom;
+        _camera.orthographicSize = newZoom;
     }
 
     private void OnDrawGizmosSelected()
