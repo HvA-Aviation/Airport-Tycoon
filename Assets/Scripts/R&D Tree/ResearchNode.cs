@@ -24,28 +24,11 @@ public class ResearchNode : MonoBehaviour
         ResearchDone += NodeSetting.UnlockObjects;
         ResearchDone += _treeManager.ResearchFinished;
     }
-
-    private void FixedUpdate() => CheckIfResearchIsDone();
     
     /// <summary>
     /// This function is called when the research is done
     /// </summary>
-    private void ResearchBought() => CurrentSkillState = SkillState.bought;        
-    
-    /// <summary>
-    /// Call this function in the fixedUpdate to check if the research is done
-    /// </summary>
-    private void CheckIfResearchIsDone()
-    {
-        if (CurrentSkillState == SkillState.inDevelopment)
-        {
-            if (ResearchTimer >= NodeSetting.ResearchTime)
-            {
-                if (ResearchDone != null)
-                    ResearchDone();
-            }
-        }
-    }
+    private void ResearchBought() => CurrentSkillState = SkillState.bought;     
 
     /// <summary>
     /// This function is called to set the next nodes active when the research is done
@@ -69,6 +52,12 @@ public class ResearchNode : MonoBehaviour
     {
         if (CurrentSkillState != SkillState.inDevelopment) return;
         ResearchTimer += value;
+
+        if (ResearchTimer >= NodeSetting.ResearchTime)
+        {
+            if (ResearchDone != null)
+                ResearchDone();
+        }
     }
 
     /// <summary>

@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 26105135}
   - component: {fileID: 26105134}
   - component: {fileID: 26105138}
+  - component: {fileID: 26105139}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -238,9 +239,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c48fce10292e6b9499c89903ec27f326, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tree: {fileID: 1178057338}
   _firstAvailableNodes:
   - {fileID: 1350594353}
   ResearchQueue: []
+--- !u!114 &26105139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 26105133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bd5d78d59b39854992f1c2b06138f94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _showTreeButton: 112
+  _rdTreeManager: {fileID: 26105138}
 --- !u!224 &94704959 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4918524161634474607, guid: 293e09816859fd748a6d86fdd3b86851,

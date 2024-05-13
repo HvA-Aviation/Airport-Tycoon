@@ -683,6 +683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fe489ab3bf6eb74fbd81157e2746fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _treeManager: {fileID: 0}
 --- !u!114 &2944279349900298504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -695,7 +696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc40cdf5a5364154da2abe38b143cf32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _researchNode: {fileID: 0}
+  _researchNode: {fileID: 4918524161634474595}
   _treeManager: {fileID: 0}
 --- !u!114 &1579861060593764006
 MonoBehaviour:
