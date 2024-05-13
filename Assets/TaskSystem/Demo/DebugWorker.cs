@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// Create a worker and derive it from the Worker class.
 public class DebugWorker : Worker
 {
     [SerializeField]
@@ -7,6 +8,7 @@ public class DebugWorker : Worker
 
     private void Start()
     {
+        // Register it to the task system by setting it available.
         _taskSystemContainer.GetTaskSystem().SetAvailable(this);
     }
 
