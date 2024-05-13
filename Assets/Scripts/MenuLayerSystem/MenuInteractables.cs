@@ -5,12 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(CanvasGroup))]
 public class MenuInteractables : MonoBehaviour
 {
+    [SerializeField] private UIManager _uiManager;
     private CanvasGroup _canvasGroup;
 
     private void Start()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
 
-        UIManager.Instance.CanvasGroups.Add(_canvasGroup);
+        _uiManager.CanvasGroups.Add(_canvasGroup);
     }
 }

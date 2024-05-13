@@ -486,6 +486,7 @@ GameObject:
   - component: {fileID: 1418025178}
   - component: {fileID: 1418025177}
   - component: {fileID: 1418025176}
+  - component: {fileID: 1418025180}
   - component: {fileID: 1418025179}
   m_Layer: 5
   m_Name: Menu1
@@ -528,6 +529,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _menuGFX: {fileID: 592951137}
+  _uiManager: {fileID: 166694899}
   PressEnableUIButton:
     m_PersistentCalls:
       m_Calls: []
@@ -543,6 +545,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34d5f6eb0da2f5248a9ed0390fe854cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _uiManager: {fileID: 0}
 --- !u!225 &1418025178
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -567,8 +570,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b642f31f7c1ec3e41a30e21f8ae12de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dissableEnableScreen: 275
+  _enableScreen: 275
+  _dissableScreen: 276
   _enableUI: {fileID: 1418025176}
+  _dissableUI: {fileID: 1418025180}
+--- !u!114 &1418025180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418025174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30136c66f04e3014fbcbb517516173c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _menuGFX: {fileID: 592951137}
+  _uiManager: {fileID: 166694899}
+  PressDissableUIButton:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1519529072
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class DissableUI : MonoBehaviour
 {
     [SerializeField] private GameObject _menuGFX;
+    [SerializeField] private UIManager _uiManager;
     [HideInInspector] public UnityEvent PressDissableUIButton = new UnityEvent();
     private void Awake()
     {
@@ -29,7 +31,7 @@ public class DissableUI : MonoBehaviour
     /// </summary>
     private void SetNewInteractable()
     {
-        var child = transform.parent.GetChild(UIManager.Instance.CanvasGroups.Count - 1);
+        var child = transform.parent.GetChild(_uiManager.CanvasGroups.Count - 1);
 
         if (child.TryGetComponent<CanvasGroup>(out CanvasGroup thisGroup))
             thisGroup.interactable = true;

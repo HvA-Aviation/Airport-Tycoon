@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class EnableUI : MonoBehaviour
 {    
     [SerializeField] private GameObject _menuGFX;
-
+    [SerializeField] private UIManager _uiManager;
     [HideInInspector]public UnityEvent PressEnableUIButton = new UnityEvent();
 
     private void Awake()
@@ -31,7 +31,7 @@ public class EnableUI : MonoBehaviour
     /// </summary>
     private void DeactivateInteractables()
     {
-        foreach (CanvasGroup group in UIManager.Instance.CanvasGroups)
+        foreach (CanvasGroup group in _uiManager.CanvasGroups)
             group.interactable = false;
                  
         if(TryGetComponent<CanvasGroup>(out CanvasGroup thisGroup))
