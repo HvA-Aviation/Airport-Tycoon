@@ -1,6 +1,7 @@
 using Unity.Jobs;
 using UnityEngine;
 using Unity.Collections;
+using Unity.Burst;
 
 public struct AStar : IJob
 {
@@ -48,7 +49,7 @@ public struct AStar : IJob
                 {
                     position = _currentNode.position + neighbourOffsets[i],
                     parent = _currentNode.position,
-                    gCost = _currentNode.gCost + i < 4 ? 10 : 14,
+                    gCost = _currentNode.gCost + (i < 4 ? 10 : 14),
                     hCost = CalculateHCost(_currentNode.position + neighbourOffsets[i], endNode.position),
                     traversable = gridNodes[_currentNode.position + neighbourOffsets[i]].traversable
                 };
@@ -88,7 +89,8 @@ public struct AStar : IJob
             int index = 1;
             while (true)
             {
-                _currentNode = closedList[_currentNode.parent];
+                if (index >= backtrackedPath.Length) break;
+                closedList.TryGetValue(_currentNode.parent, out _currentNode);
                 backtrackedPath[index++] = _currentNode;
                 if (_currentNode.position == startNode.position) break;
             }

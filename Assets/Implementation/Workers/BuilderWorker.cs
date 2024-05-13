@@ -39,7 +39,7 @@ namespace Implementation.Workers
         private IEnumerator CheckReached(Vector3Int target, Action onReachedPosition, Action onDone)
         {
             _npcController.SetTarget(new Vector3Int(target.x, target.y, 0));
-            while (!_npcController.ReachedTarget)
+            while (!_npcController.PathCompleted)
             {
                 //Checks if task is still needed
                 if (_grid.Get(target) == -1)

@@ -3,17 +3,27 @@ using Unity.Collections;
 using System.Collections.Generic;
 using Unity.Jobs;
 using System.Collections;
+using System.Linq;
 
 public class NPCController : MonoBehaviour
 {
-    [Header("Dependecies")] [SerializeField]
-    private Grid _grid;
+    [Header("Dependecies")]
+    [SerializeField] private Grid _grid;
+    [SerializeField] private bool _drawGizmos;
+
+    [Header("Movement variables")]
+    [SerializeField] float _moveSpeed = 1f;
 
     Node[,,] _nodeGrid;
     List<Node> _backtrackedPath = new List<Node>();
-    Vector3Int _endNode;
+    [SerializeField] Vector3Int _endNode;
     int _gridWidth;
     int _gridHeight;
+    [SerializeField] bool _pathCompleted = true;
+    [SerializeField] Node[] open;
+    [SerializeField] Node[] closed;
+
+    public bool PathCompleted => _pathCompleted;
 
     private void Start()
     {
@@ -28,7 +38,7 @@ public class NPCController : MonoBehaviour
         //clamp to grid positions
         var clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
             RoundToMultiple(pos.y, _grid.CellSize));
-        
+
         return new Vector3Int((int)clampedValue.x, (int)clampedValue.y, 0);
     }
 
@@ -40,7 +50,7 @@ public class NPCController : MonoBehaviour
         var clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
             RoundToMultiple(pos.y, _grid.CellSize));
 
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P) & _pathCompleted)
         {
             CreateGrid();
             StopAllCoroutines();
@@ -71,22 +81,23 @@ public class NPCController : MonoBehaviour
         StartCoroutine(MoveToTarget(_backtrackedPath));
     }
 
-    private bool _reachedTarget;
-    public bool ReachedTarget => _reachedTarget;
-    
     /// <summary>
     /// Move the NPC to the target (This is just for visualisation purposes, needs to be replanced with actual movement system)
     /// </summary>
     private IEnumerator MoveToTarget(List<Node> path)
     {
-        _reachedTarget = false;
+        _pathCompleted = false;
         for (int i = path.Count - 1; i >= 0; i--)
         {
+            while (Vector3.Distance(path[i].position, transform.position) > 0.1f)
+            {
+                Vector3 direction = path[i].position - transform.position;
+                transform.position += direction.normalized * _moveSpeed * Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
             transform.position = path[i].position;
-            yield return new WaitForSeconds(0.1f);
         }
-
-        _reachedTarget = true;
+        _pathCompleted = true;
     }
 
     /// <summary>
@@ -103,7 +114,7 @@ public class NPCController : MonoBehaviour
         NativeHashMap<Vector3Int, Node> _closedList =
             new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
         NativeArray<Vector3Int> _neighbourOffsets = new NativeArray<Vector3Int>(8, Allocator.TempJob);
-        NativeArray<Node> _backtrackedPath = new NativeArray<Node>(arraySize / 2, Allocator.TempJob);
+        NativeArray<Node> _backtrackedPath = new NativeArray<Node>(arraySize, Allocator.TempJob);
         NativeArray<int> _backtrackedPathLength = new NativeArray<int>(1, Allocator.TempJob);
 
         // Add all nodes in the generated grid to the NativeHashMap (Replace this with cody's grid system)
@@ -134,6 +145,9 @@ public class NPCController : MonoBehaviour
         {
             this._backtrackedPath.Add(_backtrackedPath[i]);
         }
+
+        open = _openList.GetValueArray(Allocator.Temp).ToArray();
+        closed = _closedList.GetValueArray(Allocator.Temp).ToArray();
 
         // Dispose all the NativeContainers to avoid memory leaks
         _gridNodes.Dispose();
@@ -169,5 +183,28 @@ public class NPCController : MonoBehaviour
     public float RoundToMultiple(float value, float roundTo)
     {
         return Mathf.RoundToInt(value / roundTo) * roundTo;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!_drawGizmos) return;
+
+        foreach (var item in open)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawCube(item.position, Vector3.one);
+        }
+
+        foreach (var item in closed)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawCube(item.position, Vector3.one);
+        }
+
+        foreach (var item in _backtrackedPath)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawCube(item.position, Vector3.one);
+        }
     }
 }

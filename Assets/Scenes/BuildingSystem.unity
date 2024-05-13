@@ -395,6 +395,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 327049622}
+  _drawGizmos: 0
+  _moveSpeed: 3
+  _endNode: {x: 0, y: 0, z: 0}
+  _pathCompleted: 1
+  open: []
+  closed: []
 --- !u!212 &162981198
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -840,7 +846,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _atlas: {fileID: 11400000, guid: 91fa229bfdc3991469f7ded3e05287e2, type: 2}
   _tilemap: {fileID: 488230465}
-  _gridSize: {x: 13, y: 7, z: 3}
+  _gridSize: {x: 20, y: 15, z: 3}
   _cellSize: 1
 --- !u!4 &327049623
 Transform:
@@ -2008,7 +2014,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2242,6 +2248,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 327049622}
+  _drawGizmos: 1
+  _moveSpeed: 3
+  _endNode: {x: 0, y: 0, z: 0}
+  _pathCompleted: 1
+  open: []
+  closed: []
 --- !u!4 &1240337498
 Transform:
   m_ObjectHideFlags: 0
@@ -2249,7 +2261,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1240337495}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
