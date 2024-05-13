@@ -72,9 +72,9 @@ public class ResearchNode : MonoBehaviour
     }
 
     /// <summary>
-    /// This function is called to pause the research
+    /// This function is called to pause the research or to set nodes available
     /// </summary>
-    [ContextMenu("Available")]public void PauseResearch() => CurrentSkillState = SkillState.available;
+    [ContextMenu("Available")]public void SetNodeAvailable() => CurrentSkillState = SkillState.available;
 
     /// <summary>
     /// This function is called when you want to start the research
