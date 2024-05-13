@@ -6,29 +6,25 @@ using UnityEngine.UI;
 public class ResearchNode : MonoBehaviour
 {
     [SerializeField] private RDTreeManager _treeManager;
-    public float ResearchTimer { get; private set; }
+    public float ResearchValue { get; private set; }
 
     public delegate void ResearchDoneEvent();
-    public ResearchDoneEvent ResearchDone { get; set; }
+    public ResearchDoneEvent ResearchDone;
 
     public ResearchNodeSetting NodeSetting {  get; private set; }
 
-    public SkillState CurrentSkillState { get;  set; }
+    public ResearchStates CurrentResearchState { get;  private set; }
 
     private void Start()
     {
         NodeSetting = GetComponent<ResearchNodeSetting>();
+        _treeManager.AllNodes.Add(this);    
 
-        ResearchDone += ResearchBought;
+        ResearchDone += SetResearchBought;
         ResearchDone += SetNextStatesInTree;
         ResearchDone += NodeSetting.UnlockObjects;
         ResearchDone += _treeManager.ResearchFinished;
     }
-    
-    /// <summary>
-    /// This function is called when the research is done
-    /// </summary>
-    private void ResearchBought() => CurrentSkillState = SkillState.bought;     
 
     /// <summary>
     /// This function is called to set the next nodes active when the research is done
@@ -37,9 +33,10 @@ public class ResearchNode : MonoBehaviour
     {
         foreach (var connectedNode in NodeSetting.ConnectedResearchNodes)
         {
-            if (connectedNode == null) continue;
+            if (connectedNode == null) 
+                continue;
 
-            connectedNode.CurrentSkillState = SkillState.available;
+            connectedNode.CurrentResearchState = ResearchStates.available;
             connectedNode.GetComponent<TreeNodeDemo>().NodeStates();
         }
     }
@@ -47,13 +44,16 @@ public class ResearchNode : MonoBehaviour
     /// <summary>
     /// Call this function when you want the research to be developed
     /// </summary>
-    /// <param name="value">The value you want to add to the time</param>
-    public void AddTime(float value)
+    /// <param name="value">The amount you want to add to the researchvalue
+    /// </param>
+    public void AddValue(float value)
     {
-        if (CurrentSkillState != SkillState.inDevelopment) return;
-        ResearchTimer += value;
+        if (CurrentResearchState != ResearchStates.inDevelopment) 
+            return;
 
-        if (ResearchTimer >= NodeSetting.ResearchTime)
+        ResearchValue += value;
+
+        if (ResearchValue >= NodeSetting.ResearchCompletionValue)
         {
             if (ResearchDone != null)
                 ResearchDone();
@@ -63,20 +63,25 @@ public class ResearchNode : MonoBehaviour
     /// <summary>
     /// This function is called to pause the research or to set nodes available
     /// </summary>
-    [ContextMenu("Available")]public void SetNodeAvailable() => CurrentSkillState = SkillState.available;
+    public void SetAvailableAvailable() => CurrentResearchState = ResearchStates.available;
+   
+    /// <summary>
+    /// This function is called to set the research in development
+    /// </summary>
+    public void SetResearchInDevelopment() => CurrentResearchState = ResearchStates.inDevelopment;
+
+    /// <summary>
+    /// This function will be called when the research states need to be set to bought
+    /// </summary>
+    public void SetResearchBought() => CurrentResearchState = ResearchStates.bought;
 
     /// <summary>
     /// This function is called when you want to start the research
     /// </summary>
-    public void StartResearch() 
-    {
-        if(CurrentSkillState != SkillState.available) return;
-        _treeManager.ChooseNewResearch(this);
-        CurrentSkillState = SkillState.inDevelopment; 
-    }
+    public void StartResearch() => _treeManager.StartNewResearch(this);    
 
     /// <summary>
-    /// All the states from the research
+    /// All the states for the research
     /// </summary>
-    public enum SkillState { notAvailable, available, inDevelopment, bought }
+    public enum ResearchStates { notAvailable, available, inDevelopment, bought }
 }

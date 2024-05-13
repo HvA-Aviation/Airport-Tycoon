@@ -15,7 +15,6 @@ public class TreeNodeDemo : MonoBehaviour
 
     private void Start()
     {
-        NodeStates();
         QueueStates();
     }
 
@@ -26,25 +25,25 @@ public class TreeNodeDemo : MonoBehaviour
 
     private void FixedUpdate()
     {
-        slider.value = researchNode.ResearchTimer;
+        slider.value = researchNode.ResearchValue;
     }
 
     public void NodeStates()
     {
-        switch (researchNode.CurrentSkillState)
+        switch (researchNode.CurrentResearchState)
         {
-            case ResearchNode.SkillState.notAvailable:
+            case ResearchNode.ResearchStates.notAvailable:
                 ActivateButton.interactable = false;
                 gameObject.SetActive(false);
                 break;
-            case ResearchNode.SkillState.available:
+            case ResearchNode.ResearchStates.available:
                 ActivateButton.interactable = true;
                 gameObject.SetActive(true);
                 break;
-            case ResearchNode.SkillState.inDevelopment:
+            case ResearchNode.ResearchStates.inDevelopment:
                 ActivateButton.interactable = false;
                 break;
-            case ResearchNode.SkillState.bought:
+            case ResearchNode.ResearchStates.bought:
                 ActivateButton.interactable = false;
                 break;
         }
@@ -59,22 +58,19 @@ public class TreeNodeDemo : MonoBehaviour
                 break;
             case ResearchNodeQueue.QueueStates.InQueue:
                 QueueButton.interactable = false;
-                break;
-            case ResearchNodeQueue.QueueStates.FinishedQueue:
-                QueueButton.interactable = false;
-                break;
+                break;            
         }
     }
     public void ClickActivateButton()
     {
-        slider.maxValue = researchNode.NodeSetting.ResearchTime;
+        slider.maxValue = researchNode.NodeSetting.ResearchCompletionValue;
         researchNode.StartResearch();
         NodeStates();
     }
 
     public void ClickQueueButton()
     {
-        slider.maxValue = researchNode.NodeSetting.ResearchTime;
+        slider.maxValue = researchNode.NodeSetting.ResearchCompletionValue;
         researchQueue.AddNodeToQueue();
         QueueStates();
     }

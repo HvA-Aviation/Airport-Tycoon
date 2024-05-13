@@ -7,16 +7,16 @@ public class ResearchNodeSetting : MonoBehaviour
 {
     [SerializeField] private string _title;
     [SerializeField] private string _description;
-    [SerializeField] private int _cost;
-    [SerializeField] private int _researchTime;
+    [SerializeField] private int _researchPrice;
+    [SerializeField] private int _researchCompletionValue;
 
     [SerializeField] private List<ResearchNode> _connectedResearchNodes;
     [SerializeField] private List<GameObject> _objectsToUnlock;
 
     public string Title => _title;
     public string Description => _description;
-    public int ResearchCost => _cost;
-    public int ResearchTime => _researchTime;
+    public int ResearchPrice => _researchPrice;
+    public int ResearchCompletionValue => _researchCompletionValue;
     public List<ResearchNode> ConnectedResearchNodes => _connectedResearchNodes;
 
     /// <summary>
