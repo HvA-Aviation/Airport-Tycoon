@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class RDTreeManager : MonoBehaviour
 {
     [SerializeField] private List<ResearchNode> _firstAvailableNodes = new List<ResearchNode>();
-         
+     
     public ResearchNode CurrentResearching { get; private set; }
     public List<ResearchNode> AllNodes { get; set; }
     public List<ResearchNode> ResearchQueue {  get; private set; }
@@ -84,14 +85,12 @@ public class RDTreeManager : MonoBehaviour
     /// This method needs to be called when you want to add the research to the queue
     /// </summary>
     /// <param name="research">The research that needs to be addeed to the queue</param>
-    public void AddResearchToQueue(ResearchNodeQueue research)
+    public void AddResearchToQueue(ResearchNode research)
     {
-        if (ResearchQueue.Contains(research.ThisResearchNode))
+        if (ResearchQueue.Contains(research))
             return;     
         
-        ResearchQueue.Add(research.ThisResearchNode);
-
-        research.SetQueueStateInQueue();
+        ResearchQueue.Add(research);
 
         //Check to see if research needs to start when it is added in the queue
         if (CurrentResearching == null)
@@ -102,12 +101,12 @@ public class RDTreeManager : MonoBehaviour
     /// This method nees to be called when you want to remove a researchnode from the queue
     /// </summary>
     /// <param name="research"></param>
-    public void RemoveResearchFromQueue(ResearchNodeQueue research)
+    public void RemoveResearchFromQueue(ResearchNode research)
     {
-        if (research.CurrentState != ResearchNodeQueue.QueueStates.InQueue && !ResearchQueue.Contains(research.ThisResearchNode))
+        if (!research.IsResearchInQueue && !ResearchQueue.Contains(research))
             return;
 
-        ResearchQueue.Remove(research.ThisResearchNode);
+        ResearchQueue.Remove(research);
     }
 
     /// <summary>

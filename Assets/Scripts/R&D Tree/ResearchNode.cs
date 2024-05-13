@@ -8,28 +8,36 @@ public class ResearchNode : MonoBehaviour
     [SerializeField] private RDTreeManager _treeManager;
     public float ResearchValue { get; private set; }
 
-    public delegate void ResearchDoneEvent();
-    public ResearchDoneEvent ResearchDone;
+    public bool IsResearchInQueue { get; private set; } 
 
     public ResearchNodeSetting NodeSetting {  get; private set; }
 
     public ResearchStates CurrentResearchState { get;  private set; }
 
+    [HideInInspector]public UnityEvent ResearchDoneEvent;
+
     private void Start()
     {
         NodeSetting = GetComponent<ResearchNodeSetting>();
         _treeManager.AllNodes.Add(this);    
+    }   
 
-        ResearchDone += SetResearchBought;
-        ResearchDone += SetNextStatesInTree;
-        ResearchDone += NodeSetting.UnlockObjects;
-        ResearchDone += _treeManager.ResearchFinished;
+    /// <summary>
+    /// This function is called when the research is finished
+    /// </summary>
+    public void ResearchDone()
+    {
+        ResearchDoneEvent?.Invoke();
+        SetResearchBought();
+        SetNextStatesInTree();
+        RemoveResearchFromQueue();
+        _treeManager.ResearchFinished();
     }
 
     /// <summary>
     /// This function is called to set the next nodes active when the research is done
     /// </summary>
-    private void SetNextStatesInTree()
+    public void SetNextStatesInTree()
     {
         foreach (var connectedNode in NodeSetting.ConnectedResearchNodes)
         {
@@ -37,6 +45,8 @@ public class ResearchNode : MonoBehaviour
                 continue;
 
             connectedNode.CurrentResearchState = ResearchStates.available;
+
+            //Deleted this code when the visualisation of the tree is being made
             connectedNode.GetComponent<TreeNodeDemo>().NodeStates();
         }
     }
@@ -54,31 +64,40 @@ public class ResearchNode : MonoBehaviour
         ResearchValue += value;
 
         if (ResearchValue >= NodeSetting.ResearchCompletionValue)
-        {
-            if (ResearchDone != null)
-                ResearchDone();
-        }
+            ResearchDone();
     }
+    
+    public void SetResearchNotAvailable() => CurrentResearchState = ResearchStates.notAvailable;
 
-    /// <summary>
-    /// This function is called to pause the research or to set nodes available
-    /// </summary>
     public void SetAvailableAvailable() => CurrentResearchState = ResearchStates.available;
-   
-    /// <summary>
-    /// This function is called to set the research in development
-    /// </summary>
+       
     public void SetResearchInDevelopment() => CurrentResearchState = ResearchStates.inDevelopment;
-
-    /// <summary>
-    /// This function will be called when the research states need to be set to bought
-    /// </summary>
+       
     public void SetResearchBought() => CurrentResearchState = ResearchStates.bought;
 
     /// <summary>
     /// This function is called when you want to start the research
     /// </summary>
-    public void StartResearch() => _treeManager.StartNewResearch(this);    
+    public void StartResearch() => _treeManager.StartNewResearch(this);
+
+    /// <summary>
+    /// This function is called when the research is finished
+    /// The research will then be removed from the queue
+    /// </summary>
+    public void RemoveResearchFromQueue() 
+    {
+        IsResearchInQueue = false;
+        _treeManager.RemoveResearchFromQueue(this); 
+    }
+
+    /// <summary>
+    /// This function will be called when you want to add research to the queue
+    /// </summary>
+    public void AddResearchToQueue() 
+    { 
+        IsResearchInQueue = true;
+        _treeManager.AddResearchToQueue(this); 
+    }
 
     /// <summary>
     /// All the states for the research

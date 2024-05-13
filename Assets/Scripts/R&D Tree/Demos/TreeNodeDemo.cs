@@ -10,13 +10,7 @@ public class TreeNodeDemo : MonoBehaviour
     public Slider slider;
 
     public ResearchNode researchNode;
-    public ResearchNodeQueue researchQueue;
     public RDTreeManager treeManager;
-
-    private void Start()
-    {
-        QueueStates();
-    }
 
     private void Update()
     {
@@ -47,20 +41,18 @@ public class TreeNodeDemo : MonoBehaviour
                 ActivateButton.interactable = false;
                 break;
         }
+
+        if (!researchNode.IsResearchInQueue)
+        {
+            if(researchNode.CurrentResearchState == ResearchNode.ResearchStates.available)
+                QueueButton.interactable = true;
+            else
+                QueueButton.interactable = false;
+        }
+        else
+            QueueButton.interactable = false;
     }
 
-    public void QueueStates()
-    {
-        switch (researchQueue.CurrentState)
-        {
-            case ResearchNodeQueue.QueueStates.NotInQueue:
-                QueueButton.interactable = true;
-                break;
-            case ResearchNodeQueue.QueueStates.InQueue:
-                QueueButton.interactable = false;
-                break;            
-        }
-    }
     public void ClickActivateButton()
     {
         slider.maxValue = researchNode.NodeSetting.ResearchCompletionValue;
@@ -71,8 +63,8 @@ public class TreeNodeDemo : MonoBehaviour
     public void ClickQueueButton()
     {
         slider.maxValue = researchNode.NodeSetting.ResearchCompletionValue;
-        researchQueue.AddNodeToQueue();
-        QueueStates();
+        researchNode.AddResearchToQueue();
+        NodeStates();
     }
 
 }

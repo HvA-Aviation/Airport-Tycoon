@@ -11,19 +11,10 @@ public class ResearchNodeSetting : MonoBehaviour
     [SerializeField] private int _researchCompletionValue;
 
     [SerializeField] private List<ResearchNode> _connectedResearchNodes;
-    [SerializeField] private List<GameObject> _objectsToUnlock;
 
     public string Title => _title;
     public string Description => _description;
     public int ResearchPrice => _researchPrice;
     public int ResearchCompletionValue => _researchCompletionValue;
-    public List<ResearchNode> ConnectedResearchNodes => _connectedResearchNodes;
-
-    /// <summary>
-    /// Call this function when the research is done and the objects needs to be unlocked
-    /// </summary>
-    public void UnlockObjects()
-    {
-
-    }
+    public List<ResearchNode> ConnectedResearchNodes => _connectedResearchNodes;    
 }
