@@ -6,8 +6,8 @@ using System.Collections;
 
 public class NPCController : MonoBehaviour
 {
-    [Header("Dependecies")]
-    [SerializeField] private Grid _grid;
+    [Header("Dependecies")] [SerializeField]
+    private Grid _grid;
 
     Node[,,] _nodeGrid;
     List<Node> _backtrackedPath = new List<Node>();
@@ -19,6 +19,17 @@ public class NPCController : MonoBehaviour
     {
         _gridWidth = _grid.GridSize.x;
         _gridHeight = _grid.GridSize.y;
+    }
+
+    public Vector3Int GetGridPosition()
+    {
+        var pos = transform.position;
+
+        //clamp to grid positions
+        var clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
+            RoundToMultiple(pos.y, _grid.CellSize));
+        
+        return new Vector3Int((int)clampedValue.x, (int)clampedValue.y, 0);
     }
 
     void Update()
@@ -43,16 +54,39 @@ public class NPCController : MonoBehaviour
         }
     }
 
+    public void SetTarget(Vector3Int position)
+    {
+        //clamp to grid positions
+        var clampedValue = new Vector2(RoundToMultiple(position.x, _grid.CellSize),
+            RoundToMultiple(position.y, _grid.CellSize));
+
+        CreateGrid();
+        StopAllCoroutines();
+
+        _backtrackedPath.Clear();
+
+        _endNode = new Vector3Int((int)clampedValue.x, (int)clampedValue.y, 0);
+
+        FindPath(_endNode);
+        StartCoroutine(MoveToTarget(_backtrackedPath));
+    }
+
+    private bool _reachedTarget;
+    public bool ReachedTarget => _reachedTarget;
+    
     /// <summary>
     /// Move the NPC to the target (This is just for visualisation purposes, needs to be replanced with actual movement system)
     /// </summary>
-    IEnumerator MoveToTarget(List<Node> path)
+    private IEnumerator MoveToTarget(List<Node> path)
     {
+        _reachedTarget = false;
         for (int i = path.Count - 1; i >= 0; i--)
         {
             transform.position = path[i].position;
             yield return new WaitForSeconds(0.1f);
         }
+
+        _reachedTarget = true;
     }
 
     /// <summary>
@@ -64,8 +98,10 @@ public class NPCController : MonoBehaviour
 
         // Declare the variables
         NativeHashMap<Vector3Int, Node> _gridNodes = new NativeHashMap<Vector3Int, Node>(arraySize, Allocator.TempJob);
-        NativeHashMap<Vector3Int, Node> _openList = new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
-        NativeHashMap<Vector3Int, Node> _closedList = new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
+        NativeHashMap<Vector3Int, Node> _openList =
+            new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
+        NativeHashMap<Vector3Int, Node> _closedList =
+            new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
         NativeArray<Vector3Int> _neighbourOffsets = new NativeArray<Vector3Int>(8, Allocator.TempJob);
         NativeArray<Node> _backtrackedPath = new NativeArray<Node>(arraySize / 2, Allocator.TempJob);
         NativeArray<int> _backtrackedPathLength = new NativeArray<int>(1, Allocator.TempJob);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Building;
 using Building.Datatypes;
+using Managers;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TileData = Building.Datatypes.TileData;
@@ -141,6 +142,9 @@ public class Grid : MonoBehaviour
 
     public bool BuildTile(Vector3Int gridVector, float speed)
     {
+        if (Get(gridVector) == -1)
+            return true;
+        
         var buildTiles = new List<Vector3Int>() { gridVector };
         for (int i = 0; i < _cellGroup.Count; i++)
         {
@@ -196,6 +200,8 @@ public class Grid : MonoBehaviour
 
             _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
 
+            GameManager.Instance.TaskManager.BuilderTaskSystem.GetTaskSystem().AddTask(new BuildTask(gridVector));
+            
             _mapUpdated = true;
             return true;
         }
@@ -256,10 +262,12 @@ public class Grid : MonoBehaviour
             cellData.Rotation = rotation;
 
             _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
+            
 
             _mapUpdated = true;
         }
 
+        GameManager.Instance.TaskManager.BuilderTaskSystem.GetTaskSystem().AddTask(new BuildTask(gridVectors[0]));
         _cellGroup.Add(gridVectors);
 
         return true;
@@ -284,6 +292,7 @@ public class Grid : MonoBehaviour
             {
                 _cells[item.x, item.y, item.z].Tile = -1;
                 _cells[item.x, item.y, item.z].Rotation = 0;
+                _cells[item.x, item.y, item.z].BuildPercentage = 0.4f;
             }
 
             //remove from group
