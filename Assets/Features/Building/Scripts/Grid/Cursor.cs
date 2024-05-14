@@ -12,6 +12,7 @@ namespace Features.Building.Scripts.Grid
         private Grid _grid;
         [SerializeField] private Tilemap _tilemap;
 
+        [SerializeField] private Tile _eraser;
         [SerializeField] private Color _validColor;
         [SerializeField] private Color _invalidColor;
 
@@ -156,13 +157,16 @@ namespace Features.Building.Scripts.Grid
 
                 List<SubBuildItem> currentSelectedGroup = new List<SubBuildItem>();
 
+                var tile = _selectedBuilding.BuildItems[0].Tile;
+                
+
                 //get all tiles between the min and the max position
                 for (var x = min.x; x < max.x + 1; x++)
                 {
                     for (var y = min.y; y < max.y + 1; y++)
                     {
-                        currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
-                            new Vector3Int(x, y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
+                       currentSelectedGroup.Add(new SubBuildItem(tile,
+                           new Vector3Int(x, y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
                     }
                 }
 

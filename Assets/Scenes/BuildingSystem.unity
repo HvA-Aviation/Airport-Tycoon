@@ -2701,6 +2701,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tilemap: {fileID: 354013457}
+  _eraser: {fileID: 11400000, guid: 6beb1ab4e709dae439c0411ba173c21d, type: 2}
   _validColor: {r: 0, g: 1, b: 0, a: 0.78431374}
   _invalidColor: {r: 1, g: 0, b: 0, a: 0.78431374}
   _selectedGroup: []
