@@ -10,6 +10,15 @@ public class TreeNodeDemo : MonoBehaviour
     public ResearchNode researchNode;
     public RDTreeManager treeManager;
 
+    private void Start()
+    {
+        foreach (ResearchNode node in researchNode.ConnectedResearchNodes)
+        {
+            researchNode.ResearchDoneEvent.AddListener(node.GetComponent<TreeNodeDemo>().NodeStates);
+            Debug.Log("ADded listener");
+        }
+    }
+
     private void Update()
     {
         NodeStates();

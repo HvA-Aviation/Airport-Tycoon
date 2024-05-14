@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f6e8eeb92023084da9655b3353a37d7, type: 3}
   m_Name: 3
   m_EditorClassIdentifier: 
-  _title: 
-  _description: 
+  _title: 3
+  _description: Soemthing 3
   _researchPrice: 0
-  _researchCompletionValue: 0
-  _connectedResearchNodes: []
+  _researchCompletionValue: 150
