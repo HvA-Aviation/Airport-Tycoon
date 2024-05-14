@@ -21,7 +21,9 @@ namespace Implementation.Workers
 
         public bool IsAvailable(Vector3Int target)
         {
-            return _npcController.IsReachable(target);
+            
+            return _npcController.IsReachable(target) && 
+                   _grid.Get(target) != -1; //TODO Remove this quick fix for removing tasks
         }
 
         public void Build(Vector3Int target, Action onBuilt)
