@@ -18,7 +18,7 @@ namespace Features.Building.Scripts.Demos
 
         private void Select(int index)
         {
-            _cursor.ChangeToBuilding(_buildable[index]);
+            _cursor.ChangeSelectedBuildable(_buildable[index]);
         }
 
     }

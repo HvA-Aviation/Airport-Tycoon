@@ -2664,6 +2664,7 @@ GameObject:
   - component: {fileID: 1474057265}
   - component: {fileID: 1474057266}
   - component: {fileID: 1474057267}
+  - component: {fileID: 1474057268}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Untagged
@@ -2699,11 +2700,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4041a3231c384557bd453694846e8313, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tilemap: {fileID: 354013457}
+  _grid: {fileID: 327049622}
+  _cursorTilemap: {fileID: 354013457}
   _validColor: {r: 0, g: 1, b: 0, a: 0.78431374}
   _invalidColor: {r: 1, g: 0, b: 0, a: 0.78431374}
   _eventSystem: {fileID: 857422073}
-  _selectedBuilding: {fileID: 11400000, guid: add816ad7c0618e45bc6275e18b3444f, type: 2}
+  _currentSelectedBuilding: {fileID: 0}
 --- !u!114 &1474057267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2717,6 +2719,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cursor: {fileID: 1474057266}
+--- !u!114 &1474057268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474057263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec95bf6afd54b24a36e9674f1b83dd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cursor: {fileID: 1474057266}
+  _grid: {fileID: 327049622}
+  _defaultSelectedBuilding: {fileID: 11400000, guid: add816ad7c0618e45bc6275e18b3444f,
+    type: 2}
 --- !u!1 &1691553783
 GameObject:
   m_ObjectHideFlags: 0

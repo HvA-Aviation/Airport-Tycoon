@@ -48,7 +48,7 @@ namespace Features.Building.Scripts.Grid
         }
 
         /// <summary>
-        /// Creates a flattend 2d array to see if it is traversable
+        /// Creates a flattend 2d array to see if the cell position is traversable
         /// </summary>
         /// <returns>A flattend 2d bool array with false as traversable</returns>
         public bool[,] UnTraversable()
@@ -114,7 +114,7 @@ namespace Features.Building.Scripts.Grid
                 {
                     for (int z = 0; z < _gridSize.z; z++)
                     {
-                        var cell = _cells[x, y, z];
+                        CellData cell = _cells[x, y, z];
 
                         Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x),
                             Mathf.RoundToInt(_tilemap.transform.position.y),
@@ -146,7 +146,7 @@ namespace Features.Building.Scripts.Grid
             if (Get(gridVector) == -1)
                 return true;
         
-            var buildTiles = new List<Vector3Int>() { gridVector };
+            List<Vector3Int> buildTiles = new List<Vector3Int>() { gridVector };
             for (int i = 0; i < _cellGroup.Count; i++)
             {
                 if (_cellGroup[i].Contains(gridVector))
@@ -196,7 +196,7 @@ namespace Features.Building.Scripts.Grid
         {
             if (Get(gridVector) == -1)
             {
-                var cellData = _cells[gridVector.x, gridVector.y, gridVector.z];
+                CellData cellData = _cells[gridVector.x, gridVector.y, gridVector.z];
 
                 cellData.Tile = buildIndex;
                 cellData.Rotation = 0;
@@ -286,7 +286,7 @@ namespace Features.Building.Scripts.Grid
             if (!OutOfBounds(gridVector) && Get(gridVector) != -1)
             {
                 //checks if given tile is part of a linked group. If not only add the given position
-                var group = _cellGroup.FirstOrDefault(x => x.Any(j => j == gridVector));
+                List<Vector3Int> group = _cellGroup.FirstOrDefault(x => x.Any(j => j == gridVector));
                 if (group == default)
                     group = new List<Vector3Int>() { gridVector };
 
@@ -354,13 +354,11 @@ namespace Features.Building.Scripts.Grid
             {
                 _cells = new CellData[_gridSize.x, _gridSize.y, _gridSize.z];
             }
-
-
+            
             for (int x = 0; x < _gridSize.x; x++)
             {
                 for (int y = 0; y < _gridSize.y; y++)
                 {
-                    //var origin = new Vector2(x, y) * _cellSize - (new Vector2(_gridSize.x, _gridSize.y) * _cellSize / 2 - Vector2.one * _cellSize / 2);
                     Vector2 origin = new Vector2(x, y) * _cellSize - (Vector2)transform.position;
                     var offset = _cellSize / 2;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Features.Building.Scripts.Datatypes;
 using UnityEngine;
@@ -9,8 +10,8 @@ namespace Features.Building.Scripts.Grid
 {
     public class Cursor : MonoBehaviour
     {
-        private Grid _grid;
-        [SerializeField] private Tilemap _tilemap;
+        [SerializeField] private Grid _grid;
+        [SerializeField] private Tilemap _cursorTilemap;
 
         [SerializeField] private Color _validColor;
         [SerializeField] private Color _invalidColor;
@@ -21,66 +22,25 @@ namespace Features.Building.Scripts.Grid
         private int _rotation = 0;
 
         [SerializeField] private EventSystem _eventSystem;
-        [SerializeField] private BuildableObject _selectedBuilding;
+        [SerializeField] private BuildableObject _currentSelectedBuilding;
+
+        public bool IsEnabled => _cursorTilemap.gameObject.activeSelf;
+        public BrushType BrushType => _currentSelectedBuilding.BrushType;
 
         private void Start()
         {
-            _grid = FindObjectOfType<Grid>();
-
             transform.localScale = Vector3.one * _grid.CellSize;
-
-            ChangeToBuilding(_selectedBuilding);
         }
 
         private void Update()
         {
-            var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            //clamp to grid positions
-            var clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
-                RoundToMultiple(pos.y, _grid.CellSize));
-
-            var position =
-                _grid.ClampedWorldToGridPosition(clampedValue, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer);
-
-            _tilemap.gameObject.SetActive(!_eventSystem.IsPointerOverGameObject());
-
-            if (!_tilemap.gameObject.activeSelf)
-                return;
-
-            if (Input.GetKey(KeyCode.B))
-            {
-                _grid.BuildTile(position, 1f);
-                return;
-            }
-
-            if (Input.GetMouseButton(1) || Input.GetMouseButtonUp(1))
-            {
-                MultiBrushSelect(position, 1);
-            }
-            else
-            {
-                switch (_selectedBuilding.BrushType)
-                {
-                    case BrushType.Multi:
-                        MultiBrushSelect(position, 0);
-                        break;
-                    case BrushType.Outline:
-                        OutlineBrushSelect(position);
-                        break;
-                    case BrushType.Drag:
-                        DragBrush(position);
-                        break;
-                    case BrushType.Single:
-                        SingleBrush(position);
-                        break;
-                }
-            }
+            //enable cursor when over UI
+            _cursorTilemap.gameObject.SetActive(!_eventSystem.IsPointerOverGameObject());
         }
 
         public void Rotate(int direction)
         {
-            if (_selectedBuilding.BrushType != BrushType.Single)
+            if (_currentSelectedBuilding.BrushType != BrushType.Single)
                 return;
 
             if (direction != 0)
@@ -118,21 +78,21 @@ namespace Features.Building.Scripts.Grid
 
         #region brushes
 
-        private void MultiBrushSelect(Vector3Int position, int cursor)
+        public void MultiBrushSelect(Vector3Int position, int mouseButton)
         {
-            if (Input.GetMouseButtonDown(cursor))
+            if (Input.GetMouseButtonDown(mouseButton))
             {
                 //starts selection and sets the origin of the selection
                 _origin = position;
             }
-            else if (Input.GetMouseButtonUp(cursor))
+            else if (Input.GetMouseButtonUp(mouseButton))
             {
                 //place or remove. This ends the selection
-                if (cursor == 0)
+                if (mouseButton == 0)
                 {
                     foreach (var selected in _selectedGroup)
                     {
-                        _grid.Set(selected.GridPosition, _selectedBuilding.BuildItems[0].Tile);
+                        _grid.Set(selected.GridPosition, _currentSelectedBuilding.BuildItems[0].Tile);
                     }
                 }
                 else
@@ -144,10 +104,10 @@ namespace Features.Building.Scripts.Grid
                 }
 
                 //resets the selection 
-                _selectedGroup = new List<SubBuildItem>();
-                _tilemap.ClearAllTiles();
+                _selectedGroup.Clear();
+                _cursorTilemap.ClearAllTiles();
             }
-            else if (Input.GetMouseButton(cursor) && _selectedGroup.Count > 0)
+            else if (Input.GetMouseButton(mouseButton) && _selectedGroup.Count > 0)
             {
                 //gets selection
                 //get the min and the max of the position
@@ -161,21 +121,21 @@ namespace Features.Building.Scripts.Grid
                 {
                     for (var y = min.y; y < max.y + 1; y++)
                     {
-                        currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
-                            new Vector3Int(x, y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
+                        currentSelectedGroup.Add(new SubBuildItem(_currentSelectedBuilding.BuildItems[0].Tile,
+                            new Vector3Int(x, y, (int)_currentSelectedBuilding.BuildItems[0].GridPosition.Layer)));
                     }
                 }
 
-                Hover(Vector3Int.zero, currentSelectedGroup, flipColors: cursor == 1);
+                Hover(Vector3Int.zero, currentSelectedGroup, flipColors: mouseButton == 1);
             }
             else
             {
                 //hover in the default shape
-                Hover(position, _shape, flipColors: cursor == 1);
+                Hover(position, _shape, flipColors: mouseButton == 1);
             }
         }
 
-        private void OutlineBrushSelect(Vector3Int position)
+        public void OutlineBrushSelect(Vector3Int position)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -184,39 +144,39 @@ namespace Features.Building.Scripts.Grid
             else if (Input.GetMouseButtonUp(0))
             {
                 //place or remove. This ends the selection
-                    foreach (var selected in _selectedGroup)
-                    {
-                        _grid.Set(selected.GridPosition, _selectedBuilding.BuildItems[0].Tile);
-                    }
+                foreach (var selected in _selectedGroup)
+                {
+                    _grid.Set(selected.GridPosition, _currentSelectedBuilding.BuildItems[0].Tile);
+                }
 
                 //resets the selection 
                 _selectedGroup = new List<SubBuildItem>();
-                _tilemap.ClearAllTiles();
+                _cursorTilemap.ClearAllTiles();
             }
             else if (Input.GetMouseButton(0) && _selectedGroup.Count > 0)
             {
                 //gets selection
                 //get the min and the max of the position
-                var min = Vector3Int.Min(_origin, position);
-                var max = Vector3Int.Max(_origin, position);
+                Vector3Int min = Vector3Int.Min(_origin, position);
+                Vector3Int max = Vector3Int.Max(_origin, position);
 
                 List<SubBuildItem> currentSelectedGroup = new List<SubBuildItem>();
 
                 //get all tiles between the min and the max position
-                for (var x = min.x; x < max.x + 1; x++)
+                for (int x = min.x; x < max.x + 1; x++)
                 {
-                    currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
-                        new Vector3Int(x, min.y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
-                    currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
-                        new Vector3Int(x, max.y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
+                    currentSelectedGroup.Add(new SubBuildItem(_currentSelectedBuilding.BuildItems[0].Tile,
+                        new Vector3Int(x, min.y, (int)_currentSelectedBuilding.BuildItems[0].GridPosition.Layer)));
+                    currentSelectedGroup.Add(new SubBuildItem(_currentSelectedBuilding.BuildItems[0].Tile,
+                        new Vector3Int(x, max.y, (int)_currentSelectedBuilding.BuildItems[0].GridPosition.Layer)));
                 }
 
-                for (var y = min.y; y < max.y + 1; y++)
+                for (int y = min.y; y < max.y + 1; y++)
                 {
-                    currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
-                        new Vector3Int(min.x, y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
-                    currentSelectedGroup.Add(new SubBuildItem(_selectedBuilding.BuildItems[0].Tile,
-                        new Vector3Int(max.x, y, (int)_selectedBuilding.BuildItems[0].GridPosition.Layer)));
+                    currentSelectedGroup.Add(new SubBuildItem(_currentSelectedBuilding.BuildItems[0].Tile,
+                        new Vector3Int(min.x, y, (int)_currentSelectedBuilding.BuildItems[0].GridPosition.Layer)));
+                    currentSelectedGroup.Add(new SubBuildItem(_currentSelectedBuilding.BuildItems[0].Tile,
+                        new Vector3Int(max.x, y, (int)_currentSelectedBuilding.BuildItems[0].GridPosition.Layer)));
                 }
 
                 Hover(Vector3Int.zero, currentSelectedGroup);
@@ -228,7 +188,7 @@ namespace Features.Building.Scripts.Grid
             }
         }
 
-        private void SingleBrush(Vector3Int position)
+        public void SingleBrush(Vector3Int position)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -255,17 +215,29 @@ namespace Features.Building.Scripts.Grid
             }
         }
 
+        public Vector3Int WorldToGirdPosition(Vector3 worldPosition)
+        {
+            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            //clamp to grid positions
+            Vector2 clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
+                RoundToMultiple(pos.y, _grid.CellSize));
+
+            return _grid.ClampedWorldToGridPosition(clampedValue,
+                (int)_currentSelectedBuilding.BuildItems[0].GridPosition.Layer);
+        }
+
         /// <summary>
         /// Creates a tile on the positions the mouse is hold down
         /// </summary>
         /// <param name="position"></param>
-        private void DragBrush(Vector3Int position)
+        public void DragBrush(Vector3Int position)
         {
             Hover(position, _shape);
 
             if (Input.GetMouseButton(0))
             {
-                _grid.Set(position, _selectedBuilding.BuildItems[0].Tile);
+                _grid.Set(position, _currentSelectedBuilding.BuildItems[0].Tile);
             }
             else if (Input.GetMouseButton(1))
             {
@@ -276,12 +248,13 @@ namespace Features.Building.Scripts.Grid
 
         #endregion
 
-        private void Hover(Vector3Int position, List<SubBuildItem> shapes, bool requireAllAvailable = false, bool flipColors = false)
+        private void Hover(Vector3Int position, List<SubBuildItem> shapes, bool requireAllAvailable = false,
+            bool flipColors = false)
         {
-            //Sets the offset of the whole grid
-            Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x),
-                Mathf.RoundToInt(_tilemap.transform.position.y),
-                Mathf.RoundToInt(_tilemap.transform.position.z));
+            //sets the offset of the whole grid
+            Vector3Int offset = new Vector3Int(Mathf.RoundToInt(_cursorTilemap.transform.position.x),
+                Mathf.RoundToInt(_cursorTilemap.transform.position.y),
+                Mathf.RoundToInt(_cursorTilemap.transform.position.z));
 
             //get the current selection of tiles
             List<SubBuildItem> currentSelectedGroup = new List<SubBuildItem>();
@@ -295,7 +268,7 @@ namespace Features.Building.Scripts.Grid
             {
                 if (!currentSelectedGroup.Any(x => x.GridPosition == gridPosition.GridPosition))
                 {
-                    _tilemap.SetTile(gridPosition.GridPosition - offset, null);
+                    _cursorTilemap.SetTile(gridPosition.GridPosition - offset, null);
                 }
             }
 
@@ -313,12 +286,12 @@ namespace Features.Building.Scripts.Grid
                 }
             }
 
-            var validColor = !flipColors ? _validColor : _invalidColor;
-            var invalidColor = !flipColors ? _invalidColor : _validColor;
-            
+            Color validColor = !flipColors ? _validColor : _invalidColor;
+            Color invalidColor = !flipColors ? _invalidColor : _validColor;
+
             //set the tile on the tilemap
-            foreach (var gridPosition in currentSelectedGroup)
-            {
+            foreach (SubBuildItem gridPosition in currentSelectedGroup)
+            {                
                 TileChangeData tempTile = new TileChangeData()
                 {
                     position = gridPosition.GridPosition - offset,
@@ -329,19 +302,19 @@ namespace Features.Building.Scripts.Grid
 
                 tempTile.transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, _rotation * -90));
                 tempTile.tile = gridPosition.Tile;
-                _tilemap.SetTile(tempTile, true);
+                _cursorTilemap.SetTile(tempTile, true);
             }
 
             _selectedGroup = currentSelectedGroup;
         }
 
-        public void ChangeToBuilding(BuildableObject buildableObject)
+        public void ChangeSelectedBuildable(BuildableObject buildableObject)
         {
             _rotation = 0;
-            _selectedBuilding = buildableObject;
+            _currentSelectedBuilding = buildableObject;
 
             //Create a fresh shape so the rotation is correct and doesn't change the prefab
-            _shape = new List<SubBuildItem>();
+            _shape.Clear();
             foreach (var item in buildableObject.BuildItems)
             {
                 _shape.Add(new SubBuildItem(item.Tile,
@@ -351,12 +324,12 @@ namespace Features.Building.Scripts.Grid
 
         public void DisableCursor()
         {
-            _tilemap.gameObject.SetActive(false);
+            _cursorTilemap.gameObject.SetActive(false);
         }
 
         public void EnableCursor()
         {
-            _tilemap.gameObject.SetActive(true);
+            _cursorTilemap.gameObject.SetActive(true);
         }
 
         public float RoundToMultiple(float value, float roundTo)
