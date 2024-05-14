@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ResearchNodeSetting : MonoBehaviour
 {
@@ -16,5 +14,5 @@ public class ResearchNodeSetting : MonoBehaviour
     public string Description => _description;
     public int ResearchPrice => _researchPrice;
     public int ResearchCompletionValue => _researchCompletionValue;
-    public List<ResearchNode> ConnectedResearchNodes => _connectedResearchNodes;    
+    public List<ResearchNode> ConnectedResearchNodes => _connectedResearchNodes;
 }

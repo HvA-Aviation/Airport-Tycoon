@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class RDTreeManager : MonoBehaviour
 {
     [SerializeField] private List<ResearchNode> _firstAvailableNodes = new List<ResearchNode>();
-     
+
     public ResearchNode CurrentResearching { get; private set; }
     public List<ResearchNode> AllNodes { get; private set; }
-    public List<ResearchNode> ResearchQueue {  get; private set; }
+    public List<ResearchNode> ResearchQueue { get; private set; }
 
     private void Awake()
     {
@@ -16,14 +15,14 @@ public class RDTreeManager : MonoBehaviour
         ResearchQueue = new List<ResearchNode>();
     }
 
-    private void Start() => ActivateFirstNodes();    
+    private void Start() => ActivateFirstNodes();
 
     /// <summary>
     /// This function sets the firstavailable nodes in the tree active and available
     /// </summary>
     private void ActivateFirstNodes()
     {
-        foreach(ResearchNode node in _firstAvailableNodes)
+        foreach (ResearchNode node in _firstAvailableNodes)
         {
             node.SetResearchStatus(ResearchNode.ResearchStates.available);
         }
@@ -39,14 +38,14 @@ public class RDTreeManager : MonoBehaviour
     {
         List<ResearchNode> availableNodes = new List<ResearchNode>();
 
-        foreach(ResearchNode node in AllNodes)
+        foreach (ResearchNode node in AllNodes)
         {
-            if(node.CurrentResearchState == ResearchNode.ResearchStates.available)
+            if (node.CurrentResearchState == ResearchNode.ResearchStates.available)
                 availableNodes.Add(node);
         }
 
         return availableNodes;
-    }    
+    }
 
     /// <summary>
     /// Checks if there is an node in the queue and returns that node
@@ -58,8 +57,8 @@ public class RDTreeManager : MonoBehaviour
             return ResearchQueue[0];
         else
             return null;
-    }  
-    
+    }
+
     /// <summary>
     /// This method will pause the research of the one that is currently researching and then it will set the new research.
     /// </summary>
@@ -83,8 +82,8 @@ public class RDTreeManager : MonoBehaviour
     public void AddResearchToQueue(ResearchNode research)
     {
         if (ResearchQueue.Contains(research))
-            return;     
-        
+            return;
+
         ResearchQueue.Add(research);
 
         //Check to see if research needs to start when it is added in the queue
@@ -108,7 +107,7 @@ public class RDTreeManager : MonoBehaviour
     /// Call this function when the research is finished researching
     /// It will look if there is a node in the queue and set the research to that node
     /// </summary>
-    public void ResearchFinished() 
+    public void ResearchFinished()
     {
         CurrentResearching = NextInQueue();
         CurrentResearching?.StartResearch();

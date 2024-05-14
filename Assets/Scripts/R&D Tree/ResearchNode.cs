@@ -1,26 +1,24 @@
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
 public class ResearchNode : MonoBehaviour
 {
     [SerializeField] private RDTreeManager _treeManager;
     public float ResearchValue { get; private set; }
 
-    public bool IsResearchInQueue { get; private set; } 
+    public bool IsResearchInQueue { get; private set; }
 
-    public ResearchNodeSetting NodeSetting {  get; private set; }
+    public ResearchNodeSetting NodeSetting { get; private set; }
 
-    public ResearchStates CurrentResearchState { get;  private set; }
+    public ResearchStates CurrentResearchState { get; private set; }
 
-    [HideInInspector]public UnityEvent ResearchDoneEvent;
+    [HideInInspector] public UnityEvent ResearchDoneEvent;
 
     private void Start()
     {
         NodeSetting = GetComponent<ResearchNodeSetting>();
-        _treeManager.AddNodeToList(this);   
-    }   
+        _treeManager.AddNodeToList(this);
+    }
 
     /// <summary>
     /// This function is called when the research is finished
@@ -41,7 +39,7 @@ public class ResearchNode : MonoBehaviour
     {
         foreach (var connectedNode in NodeSetting.ConnectedResearchNodes)
         {
-            if (connectedNode == null) 
+            if (connectedNode == null)
                 continue;
 
             connectedNode.CurrentResearchState = ResearchStates.available;
@@ -58,7 +56,7 @@ public class ResearchNode : MonoBehaviour
     /// </param>
     public void AddValue(float value)
     {
-        if (CurrentResearchState != ResearchStates.inDevelopment) 
+        if (CurrentResearchState != ResearchStates.inDevelopment)
             return;
 
         ResearchValue += value;
@@ -66,8 +64,11 @@ public class ResearchNode : MonoBehaviour
         if (ResearchValue >= NodeSetting.ResearchCompletionValue)
             ResearchDone();
     }
-    
 
+    /// <summary>
+    /// Call this function when you want to change the state of the research
+    /// </summary>
+    /// <param name="state">The state you want the research to be in</param>
     public void SetResearchStatus(ResearchStates state) => CurrentResearchState = state;
 
     /// <summary>
@@ -79,19 +80,19 @@ public class ResearchNode : MonoBehaviour
     /// This function is called when the research is finished
     /// The research will then be removed from the queue
     /// </summary>
-    public void RemoveResearchFromQueue() 
+    public void RemoveResearchFromQueue()
     {
         IsResearchInQueue = false;
-        _treeManager.RemoveResearchFromQueue(this); 
+        _treeManager.RemoveResearchFromQueue(this);
     }
 
     /// <summary>
     /// This function will be called when you want to add research to the queue
     /// </summary>
-    public void AddResearchToQueue() 
-    { 
+    public void AddResearchToQueue()
+    {
         IsResearchInQueue = true;
-        _treeManager.AddResearchToQueue(this); 
+        _treeManager.AddResearchToQueue(this);
     }
 
     /// <summary>
