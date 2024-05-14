@@ -579,9 +579,8 @@ GameObject:
   - component: {fileID: 4918524161634474607}
   - component: {fileID: 4918524161634474593}
   - component: {fileID: 4918524161634474592}
-  - component: {fileID: 5417723483575884939}
+  - component: {fileID: 1163818655714566755}
   - component: {fileID: 4918524161634474595}
-  - component: {fileID: 2944279349900298504}
   - component: {fileID: 1579861060593764006}
   m_Layer: 5
   m_Name: ResearchNode
@@ -653,7 +652,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5417723483575884939
+--- !u!114 &1163818655714566755
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -665,12 +664,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37c9c607a158a84fa67e213d7b644d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _title: Building
-  _description: This is the description for the research
-  _cost: 0
-  _researchTime: 10
+  _title: Title
+  _description: Somethjing
+  _researchPrice: 0
+  _researchCompletionValue: 100
   _connectedResearchNodes: []
-  _objectsToUnlock: []
 --- !u!114 &4918524161634474595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -684,20 +682,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _treeManager: {fileID: 0}
---- !u!114 &2944279349900298504
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4918524161634474606}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc40cdf5a5364154da2abe38b143cf32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _researchNode: {fileID: 4918524161634474595}
-  _treeManager: {fileID: 0}
+  ResearchDoneEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1579861060593764006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -714,7 +701,6 @@ MonoBehaviour:
   QueueButton: {fileID: 1882372212417117199}
   slider: {fileID: 4918524161388179895}
   researchNode: {fileID: 4918524161634474595}
-  researchQueue: {fileID: 2944279349900298504}
   treeManager: {fileID: 0}
 --- !u!1 &8896265731945673516
 GameObject:

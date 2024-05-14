@@ -28,7 +28,7 @@ public class RDTreeManager : MonoBehaviour
         }
     }
 
-    public void AddNodeToList(ResearchNode node) => AllNodes?.Add(node);
+    public void AddNodeToList(ResearchNode node) => AllNodes.Add(node);
 
     /// <summary>
     /// Function that returns a list of all the nodes that are available to buy

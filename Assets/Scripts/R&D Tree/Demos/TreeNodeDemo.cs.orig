@@ -10,20 +10,23 @@ public class TreeNodeDemo : MonoBehaviour
     public ResearchNode researchNode;
     public RDTreeManager treeManager;
 
-    bool addedEvents = false;
+    private void Start()
+    {
+<<<<<<< HEAD
+        for (int i = 0; i < researchNode.NodeSetting.ConnectedResearchNodes.Count; i++)
+        {
+            researchNode.ResearchDoneEvent.AddListener(researchNode.NodeSetting.ConnectedResearchNodes[i].GetComponent<TreeNodeDemo>().NodeStates);
+=======
+        foreach (ResearchNode node in researchNode.ConnectedResearchNodes)
+        {
+            researchNode.ResearchDoneEvent.AddListener(node.GetComponent<TreeNodeDemo>().NodeStates);
+            Debug.Log("ADded listener");
+>>>>>>> 315f142a66ca8c4623c71c060adf5e933e475907
+        }
+    }
 
     private void Update()
     {
-        if (addedEvents == false)
-        {
-            for (int i = 0; i < researchNode.NodeSetting.ConnectedResearchNodes.Count; i++)
-            {
-                researchNode.ResearchDoneEvent.AddListener(researchNode.NodeSetting.ConnectedResearchNodes[i].GetComponent<TreeNodeDemo>().NodeStates);
-            }
-
-            addedEvents = true;
-        }
-
         NodeStates();
     }
 
@@ -65,14 +68,14 @@ public class TreeNodeDemo : MonoBehaviour
 
     public void ClickActivateButton()
     {
-        slider.maxValue = researchNode.NodeSetting.ResearchCompletionValue;
+        slider.maxValue = researchNode.ResearchNodeSetting.ResearchCompletionValue;
         researchNode.StartResearch();
         NodeStates();
     }
 
     public void ClickQueueButton()
     {
-        slider.maxValue = researchNode.NodeSetting.ResearchCompletionValue;
+        slider.maxValue = researchNode.ResearchNodeSetting.ResearchCompletionValue;
         researchNode.AddResearchToQueue();
         NodeStates();
     }
