@@ -18,6 +18,11 @@ namespace Implementation.Workers.TaskCommands
             _targetPosition = targetPosition;
         }
 
+        public override bool IsAvailable(BuilderWorker worker)
+        {
+            return worker.IsAvailable(_targetPosition);
+        }
+
         // Set task instructions.
         protected override void ExecuteInternal(BuilderWorker worker, Action onTaskDone)
         {

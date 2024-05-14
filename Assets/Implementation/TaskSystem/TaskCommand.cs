@@ -19,7 +19,12 @@ namespace Implementation.TaskSystem
             Prepare(worker);
             ExecuteInternal(worker, onTaskDone);
         }
-    
+
+        public virtual bool IsAvailable(WorkerType worker)
+        {
+            return true;
+        }
+
         /// <summary>
         /// Task instructions.
         /// </summary>

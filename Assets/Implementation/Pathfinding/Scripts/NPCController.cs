@@ -83,6 +83,23 @@ public class NPCController : MonoBehaviour
         StartCoroutine(MoveToTarget(_backtrackedPath));
     }
 
+    public bool IsReachable(Vector3Int position)
+    {
+        var clampedValue = new Vector2(RoundToMultiple(position.x, _grid.CellSize),
+            RoundToMultiple(position.y, _grid.CellSize));
+
+        CreateGrid();
+        StopAllCoroutines();
+
+        _backtrackedPath.Clear();
+
+        _endNode = new Vector3Int((int)clampedValue.x, (int)clampedValue.y, 0);
+
+        FindPath(_endNode);
+        
+        return _backtrackedPath.Count > 0 || new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z) == _endNode;
+    }
+
     /// <summary>
     /// Move the NPC to the target (This is just for visualisation purposes, needs to be replanced with actual movement system)
     /// </summary>

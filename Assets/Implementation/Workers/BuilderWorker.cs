@@ -19,6 +19,11 @@ namespace Implementation.Workers
             GameManager.Instance.TaskManager.BuilderTaskSystem.GetTaskSystem().SetAvailable(this);
         }
 
+        public bool IsAvailable(Vector3Int target)
+        {
+            return _npcController.IsReachable(target);
+        }
+
         public void Build(Vector3Int target, Action onBuilt)
         {
             StartCoroutine(CheckBuild(target, onBuilt));
