@@ -1,10 +1,11 @@
-﻿using Implementation.Workers;
+﻿using Features.Workers;
+using Implementation.TaskSystem;
 using UnityEngine;
 
 namespace Features.Managers
 {
     public class TaskManager : MonoBehaviour
     {
-        public BuilderTaskSystem BuilderTaskSystem;
+        public TaskSystem<BuilderWorker> BuilderTaskSystem { get; } = new();
     }
 }

@@ -152,9 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 132b71cf013340b982b34a0e9b442965, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AudioManager: {fileID: 450596719}
-  EventManager: {fileID: 872495805}
-  TaskManager: {fileID: 1179201915}
+  <AudioManager>k__BackingField: {fileID: 450596719}
+  <EventManager>k__BackingField: {fileID: 872495805}
+  <TaskManager>k__BackingField: {fileID: 1179201915}
 --- !u!4 &61372903
 Transform:
   m_ObjectHideFlags: 0
@@ -2506,7 +2506,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a647d67e138246c581c1c04acfe9d700, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BuilderTaskSystem: {fileID: 1179201916}
 --- !u!114 &1179201916
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,8 +12,8 @@ namespace Features.Building.Scripts.Grid
             Layer = layer;
         }
 
-        public Vector2Int Position;
-        public GridLayer Layer;
+        [field: SerializeField] public Vector2Int Position { get; set; }
+        [field: SerializeField] public GridLayer Layer { get; private set; }
 
         public static implicit operator Vector3Int(GridPosition gridPosition)
         {

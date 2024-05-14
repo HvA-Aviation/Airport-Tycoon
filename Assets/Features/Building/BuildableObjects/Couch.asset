@@ -15,11 +15,13 @@ MonoBehaviour:
   Name: Couch
   BrushType: 0
   BuildItems:
-  - _tile: {fileID: 11400000, guid: 6c780cbf86e291d499131d526e833735, type: 2}
-    _gridPosition:
-      Position: {x: 0, y: 0}
-      Layer: 1
-  - _tile: {fileID: 11400000, guid: 9ec80e97310e10147a0331cc257d09ed, type: 2}
-    _gridPosition:
-      Position: {x: 1, y: 0}
-      Layer: 1
+  - <Tile>k__BackingField: {fileID: 11400000, guid: 6c780cbf86e291d499131d526e833735,
+      type: 2}
+    <GridPosition>k__BackingField:
+      <Position>k__BackingField: {x: 0, y: 0}
+      <Layer>k__BackingField: 1
+  - <Tile>k__BackingField: {fileID: 11400000, guid: 9ec80e97310e10147a0331cc257d09ed,
+      type: 2}
+    <GridPosition>k__BackingField:
+      <Position>k__BackingField: {x: 1, y: 0}
+      <Layer>k__BackingField: 1

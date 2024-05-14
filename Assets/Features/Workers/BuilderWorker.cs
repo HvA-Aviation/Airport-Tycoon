@@ -6,7 +6,7 @@ using Implementation.TaskSystem;
 using UnityEngine;
 using Grid = Features.Building.Scripts.Grid.Grid;
 
-namespace Implementation.Workers
+namespace Features.Workers
 {
     public class BuilderWorker : Worker
     {
@@ -16,7 +16,7 @@ namespace Implementation.Workers
         private void Start()
         {
             // Register it to the task system by setting it available.
-            GameManager.Instance.TaskManager.BuilderTaskSystem.GetTaskSystem().SetAvailable(this);
+            GameManager.Instance.TaskManager.BuilderTaskSystem.SetAvailable(this);
         }
 
         public void Build(Vector3Int target, Action onBuilt)

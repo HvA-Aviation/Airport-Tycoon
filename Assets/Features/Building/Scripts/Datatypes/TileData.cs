@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 using UnityEngine.Tilemaps;
 
 namespace Features.Building.Scripts.Datatypes
@@ -6,8 +7,7 @@ namespace Features.Building.Scripts.Datatypes
     [Serializable]
     public class TileData
     {
-        public Tile Tile;
+        [field: SerializeField] public Tile Tile { get; private set;  }
         public bool UnTraversable = false;
-        //TODO different tile for rotation list
     }
 }

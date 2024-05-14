@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Features.Building.Scripts.Datatypes;
 using Features.Managers;
-using Implementation.Workers.TaskCommands;
+using Features.Workers.TaskCommands;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TileData = Features.Building.Scripts.Datatypes.TileData;
@@ -162,7 +162,9 @@ namespace Features.Building.Scripts.Grid
             bool isFinished = false;
             foreach (var tile in buildTiles)
             {
-                isFinished = _cells[tile.x, tile.y, tile.z].Build(speed * Time.deltaTime);
+                _cells[tile.x, tile.y, tile.z].BuildPercentage = Mathf.Clamp(_cells[tile.x, tile.y, tile.z].BuildPercentage + speed, 0, 1);
+                
+                isFinished = _cells[tile.x, tile.y, tile.z].BuildPercentage == 1;
             }
 
             _mapUpdated = true;
@@ -201,7 +203,7 @@ namespace Features.Building.Scripts.Grid
 
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
 
-                GameManager.Instance.TaskManager.BuilderTaskSystem.GetTaskSystem().AddTask(new BuildTask(gridVector));
+                GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVector));
             
                 _mapUpdated = true;
                 return true;
@@ -268,7 +270,7 @@ namespace Features.Building.Scripts.Grid
                 _mapUpdated = true;
             }
 
-            GameManager.Instance.TaskManager.BuilderTaskSystem.GetTaskSystem().AddTask(new BuildTask(gridVectors[0]));
+            GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
             _cellGroup.Add(gridVectors);
 
             return true;

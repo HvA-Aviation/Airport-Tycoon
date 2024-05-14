@@ -8,23 +8,19 @@ namespace Features.Building.Scripts.Datatypes
     [Serializable]
     public class SubBuildItem
     {
-        [SerializeField] private Tile _tile;
-        [SerializeField] private GridPosition _gridPosition;
-
-        public Tile Tile => _tile;
-
-        public GridPosition GridPosition => _gridPosition;
+        [field: SerializeField]public Tile Tile { get; private set; }
+        [field: SerializeField]public GridPosition GridPosition { get; private set; }
 
         public SubBuildItem(Tile tile, GridPosition gridPosition)
         {
-            _tile = tile;
-            _gridPosition = gridPosition;
+            Tile = tile;
+            GridPosition = gridPosition;
         }
-        
+
         public SubBuildItem(Tile tile, Vector3Int gridPosition)
         {
-            _tile = tile;
-            _gridPosition = new GridPosition(new Vector2Int(gridPosition.x, gridPosition.y), (GridLayer)gridPosition.z);
+            Tile = tile;
+            GridPosition = new GridPosition(new Vector2Int(gridPosition.x, gridPosition.y), (GridLayer)gridPosition.z);
         }
     }
 }

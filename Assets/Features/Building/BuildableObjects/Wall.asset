@@ -15,7 +15,8 @@ MonoBehaviour:
   Name: Wall
   BrushType: 3
   BuildItems:
-  - _tile: {fileID: 11400000, guid: fbfe88272625d5c47979b613d9233838, type: 2}
-    _gridPosition:
-      Position: {x: 0, y: 0}
-      Layer: 1
+  - <Tile>k__BackingField: {fileID: 11400000, guid: fbfe88272625d5c47979b613d9233838,
+      type: 2}
+    <GridPosition>k__BackingField:
+      <Position>k__BackingField: {x: 0, y: 0}
+      <Layer>k__BackingField: 1

@@ -6,7 +6,7 @@ using UnityEngine;
 
 // Create a class deriving from TaskCommand and the worker it's aimed at.
 
-namespace Implementation.Workers.TaskCommands
+namespace Features.Workers.TaskCommands
 {
     public class BuildTask : TaskCommand<BuilderWorker>
     {
