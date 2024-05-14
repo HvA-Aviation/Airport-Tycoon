@@ -8,6 +8,9 @@ namespace Features.Building.Scripts.Datatypes
     [Serializable]
     public class SubBuildItem
     {
+        public Tile Tile;
+        public GridPosition GridPosition;
+        
         public SubBuildItem(Tile tile, GridPosition gridPosition)
         {
             Tile = tile;
@@ -19,8 +22,5 @@ namespace Features.Building.Scripts.Datatypes
             Tile = tile;
             GridPosition = new GridPosition(new Vector2Int(gridPosition.x, gridPosition.y), (GridLayer)gridPosition.z);
         }
-
-        public Tile Tile;
-        public GridPosition GridPosition;
     }
 }
