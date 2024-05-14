@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,7 +42,7 @@ public class TreeNodeDemo : MonoBehaviour
 
         if (!researchNode.IsResearchInQueue)
         {
-            if(researchNode.CurrentResearchState == ResearchNode.ResearchStates.available)
+            if (researchNode.CurrentResearchState == ResearchNode.ResearchStates.available)
                 QueueButton.interactable = true;
             else
                 QueueButton.interactable = false;
@@ -55,14 +53,14 @@ public class TreeNodeDemo : MonoBehaviour
 
     public void ClickActivateButton()
     {
-        slider.maxValue = researchNode.NodeSetting.ResearchCompletionValue;
+        slider.maxValue = researchNode.ResearchNodeSetting.ResearchCompletionValue;
         researchNode.StartResearch();
         NodeStates();
     }
 
     public void ClickQueueButton()
     {
-        slider.maxValue = researchNode.NodeSetting.ResearchCompletionValue;
+        slider.maxValue = researchNode.ResearchNodeSetting.ResearchCompletionValue;
         researchNode.AddResearchToQueue();
         NodeStates();
     }

@@ -1,14 +1,19 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class ResearchNode : MonoBehaviour
 {
     [SerializeField] private RDTreeManager _treeManager;
+    [SerializeField] private ResearchNodeObject _researchNodeObject;
+
+    [SerializeField] private List<ResearchNode> _connectedResearchNodes;
+
     public float ResearchValue { get; private set; }
 
     public bool IsResearchInQueue { get; private set; }
 
-    public ResearchNodeSetting NodeSetting { get; private set; }
+    public ResearchNodeObject ResearchNodeSetting => _researchNodeObject;
 
     public ResearchStates CurrentResearchState { get; private set; }
 
@@ -16,7 +21,6 @@ public class ResearchNode : MonoBehaviour
 
     private void Start()
     {
-        NodeSetting = GetComponent<ResearchNodeSetting>();
         _treeManager.AddNodeToList(this);
     }
 
@@ -37,7 +41,7 @@ public class ResearchNode : MonoBehaviour
     /// </summary>
     public void SetNextStatesInTree()
     {
-        foreach (var connectedNode in NodeSetting.ConnectedResearchNodes)
+        foreach (var connectedNode in _connectedResearchNodes)
         {
             if (connectedNode == null)
                 continue;
@@ -61,7 +65,7 @@ public class ResearchNode : MonoBehaviour
 
         ResearchValue += value;
 
-        if (ResearchValue >= NodeSetting.ResearchCompletionValue)
+        if (ResearchValue >= ResearchNodeSetting.ResearchCompletionValue)
             ResearchDone();
     }
 

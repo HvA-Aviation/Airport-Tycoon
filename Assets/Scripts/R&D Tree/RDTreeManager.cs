@@ -60,7 +60,7 @@ public class RDTreeManager : MonoBehaviour
     }
 
     /// <summary>
-    /// This method will pause the research of the one that is currently researching and then it will set the new research.
+    /// This method will pause the research of the one that is currently researching and then it will set the new research
     /// </summary>
     /// <param name="newResearch">The research that needs to be started</param>
     public void ChooseNewResearch(ResearchNode newResearch)
