@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Door
   BrushType: 0
   BuildItems:
-  - Tile: {fileID: 11400000, guid: 188e4c7d9c6ce694a8392e304280d246, type: 2}
-    GridPosition:
+  - _tile: {fileID: 11400000, guid: 188e4c7d9c6ce694a8392e304280d246, type: 2}
+    _gridPosition:
       Position: {x: 0, y: 0}
       Layer: 1

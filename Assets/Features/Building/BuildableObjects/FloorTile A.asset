@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: FloorTile
   BrushType: 1
   BuildItems:
-  - Tile: {fileID: 11400000, guid: 29fa9a4e0e09c14478da003d3f391e1c, type: 2}
-    GridPosition:
+  - _tile: {fileID: 11400000, guid: 29fa9a4e0e09c14478da003d3f391e1c, type: 2}
+    _gridPosition:
       Position: {x: 0, y: 0}
       Layer: 0

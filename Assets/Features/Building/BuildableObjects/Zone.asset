@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Zone
   BrushType: 1
   BuildItems:
-  - Tile: {fileID: 11400000, guid: 14d9b7aad09203345989c9b0010e8ea0, type: 2}
-    GridPosition:
+  - _tile: {fileID: 11400000, guid: 14d9b7aad09203345989c9b0010e8ea0, type: 2}
+    _gridPosition:
       Position: {x: 0, y: 0}
       Layer: 2

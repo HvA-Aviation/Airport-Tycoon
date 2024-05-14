@@ -2703,10 +2703,6 @@ MonoBehaviour:
   _tilemap: {fileID: 354013457}
   _validColor: {r: 0, g: 1, b: 0, a: 0.78431374}
   _invalidColor: {r: 1, g: 0, b: 0, a: 0.78431374}
-  _selectedGroup: []
-  _shape: []
-  _origin: {x: 0, y: 0, z: 0}
-  _rotation: 0
   _eventSystem: {fileID: 857422073}
   _selectedBuilding: {fileID: 11400000, guid: add816ad7c0618e45bc6275e18b3444f, type: 2}
 --- !u!114 &1474057267

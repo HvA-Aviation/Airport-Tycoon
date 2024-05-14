@@ -15,10 +15,10 @@ namespace Features.Building.Scripts.Grid
         [SerializeField] private Color _validColor;
         [SerializeField] private Color _invalidColor;
 
-        [SerializeField] private List<SubBuildItem> _selectedGroup = new List<SubBuildItem>();
-        [SerializeField] private List<SubBuildItem> _shape = new List<SubBuildItem>();
-        [SerializeField] private Vector3Int _origin;
-        [SerializeField] private int _rotation = 0;
+        private List<SubBuildItem> _selectedGroup = new List<SubBuildItem>();
+        private List<SubBuildItem> _shape = new List<SubBuildItem>();
+        private Vector3Int _origin;
+        private int _rotation = 0;
 
         [SerializeField] private EventSystem _eventSystem;
         [SerializeField] private BuildableObject _selectedBuilding;
