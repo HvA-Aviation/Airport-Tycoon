@@ -1,6 +1,6 @@
 ﻿namespace Implementation.TaskSystem
 {
-    public class WorkerTask<WorkerType> where WorkerType : Worker
+    public struct WorkerTask<WorkerType> where WorkerType : Worker
     {
         public WorkerType Worker;
         public TaskCommand<WorkerType> Task;

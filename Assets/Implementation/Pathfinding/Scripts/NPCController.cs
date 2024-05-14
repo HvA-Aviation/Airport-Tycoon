@@ -83,6 +83,7 @@ public class NPCController : MonoBehaviour
         StartCoroutine(MoveToTarget(_backtrackedPath));
     }
 
+    //TODO make this more efficient
     public bool IsReachable(Vector3Int position)
     {
         var clampedValue = new Vector2(RoundToMultiple(position.x, _grid.CellSize),

@@ -1,6 +1,7 @@
 ﻿namespace Features.EventManager
 {
-    public class EventId
+    public enum EventId
     {
+        UpdateMap
     }
 }

@@ -43,16 +43,13 @@ namespace Implementation.TaskSystem
         /// <summary>
         /// Checks whether there is a task and an available worker and assigns a worker to a task if possible.
         /// </summary>
-        private void TryAssignTask()
+        public void TryAssignTask()
         {
             if (_availableWorkers.Count > 0 && _queue.Count > 0)
             {
-                WorkerTask<WorkerType> workerTask = FindAvailableTask(_queue);
-                if (workerTask == default)
+                WorkerTask<WorkerType> workerTask = FilterAndFindAvailable();
+                if (!workerTask.Worker)
                     return;
-
-                _availableWorkers = new Queue<WorkerType>(_availableWorkers.Where(x => x != workerTask.Worker));
-                _queue = new Queue<TaskCommand<WorkerType>>(_queue.Where(x => x != workerTask.Task));
 
                 workerTask.Task.Execute(workerTask.Worker, () =>
                 {
@@ -62,15 +59,29 @@ namespace Implementation.TaskSystem
             }
         }
 
-        private WorkerTask<WorkerType> FindAvailableTask(Queue<TaskCommand<WorkerType>> queue)
+        /// <summary>
+        /// Checks if the tasks are available for the workers if not they are put at the back of the queue
+        /// </summary>
+        /// <returns>A struct with the available worker and task</returns>
+        private WorkerTask<WorkerType> FilterAndFindAvailable()
         {
-            foreach (var worker in _availableWorkers)
+            for (int i = 0; i < _availableWorkers.Count; i++)
             {
-                foreach (var task in queue)
+                var worker = _availableWorkers.Dequeue();
+
+                for (int j = 0; j < _queue.Count; j++)
                 {
-                    if (task.IsAvailable(worker))
+                    var task = _queue.Dequeue();
+
+                    if (!task.IsAvailable(worker))
+                        _queue.Enqueue(task);
+                    else
+                    {
                         return new WorkerTask<WorkerType>(worker, task);
+                    }
                 }
+
+                _availableWorkers.Enqueue(worker);
             }
 
             return default;

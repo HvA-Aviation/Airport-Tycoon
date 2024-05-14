@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Features.Building.Scripts.Datatypes;
+using Features.EventManager;
 using Features.Managers;
 using Implementation.Workers.TaskCommands;
 using UnityEngine;
@@ -139,6 +140,8 @@ namespace Features.Building.Scripts.Grid
                     }
                 }
             }
+            
+            GameManager.Instance.EventManager.TriggerEvent(EventId.UpdateMap);
         }
 
         public bool BuildTile(Vector3Int gridVector, float speed)
