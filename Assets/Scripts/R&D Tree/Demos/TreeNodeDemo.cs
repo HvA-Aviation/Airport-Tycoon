@@ -1,8 +1,11 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TreeNodeDemo : MonoBehaviour
 {
+    public TMP_Text Title;
+    public TMP_Text Description;
     public Button ActivateButton;
     public Button QueueButton;
     public Slider slider;
@@ -20,6 +23,9 @@ public class TreeNodeDemo : MonoBehaviour
             {
                 researchNode.ResearchDoneEvent.AddListener(researchNode.NodeSetting.ConnectedResearchNodes[i].GetComponent<TreeNodeDemo>().NodeStates);
             }
+
+            Title.text = researchNode.NodeSetting.Title;
+            Description.text = researchNode.NodeSetting.Description;
 
             addedEvents = true;
         }
