@@ -14,10 +14,10 @@ public class ResearchNode : MonoBehaviour
 
     [HideInInspector] public UnityEvent ResearchDoneEvent;
 
-    private void Start()
+    private void Awake()
     {
         NodeSetting = GetComponent<ResearchNodeSetting>();
-        _treeManager.AddNodeToList(this);
+        _treeManager?.AddNodeToList(this);
     }
 
     /// <summary>
@@ -25,10 +25,10 @@ public class ResearchNode : MonoBehaviour
     /// </summary>
     public void ResearchDone()
     {
-        ResearchDoneEvent?.Invoke();
         SetResearchStatus(ResearchStates.bought);
         SetNextStatesInTree();
         RemoveResearchFromQueue();
+        ResearchDoneEvent?.Invoke();
         _treeManager.ResearchFinished();
     }
 
@@ -43,9 +43,6 @@ public class ResearchNode : MonoBehaviour
                 continue;
 
             connectedNode.CurrentResearchState = ResearchStates.available;
-
-            //Deleted this code when the visualisation of the tree is being made
-            connectedNode.GetComponent<TreeNodeDemo>().NodeStates();
         }
     }
 

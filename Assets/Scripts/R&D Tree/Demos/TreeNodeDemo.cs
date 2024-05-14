@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +9,14 @@ public class TreeNodeDemo : MonoBehaviour
 
     public ResearchNode researchNode;
     public RDTreeManager treeManager;
+
+    private void Start()
+    {
+        for (int i = 0; i < researchNode.NodeSetting.ConnectedResearchNodes.Count; i++)
+        {
+            researchNode.ResearchDoneEvent.AddListener(researchNode.NodeSetting.ConnectedResearchNodes[i].GetComponent<TreeNodeDemo>().NodeStates);
+        }
+    }
 
     private void Update()
     {
@@ -44,7 +50,7 @@ public class TreeNodeDemo : MonoBehaviour
 
         if (!researchNode.IsResearchInQueue)
         {
-            if(researchNode.CurrentResearchState == ResearchNode.ResearchStates.available)
+            if (researchNode.CurrentResearchState == ResearchNode.ResearchStates.available)
                 QueueButton.interactable = true;
             else
                 QueueButton.interactable = false;
