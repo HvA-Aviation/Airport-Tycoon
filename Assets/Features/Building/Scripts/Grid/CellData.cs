@@ -20,5 +20,16 @@ namespace Features.Building.Scripts.Grid
             WorkLoad = workLoad;
             CurrentWorkLoad = 0;
         }
+
+        /// <summary>
+        /// Set the tile to an empty tile
+        /// </summary>
+        public void Clear()
+        {
+            Tile = -1;
+            Rotation = 0;
+            WorkLoad = 0;
+            CurrentWorkLoad = 0;
+        }
     }
 }

@@ -295,10 +295,7 @@ namespace Features.Building.Scripts.Grid
                 //Remove from array
                 foreach (var item in group)
                 {
-                    _cells[item.x, item.y, item.z].Tile = -1;
-                    _cells[item.x, item.y, item.z].Rotation = 0;
-                    _cells[item.x, item.y, item.z].WorkLoad = 0f;
-                    _cells[item.x, item.y, item.z].CurrentWorkLoad = 0f;
+                    _cells[item.x, item.y, item.z].Clear();
                 }
 
                 //remove from group

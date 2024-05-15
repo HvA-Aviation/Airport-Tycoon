@@ -385,6 +385,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _npcController: {fileID: 162981197}
   _grid: {fileID: 327049622}
+  _workLoadSpeed: 2
 --- !u!114 &162981197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2653,6 +2654,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1240337497}
   _grid: {fileID: 327049622}
+  _workLoadSpeed: 2
 --- !u!1 &1474057263
 GameObject:
   m_ObjectHideFlags: 0
