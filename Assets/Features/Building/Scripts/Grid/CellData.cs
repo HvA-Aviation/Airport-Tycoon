@@ -8,15 +8,17 @@ namespace Features.Building.Scripts.Grid
     {
         public int Tile;
         public int Rotation;
-        public float BuildPercentage;
+        public float WorkLoad;
+        public float CurrentWorkLoad;
         
-        public static CellData empty => new CellData(-1, 0);
+        public static CellData empty => new CellData(-1, 0, 0);
         
-        public CellData(int tile, int rotation, float buildPercentage = 0.4f)
+        public CellData(int tile, int rotation, float workLoad)
         {
             Tile = tile;
             Rotation = rotation;
-            BuildPercentage = buildPercentage;
+            WorkLoad = workLoad;
+            CurrentWorkLoad = 0;
         }
     }
 }
