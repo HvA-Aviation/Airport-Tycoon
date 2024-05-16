@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MenuDemo : MonoBehaviour
@@ -7,7 +5,7 @@ public class MenuDemo : MonoBehaviour
     [SerializeField] private KeyCode _enable;
     [SerializeField] private KeyCode _disable;
 
-    [SerializeField] private MenuInteractable _interactable;
+    [SerializeField] private UIElementInteractable _interactable;
     [SerializeField] private GameObject _uiOBJ;
     [SerializeField] private UIManager _manager;
 
@@ -15,10 +13,10 @@ public class MenuDemo : MonoBehaviour
     {
         if (Input.GetKeyDown(_enable))
         {
-            foreach(var interactable in _manager.Interactables)
+            foreach (var interactable in _manager.Interactables)
             {
-                if(interactable == _interactable)                
-                    interactable.EnableInteraction();                
+                if (interactable == _interactable)
+                    interactable.EnableInteraction();
                 else
                     interactable.DissableInteraction();
             }

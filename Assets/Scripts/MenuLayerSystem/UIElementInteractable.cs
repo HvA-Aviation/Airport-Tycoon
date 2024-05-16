@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class MenuInteractable : MonoBehaviour, IInteractable
+public class UIElementInteractable : MonoBehaviour, IInteractable
 {
     [SerializeField] private UIManager _uiManager;
 
