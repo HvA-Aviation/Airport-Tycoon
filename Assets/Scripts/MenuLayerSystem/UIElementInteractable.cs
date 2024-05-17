@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(CanvasGroup))]
 public class UIElementInteractable : MonoBehaviour, IInteractable
 {
-    [SerializeField] private UIManager _uiManager;
+    [SerializeField] private InteractableManager _uiManager;
 
     private CanvasGroup _thisCanvasGroup;
 
@@ -16,12 +16,13 @@ public class UIElementInteractable : MonoBehaviour, IInteractable
 
     public void DissableInteraction()
     {
-        if (transform == transform.parent.GetChild(_uiManager.Interactables.Count - 1)) transform.SetAsFirstSibling();
+        _uiManager.PutElementLastInList(this);
         _thisCanvasGroup.interactable = false;
     }
 
     public void EnableInteraction()
     {
+        _uiManager.PutElementToFirstInList(this);
         transform.SetAsLastSibling();
         _thisCanvasGroup.interactable = true;
     }

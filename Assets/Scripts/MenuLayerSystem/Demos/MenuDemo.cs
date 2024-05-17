@@ -7,7 +7,7 @@ public class MenuDemo : MonoBehaviour
 
     [SerializeField] private UIElementInteractable _interactable;
     [SerializeField] private GameObject _uiOBJ;
-    [SerializeField] private UIManager _manager;
+    [SerializeField] private InteractableManager _manager;
 
     private void Update()
     {
@@ -17,7 +17,7 @@ public class MenuDemo : MonoBehaviour
 
             foreach (IInteractable interactbale in _manager.Interactables)
             {
-                if (interactbale == _interactable) continue;
+                if (_interactable == interactbale) continue;
                 else interactbale.DissableInteraction();
             }
             _uiOBJ.SetActive(true);
@@ -27,7 +27,7 @@ public class MenuDemo : MonoBehaviour
         {
             _interactable.DissableInteraction();
 
-            transform.parent.GetChild(_manager.Interactables.Count - 1).GetComponent<IInteractable>().EnableInteraction();
+            _manager.Interactables[0].EnableInteraction();
 
             _uiOBJ.SetActive(false);
         }
