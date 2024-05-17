@@ -3,12 +3,22 @@ using System.Collections.Generic;
 using Features.Building.Scripts.Datatypes;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Grid = Features.Building.Scripts.Grid.Grid;
 
 namespace Brushes
 {
     public class MultiBrush : Brush
     {
-        public override void Holding(Vector3Int position)
+       
+        public MultiBrush(Grid grid) : base(grid)
+        {
+        }
+        
+        /// <summary>
+        /// Sets the selected tiles between the origin and current position
+        /// </summary>
+        /// <param name="position">Current position</param>
+        protected override void Holding(Vector3Int position)
         {
             //gets selection
             //get the min and the max of the position
@@ -36,14 +46,10 @@ namespace Brushes
         {
             foreach (SubBuildItem item in _selectedTiles)
             {
-                _paintCallback.Invoke(item.GridPosition, _buildableObject.BuildItems[0].Tile);
+                _grid.Set(item.GridPosition, _buildableObject.BuildItems[0].Tile);
             }
             
             base.Release(position);
-        }
-
-        public MultiBrush(Action<Vector3Int, Tile> paintCallback) : base(paintCallback)
-        {
         }
     }
 }
