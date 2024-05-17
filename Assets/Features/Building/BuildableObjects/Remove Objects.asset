@@ -10,16 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29d11b396c214f51a51ce3fe8885b523, type: 3}
-  m_Name: Remove
+  m_Name: Remove Objects
   m_EditorClassIdentifier: 
-  Name: Remove
+  Name: Remove Floor
   BrushType: 4
   BuildItems:
-  - <Tile>k__BackingField: {fileID: 11400000, guid: 14d9b7aad09203345989c9b0010e8ea0,
-      type: 2}
-    <GridPosition>k__BackingField:
-      <Position>k__BackingField: {x: 0, y: 0}
-      <Layer>k__BackingField: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: 14d9b7aad09203345989c9b0010e8ea0,
       type: 2}
     <GridPosition>k__BackingField:

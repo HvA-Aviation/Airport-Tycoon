@@ -8,6 +8,7 @@ namespace Features.Building.Scripts.Demos
 {
     public class CursorDemo : MonoBehaviour
     {
+
         [SerializeField] private Cursor _cursor;
         [SerializeField] private TileGrid _grid;
         [SerializeField] private BuildableObject _defaultSelectedBuilding;

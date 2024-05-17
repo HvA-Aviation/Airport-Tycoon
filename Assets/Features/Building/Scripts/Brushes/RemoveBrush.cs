@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Features.Building.Scripts.Datatypes;
+using Features.Building.Scripts.Grid;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Grid = Features.Building.Scripts.Grid.Grid;
