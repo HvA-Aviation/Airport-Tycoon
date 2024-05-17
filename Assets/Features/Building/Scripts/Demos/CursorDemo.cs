@@ -24,35 +24,19 @@ namespace Features.Building.Scripts.Demos
             if (!_cursor.IsEnabled)
                 return;
 
-            if (Input.GetKey(KeyCode.B))
+            if (Input.GetMouseButton(0))
             {
-                _grid.BuildTile(position, 1f);
-                return;
-            }
-
-            if (Input.GetMouseButton(1) || Input.GetMouseButtonUp(1))
+                _cursor.Press(position);
+            } else if (Input.GetMouseButtonUp(0))
             {
-                //remove tiles
-                _cursor.MultiBrushSelect(position, 1);
+                _cursor.Release(position);
             }
             else
             {
-                switch (_cursor.BrushType)
-                {
-                    case BrushType.Multi:
-                        _cursor.MultiBrushSelect(position, 0);
-                        break;
-                    case BrushType.Outline:
-                        _cursor.OutlineBrushSelect(position);
-                        break;
-                    case BrushType.Drag:
-                        _cursor.DragBrush(position);
-                        break;
-                    case BrushType.Single:
-                        _cursor.SingleBrush(position);
-                        break;
-                }
+                _cursor.Hover(position);
             }
+            
+            _cursor.UpdateVisuals();
         }
     }
 }

@@ -1,30 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace Brushes
 {
     public class SingleBrush : Brush
     {
-        private bool _using;
-        
-        /*public override List<Vector3Int> Initiate(Vector3Int position)
+        public SingleBrush(Action<Vector3Int, Tile> paintCallback) : base(paintCallback)
         {
-            if (_using)
-                return default;
-
-            _using = true;
-            return new List<Vector3Int>() { position };
         }
-
-        public override void Holding()
-        {
-            
-        }
-
-        public override List<Vector3Int> Release(Vector3Int position)
-        {
-            _using = false;
-            return default;
-        }*/
     }
 }

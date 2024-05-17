@@ -17,20 +17,50 @@ namespace Features.Building.Scripts.Grid
         [SerializeField] private Color _validColor;
         [SerializeField] private Color _invalidColor;
 
-        private List<SubBuildItem> _selectedGroup = new List<SubBuildItem>();
+        //private List<SubBuildItem> _selectedGroup = new List<SubBuildItem>();
         private List<SubBuildItem> _shape = new List<SubBuildItem>();
-        private Vector3Int _origin;
         private int _rotation = 0;
 
         [SerializeField] private EventSystem _eventSystem;
         [SerializeField] private BuildableObject _currentSelectedBuilding;
+
+        private Dictionary<BrushType, Brush> _brushes = new Dictionary<BrushType, Brush>();
 
         public bool IsEnabled => _cursorTilemap.gameObject.activeSelf;
         public BrushType BrushType => _currentSelectedBuilding.BrushType;
 
         private void Start()
         {
+            _brushes = new Dictionary<BrushType, Brush>()
+            {
+                { BrushType.Single, new SingleBrush((position, tile) => _grid.Set(position, tile)) },
+                { BrushType.Drag, new DragBrush((position, tile) => _grid.Set(position, tile)) },
+                { BrushType.Multi, new MultiBrush((position, tile) => _grid.Set(position, tile)) }
+            };
+            
             transform.localScale = Vector3.one * _grid.CellSize;
+        }
+
+        private Vector3Int _origin;
+
+        public void Press(Vector3Int position)
+        {
+            _brushes[_currentSelectedBuilding.BrushType].Down(position);
+        }
+        
+        public void Release(Vector3Int position)
+        {
+            _brushes[_currentSelectedBuilding.BrushType].Release(position);
+        }
+
+        public void UpdateVisuals()
+        {
+            Hover(_brushes[_currentSelectedBuilding.BrushType].SelectedTiles);
+        }
+
+        public void Hover(Vector3Int position)
+        {
+            _brushes[_currentSelectedBuilding.BrushType].Hover(position);
         }
 
         private void Update()
@@ -77,9 +107,9 @@ namespace Features.Building.Scripts.Grid
             }
         }
 
-        #region brushes
+        //#region brushes
 
-        public void MultiBrushSelect(Vector3Int position, int mouseButton)
+        /*public void MultiBrushSelect(Vector3Int position, int mouseButton)
         {
             if (Input.GetMouseButtonDown(mouseButton))
             {
@@ -214,11 +244,11 @@ namespace Features.Building.Scripts.Grid
                 //hover and require all spaces to be free
                 Hover(position, _shape, true);
             }
-        }
+        }*/
 
         public Vector3Int WorldToGirdPosition(Vector3 worldPosition)
         {
-            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 pos = worldPosition;
 
             //clamp to grid positions
             Vector2 clampedValue = new Vector2(RoundToMultiple(pos.x, _grid.CellSize),
@@ -232,7 +262,7 @@ namespace Features.Building.Scripts.Grid
         /// Creates a tile on the positions the mouse is hold down
         /// </summary>
         /// <param name="position"></param>
-        public void DragBrush(Vector3Int position)
+      /*  public void DragBrush(Vector3Int position)
         {
             Hover(position, _shape);
 
@@ -247,9 +277,9 @@ namespace Features.Building.Scripts.Grid
             }
         }
 
-        #endregion
+        #endregion*/
 
-        private void Hover(Vector3Int position, List<SubBuildItem> shapes, bool requireAllAvailable = false,
+        private void Hover(List<SubBuildItem> selectedGroup, bool requireAllAvailable = false,
             bool flipColors = false)
         {
             //sets the offset of the whole grid
@@ -257,27 +287,13 @@ namespace Features.Building.Scripts.Grid
                 Mathf.RoundToInt(_cursorTilemap.transform.position.y),
                 Mathf.RoundToInt(_cursorTilemap.transform.position.z));
 
-            //get the current selection of tiles
-            List<SubBuildItem> currentSelectedGroup = new List<SubBuildItem>();
-            foreach (var shape in shapes)
-            {
-                currentSelectedGroup.Add(new SubBuildItem(shape.Tile, position + shape.GridPosition));
-            }
-
-            //remove the tiles that were in the previous selection, but not in the current
-            foreach (var gridPosition in _selectedGroup)
-            {
-                if (!currentSelectedGroup.Any(x => x.GridPosition == gridPosition.GridPosition))
-                {
-                    _cursorTilemap.SetTile(gridPosition.GridPosition - offset, null);
-                }
-            }
+            _cursorTilemap.ClearAllTiles();
 
             //check if all positions are required when placing
             bool valid = true;
             if (requireAllAvailable)
             {
-                foreach (var gridPosition in currentSelectedGroup)
+                foreach (var gridPosition in selectedGroup)
                 {
                     if (!_grid.IsEmpty(gridPosition.GridPosition))
                     {
@@ -291,8 +307,8 @@ namespace Features.Building.Scripts.Grid
             Color invalidColor = !flipColors ? _invalidColor : _validColor;
 
             //set the tile on the tilemap
-            foreach (SubBuildItem gridPosition in currentSelectedGroup)
-            {                
+            foreach (SubBuildItem gridPosition in selectedGroup)
+            {
                 TileChangeData tempTile = new TileChangeData()
                 {
                     position = gridPosition.GridPosition - offset,
@@ -305,14 +321,14 @@ namespace Features.Building.Scripts.Grid
                 tempTile.tile = gridPosition.Tile;
                 _cursorTilemap.SetTile(tempTile, true);
             }
-
-            _selectedGroup = currentSelectedGroup;
         }
 
         public void ChangeSelectedBuildable(BuildableObject buildableObject)
         {
             _rotation = 0;
             _currentSelectedBuilding = buildableObject;
+
+            _brushes[buildableObject.BrushType].Assign(buildableObject);
 
             //Create a fresh shape so the rotation is correct and doesn't change the prefab
             _shape.Clear();

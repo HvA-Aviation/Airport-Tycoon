@@ -1,23 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace Brushes
 {
     public class DragBrush : Brush
     {
-        /*public override List<Vector3Int> Initiate(Vector3Int position)
+        public DragBrush(Action<Vector3Int, Tile> paintCallback) : base(paintCallback)
         {
-            return new List<Vector3Int>() { position };
         }
-
-        public override void Holding()
-        {
-            
-        }
-
-        public override List<Vector3Int> Release(Vector3Int position)
-        {
-            return default;
-        }*/
     }
 }
