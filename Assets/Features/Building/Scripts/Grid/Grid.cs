@@ -64,7 +64,7 @@ namespace Features.Building.Scripts.Grid
                         if (unTraversable[x, y] || _cells[x, y, z].Tile == CellData.empty.Tile)
                             continue;
 
-                        if (_cells[x, y, z].BuildPercentage == 1f)
+                        if (_cells[x, y, z].CurrentWorkLoad >= _cells[x, y, z].WorkLoad)
                             unTraversable[x, y] = _atlas.Items[_cells[x, y, z].Tile].UnTraversable;
                     }
                 }
@@ -131,7 +131,7 @@ namespace Features.Building.Scripts.Grid
                             tile.transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cell.Rotation * -90));
                             tile.tile = _atlas.Items[cell.Tile].Tile;
 
-                            float buildAmount = cell.BuildPercentage;
+                            float buildAmount = 0.4f + (cell.CurrentWorkLoad / cell.WorkLoad * .6f);
                             tile.color = new Color(1, 1, 1, buildAmount);
                         }
 
@@ -162,9 +162,9 @@ namespace Features.Building.Scripts.Grid
             bool isFinished = false;
             foreach (var tile in buildTiles)
             {
-                _cells[tile.x, tile.y, tile.z].BuildPercentage = Mathf.Clamp(_cells[tile.x, tile.y, tile.z].BuildPercentage + speed, 0, 1);
+                _cells[tile.x, tile.y, tile.z].CurrentWorkLoad = Mathf.Clamp(_cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * Time.deltaTime, 0, _cells[tile.x, tile.y, tile.z].WorkLoad);
                 
-                isFinished = _cells[tile.x, tile.y, tile.z].BuildPercentage == 1;
+                isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
             }
 
             _mapUpdated = true;
@@ -200,6 +200,7 @@ namespace Features.Building.Scripts.Grid
 
                 cellData.Tile = buildIndex;
                 cellData.Rotation = 0;
+                cellData.WorkLoad = _atlas.Items[buildIndex].WorkLoad;
 
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
 
@@ -263,6 +264,7 @@ namespace Features.Building.Scripts.Grid
 
                 cellData.Tile = Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile);
                 cellData.Rotation = rotation;
+                cellData.WorkLoad = tileData.WorkLoad;
 
                 _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
             
@@ -293,9 +295,7 @@ namespace Features.Building.Scripts.Grid
                 //Remove from array
                 foreach (var item in group)
                 {
-                    _cells[item.x, item.y, item.z].Tile = -1;
-                    _cells[item.x, item.y, item.z].Rotation = 0;
-                    _cells[item.x, item.y, item.z].BuildPercentage = 0.4f;
+                    _cells[item.x, item.y, item.z].Clear();
                 }
 
                 //remove from group

@@ -12,6 +12,7 @@ namespace Features.Workers
     {
         [SerializeField] private NPCController _npcController;
         [SerializeField] private Grid _grid;
+        [SerializeField] private float _workLoadSpeed;
 
         private void Start()
         {
@@ -26,7 +27,7 @@ namespace Features.Workers
 
         private IEnumerator CheckBuild(Vector3Int target, Action onBuilt)
         {
-            while (!_grid.BuildTile(target, 2f))
+            while (!_grid.BuildTile(target, _workLoadSpeed))
             {
                 yield return null;
             }

@@ -15,19 +15,25 @@ MonoBehaviour:
   Items:
   - <Tile>k__BackingField: {fileID: 11400000, guid: 29fa9a4e0e09c14478da003d3f391e1c,
       type: 2}
+    WorkLoad: 0.5
     UnTraversable: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: 6c780cbf86e291d499131d526e833735,
       type: 2}
+    WorkLoad: 1
     UnTraversable: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: 9ec80e97310e10147a0331cc257d09ed,
       type: 2}
+    WorkLoad: 1
     UnTraversable: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: fbfe88272625d5c47979b613d9233838,
       type: 2}
+    WorkLoad: 10
     UnTraversable: 1
   - <Tile>k__BackingField: {fileID: 11400000, guid: 188e4c7d9c6ce694a8392e304280d246,
       type: 2}
+    WorkLoad: 1
     UnTraversable: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: 14d9b7aad09203345989c9b0010e8ea0,
       type: 2}
+    WorkLoad: 1
     UnTraversable: 0
