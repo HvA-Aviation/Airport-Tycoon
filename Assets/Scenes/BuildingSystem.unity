@@ -1231,7 +1231,7 @@ MonoBehaviour:
       m_Image: {fileID: 21300000, guid: 17373be14ce236247b835dcf32e280a4, type: 3}
     - m_Text: Door
       m_Image: {fileID: 21300000, guid: f6a22b56bdc365449b029b97d142627b, type: 3}
-    - m_Text: Zone
+    - m_Text: Remove
       m_Image: {fileID: 21300000, guid: 8486da64919f72b4ead1bb47afb73c7c, type: 3}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1292,7 +1292,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4240fc810619a194bb03633333b32553, type: 2}
   - {fileID: 11400000, guid: 8010ef2a2abc1c2488ba6493a5a30fd1, type: 2}
   - {fileID: 11400000, guid: 614598fcdcd206e4c90eab112bfbd081, type: 2}
-  - {fileID: 11400000, guid: e1aa0f1e04fb1804b940e9f4981a3b0d, type: 2}
+  - {fileID: 11400000, guid: abf38142527b0b440b726bd2f269251f, type: 2}
   _cursor: {fileID: 1474057266}
 --- !u!1 &410087039
 GameObject:

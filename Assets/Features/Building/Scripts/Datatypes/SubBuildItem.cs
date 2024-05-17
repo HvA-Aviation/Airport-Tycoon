@@ -9,7 +9,7 @@ namespace Features.Building.Scripts.Datatypes
     public class SubBuildItem
     {
         [field: SerializeField]public Tile Tile { get; private set; }
-        [field: SerializeField]public GridPosition GridPosition { get; private set; }
+        [field: SerializeField]public GridPosition GridPosition { get; set; }
 
         public SubBuildItem(Tile tile, GridPosition gridPosition)
         {
