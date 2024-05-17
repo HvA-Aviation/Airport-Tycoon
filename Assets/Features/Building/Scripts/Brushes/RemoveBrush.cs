@@ -21,10 +21,7 @@ namespace Brushes
         {
             foreach (SubBuildItem item in _selectedTiles)
             {
-                for (int i = 0; i < 2; i++)
-                {
-                    _grid.Remove(new Vector3Int(item.GridPosition.Position.x, item.GridPosition.Position.y, i));
-                }
+                _grid.Remove(item.GridPosition);
             }
         }
     }
