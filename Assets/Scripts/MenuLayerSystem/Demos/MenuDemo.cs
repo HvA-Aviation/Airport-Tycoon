@@ -13,13 +13,10 @@ public class MenuDemo : MonoBehaviour
     {
         if (Input.GetKeyDown(_enable))
         {
-            foreach (var interactable in _manager.Interactables)
-            {
-                if (interactable == _interactable)
-                    interactable.EnableInteraction();
-                else
-                    interactable.DissableInteraction();
-            }
+            _interactable.EnableInteraction();
+
+            transform.parent.GetChild(_manager.Interactables.Count - 2).GetComponent<IInteractable>().DissableInteraction();
+
             _uiOBJ.SetActive(true);
         }
 

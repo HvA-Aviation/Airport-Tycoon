@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
@@ -17,7 +15,7 @@ public class UIElementInteractable : MonoBehaviour, IInteractable
 
     public void DissableInteraction()
     {
-        transform.SetAsFirstSibling();
+        if (transform == transform.parent.GetChild(_uiManager.Interactables.Count - 1)) transform.SetAsFirstSibling();
         _thisCanvasGroup.interactable = false;
     }
 
