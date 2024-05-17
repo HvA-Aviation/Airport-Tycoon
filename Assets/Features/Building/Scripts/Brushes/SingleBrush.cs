@@ -90,7 +90,7 @@ namespace Brushes
         /// Place all the selected positions and link them
         /// </summary>
         /// <param name="position">current position</param>
-        public override void Release(Vector3Int position)
+        public override void Apply(Vector3Int position)
         {
             //place the tiles in the shape of the selection
             List<Vector3Int> positions = new List<Vector3Int>();
@@ -102,8 +102,6 @@ namespace Brushes
             }
 
             _grid.SetGroup(positions, indices, Rotation);
-
-            base.Release(position);
         }
     }
 }

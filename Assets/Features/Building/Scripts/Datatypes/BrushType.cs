@@ -6,5 +6,6 @@
         Multi,
         Drag,
         Outline,
+        Remove
     }
 }

@@ -93,11 +93,21 @@ namespace Brushes
         /// <summary>
         /// Resets holding and selected tiles when button is released
         /// </summary>
-        /// <param name="position">release position</param>
-        public virtual void Release(Vector3Int position)
+        /// <param name="position">Release position</param>
+        public void Release(Vector3Int position)
         {
+            Apply(position);
             _selectedTiles.Clear();
             _holding = false;
+        }
+
+
+        /// <summary>
+        /// Applies the changes to the selected area
+        /// </summary>
+        /// <param name="position">Current position</param>
+        public virtual void Apply(Vector3Int position)
+        {
         }
     }
 }

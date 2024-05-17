@@ -42,14 +42,12 @@ namespace Brushes
             base.Holding(position);
         }
 
-        public override void Release(Vector3Int position)
+        public override void Apply(Vector3Int position)
         {
             foreach (SubBuildItem item in _selectedTiles)
             {
                 _grid.Set(item.GridPosition, _buildableObject.BuildItems[0].Tile);
             }
-            
-            base.Release(position);
         }
     }
 }

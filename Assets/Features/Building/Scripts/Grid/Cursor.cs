@@ -31,7 +31,8 @@ namespace Features.Building.Scripts.Grid
             {
                 { BrushType.Single, new SingleBrush(_grid) },
                 { BrushType.Outline, new OutlineBrush(_grid) },
-                { BrushType.Multi, new MultiBrush(_grid) }
+                { BrushType.Multi, new MultiBrush(_grid) },
+                { BrushType.Remove, new RemoveBrush(_grid) }
             };
             
             transform.localScale = Vector3.one * _grid.CellSize;

@@ -50,14 +50,12 @@ namespace Brushes
         /// Place all the selected positions
         /// </summary>
         /// <param name="position">current position</param>
-        public override void Release(Vector3Int position)
+        public override void Apply(Vector3Int position)
         {
             foreach (SubBuildItem item in _selectedTiles)
             {
                 _grid.Set(item.GridPosition, _buildableObject.BuildItems[0].Tile);
             }
-            
-            base.Release(position);
         }
     }
 }
