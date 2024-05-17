@@ -128,7 +128,7 @@ namespace Implementation.Pathfinding.Scripts
         {
             _nodeGrid = new Node[_gridWidth, _gridHeight, 1];
 
-            var traversable = _grid.GetTraversable();
+            var traversable = _grid.TraversableTiles;
             for (int x = 0; x < _gridWidth; x++)
             {
                 for (int y = 0; y < _gridHeight; y++)

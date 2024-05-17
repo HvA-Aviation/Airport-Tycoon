@@ -27,6 +27,7 @@ namespace Features.Building.Scripts.Grid
         [SerializeField] private float _cellSize;
 
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
+        [SerializeField] public bool[,] TraversableTiles { get; private set; }
 
         /// <summary>
         /// If true the map will be updated at the end of the frame and set to false
@@ -45,13 +46,17 @@ namespace Features.Building.Scripts.Grid
             _cells = new CellData[_gridSize.x, _gridSize.y, _gridSize.z];
             _cellGroup = new List<List<Vector3Int>>();
             PopulateCells();
+
+            //create and populate traversabletiles
+            TraversableTiles = new bool[_gridSize.x, _gridSize.y];
+            UpdateTraversable();
         }
 
         /// <summary>
         /// Creates a flattend 2d array to see if the cell position is traversable
         /// </summary>
         /// <returns>A flattend 2d bool array with false as traversable</returns>
-        public bool[,] GetTraversable()
+        public void UpdateTraversable()
         {
             bool[,] unTraversable = new bool[_gridSize.x, _gridSize.y];
 
@@ -74,11 +79,9 @@ namespace Features.Building.Scripts.Grid
             {
                 for (int y = 0; y < _gridSize.y; y++)
                 {
-                    unTraversable[x, y] = !unTraversable[x, y];
+                    TraversableTiles[x, y] = !unTraversable[x, y];
                 }
             }
-            
-            return unTraversable;
         }
 
         /// <summary>
@@ -147,6 +150,9 @@ namespace Features.Building.Scripts.Grid
                     }
                 }
             }
+
+            //Update Traversable
+            UpdateTraversable();
         }
 
         public bool BuildTile(Vector3Int gridVector, float speed)
@@ -381,7 +387,7 @@ namespace Features.Building.Scripts.Grid
 
             if (Application.isPlaying)
             {
-                var traversable = GetTraversable();
+                var traversable = TraversableTiles;
 
                 for (int x = 0; x < _gridSize.x; x++)
                 {
