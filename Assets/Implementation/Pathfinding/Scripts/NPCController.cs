@@ -128,7 +128,7 @@ namespace Implementation.Pathfinding.Scripts
         {
             _nodeGrid = new Node[_gridWidth, _gridHeight, 1];
 
-            var untraversable = _grid.UnTraversable();
+            var traversable = _grid.GetTraversable();
             for (int x = 0; x < _gridWidth; x++)
             {
                 for (int y = 0; y < _gridHeight; y++)
@@ -136,7 +136,7 @@ namespace Implementation.Pathfinding.Scripts
                     Node node = new Node()
                     {
                         position = new Vector3Int(x, y, 0),
-                        untraversable = untraversable[x, y]
+                        untraversable = !traversable[x, y]
                     };
                     _nodeGrid[x, y, 0] = node;
                 }

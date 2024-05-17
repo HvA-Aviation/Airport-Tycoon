@@ -51,7 +51,7 @@ namespace Features.Building.Scripts.Grid
         /// Creates a flattend 2d array to see if the cell position is traversable
         /// </summary>
         /// <returns>A flattend 2d bool array with false as traversable</returns>
-        public bool[,] UnTraversable()
+        public bool[,] GetTraversable()
         {
             bool[,] unTraversable = new bool[_gridSize.x, _gridSize.y];
 
@@ -70,6 +70,14 @@ namespace Features.Building.Scripts.Grid
                 }
             }
 
+            for (int x = 0; x < _gridSize.x; x++)
+            {
+                for (int y = 0; y < _gridSize.y; y++)
+                {
+                    unTraversable[x, y] = !unTraversable[x, y];
+                }
+            }
+            
             return unTraversable;
         }
 
@@ -373,7 +381,7 @@ namespace Features.Building.Scripts.Grid
 
             if (Application.isPlaying)
             {
-                var untraversable = UnTraversable();
+                var traversable = GetTraversable();
 
                 for (int x = 0; x < _gridSize.x; x++)
                 {
@@ -381,7 +389,7 @@ namespace Features.Building.Scripts.Grid
                     {
                         Vector2 origin = new Vector2(x, y) * _cellSize - (Vector2)transform.position;
 
-                        Gizmos.color = untraversable[x, y] ? Color.red : Color.green;
+                        Gizmos.color = traversable[x, y] ? Color.green : Color.red;
                         Gizmos.DrawSphere(origin, _cellSize / 10);
                     }
                 }
