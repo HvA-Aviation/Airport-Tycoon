@@ -15,8 +15,11 @@ public class MenuDemo : MonoBehaviour
         {
             _interactable.EnableInteraction();
 
-            transform.parent.GetChild(_manager.Interactables.Count - 2).GetComponent<IInteractable>().DissableInteraction();
-
+            foreach (IInteractable interactbale in _manager.Interactables)
+            {
+                if (interactbale == _interactable) continue;
+                else interactbale.DissableInteraction();
+            }
             _uiOBJ.SetActive(true);
         }
 

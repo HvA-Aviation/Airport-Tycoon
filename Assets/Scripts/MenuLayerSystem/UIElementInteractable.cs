@@ -10,7 +10,8 @@ public class UIElementInteractable : MonoBehaviour, IInteractable
     private void Start()
     {
         _thisCanvasGroup = GetComponent<CanvasGroup>();
-        _uiManager.Interactables.Add(this);
+
+        _uiManager.AddInteractableToList(this);
     }
 
     public void DissableInteraction()
