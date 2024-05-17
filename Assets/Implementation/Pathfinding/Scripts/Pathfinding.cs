@@ -52,11 +52,11 @@ namespace Implementation.Pathfinding.Scripts
                         parent = _currentNode.position,
                         gCost = _currentNode.gCost + (i < 4 ? 10 : 14),
                         hCost = CalculateHCost(_currentNode.position + neighbourOffsets[i], endNode.position),
-                        traversable = gridNodes[_currentNode.position + neighbourOffsets[i]].traversable
+                        untraversable = gridNodes[_currentNode.position + neighbourOffsets[i]].untraversable
                     };
                     neighbour.CalculateFCost();
 
-                    if (!neighbour.traversable) continue;
+                    if (neighbour.untraversable) continue;
 
                     if (openList.ContainsKey(neighbour.position) && neighbour.gCost < openList[neighbour.position].gCost)
                     {

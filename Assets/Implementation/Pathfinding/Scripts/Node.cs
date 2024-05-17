@@ -9,7 +9,7 @@ namespace Implementation.Pathfinding.Scripts
         public float gCost;
         public float hCost;
         public float fCost;
-        public bool traversable;
+        public bool untraversable;
         public bool isEndNode;
         public bool isStartNode;
         public Vector3Int parent;
