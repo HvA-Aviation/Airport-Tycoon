@@ -75,14 +75,7 @@ namespace Brushes
                     _shape[i].GridPosition.Position = new Vector2Int(gridPosition.y, gridPosition.x) * dir;
                 }
 
-                if (Rotation > 3)
-                {
-                    Rotation = 0;
-                }
-                else if (Rotation < 0)
-                {
-                    Rotation = 3;
-                }
+                Rotation %= 4;
             }
         }
 
