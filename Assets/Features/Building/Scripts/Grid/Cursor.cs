@@ -35,6 +35,7 @@ namespace Features.Building.Scripts.Grid
             {
                 { BrushType.Single, new SingleBrush((position, tile) => _grid.Set(position, tile)) },
                 { BrushType.Drag, new DragBrush((position, tile) => _grid.Set(position, tile)) },
+                { BrushType.Outline, new OutlineBrush((position, tile) => _grid.Set(position, tile)) },
                 { BrushType.Multi, new MultiBrush((position, tile) => _grid.Set(position, tile)) }
             };
             
@@ -328,15 +329,17 @@ namespace Features.Building.Scripts.Grid
             _rotation = 0;
             _currentSelectedBuilding = buildableObject;
 
-            _brushes[buildableObject.BrushType].Assign(buildableObject);
 
             //Create a fresh shape so the rotation is correct and doesn't change the prefab
             _shape.Clear();
+            List<SubBuildItem> shape = new List<SubBuildItem>();
             foreach (var item in buildableObject.BuildItems)
             {
-                _shape.Add(new SubBuildItem(item.Tile,
+                shape.Add(new SubBuildItem(item.Tile,
                     new GridPosition(item.GridPosition.Position, item.GridPosition.Layer)));
             }
+            
+            _brushes[buildableObject.BrushType].Assign(buildableObject);
         }
 
         public void DisableCursor()

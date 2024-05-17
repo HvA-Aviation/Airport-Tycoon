@@ -34,7 +34,6 @@ namespace Brushes
 
         public override void Release(Vector3Int position)
         {
-            Debug.Log("release");
             foreach (SubBuildItem item in _selectedTiles)
             {
                 _paintCallback.Invoke(item.GridPosition, _buildableObject.BuildItems[0].Tile);
