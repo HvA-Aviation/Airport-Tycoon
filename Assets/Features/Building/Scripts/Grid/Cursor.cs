@@ -143,11 +143,12 @@ namespace Features.Building.Scripts.Grid
             //set the tile on the tilemap
             foreach (SubBuildItem gridPosition in selectedGroup)
             {
+                Color availableColor = _grid.IsEmpty(gridPosition.GridPosition) ? validColor : invalidColor;
                 TileChangeData tempTile = new TileChangeData()
                 {
                     position = gridPosition.GridPosition - offset,
                     color = valid
-                        ? (_grid.IsEmpty(gridPosition.GridPosition) ? validColor : invalidColor)
+                        ? availableColor
                         : invalidColor
                 };
 
