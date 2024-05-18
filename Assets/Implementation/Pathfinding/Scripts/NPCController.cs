@@ -82,8 +82,7 @@ namespace Implementation.Pathfinding.Scripts
 
             // Declare the variables
             NativeHashMap<Vector3Int, Node> _gridNodes = new NativeHashMap<Vector3Int, Node>(arraySize, Allocator.TempJob);
-            NativeHashMap<Vector3Int, Node> _openList =
-                new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
+            Heap _openListHeap = new Heap(arraySize / 2);
             NativeHashMap<Vector3Int, Node> _closedList =
                 new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
             NativeArray<Vector3Int> _neighbourOffsets = new NativeArray<Vector3Int>(8, Allocator.TempJob);
@@ -100,8 +99,8 @@ namespace Implementation.Pathfinding.Scripts
             AStar aStar = new AStar
             {
                 gridNodes = _gridNodes,
-                openList = _openList,
                 closedList = _closedList,
+                openListHeap = _openListHeap,
                 neighbourOffsets = _neighbourOffsets,
                 startNode = _nodeGrid[(int)transform.position.x, (int)transform.position.y, (int)transform.position.z],
                 endNode = _nodeGrid[destination.x, destination.y, destination.z],
@@ -119,12 +118,12 @@ namespace Implementation.Pathfinding.Scripts
                 this._backtrackedPath.Add(_backtrackedPath[i]);
             }
 
-            open = _openList.GetValueArray(Allocator.Temp).ToArray();
+            open = _openListHeap.items.ToArray();
             closed = _closedList.GetValueArray(Allocator.Temp).ToArray();
 
             // Dispose all the NativeContainers to avoid memory leaks
             _gridNodes.Dispose();
-            _openList.Dispose();
+            _openListHeap.DisposeOfLists();
             _closedList.Dispose();
             _neighbourOffsets.Dispose();
             _backtrackedPath.Dispose();

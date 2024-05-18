@@ -1,14 +1,16 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
 namespace Implementation.Pathfinding.Scripts
 {
+    [BurstCompile(CompileSynchronously = true, FloatMode = FloatMode.Fast, FloatPrecision = FloatPrecision.Low)]
     public struct AStar : IJob
     {
         public NativeHashMap<Vector3Int, Node> gridNodes;
 
-        public NativeHashMap<Vector3Int, Node> openList;
+        public Heap openListHeap;
         public NativeHashMap<Vector3Int, Node> closedList;
         public NativeArray<Node> backtrackedPath;
         public NativeArray<int> backTrackedPathLength;
@@ -23,7 +25,7 @@ namespace Implementation.Pathfinding.Scripts
             Node _currentNode = startNode;
             _currentNode.hCost = CalculateHCost(_currentNode.position, endNode.position);
             _currentNode.CalculateFCost();
-            openList.Add(_currentNode.position, _currentNode);
+            openListHeap.Add(_currentNode);
 
             neighbourOffsets[0] = Vector3Int.up;
             neighbourOffsets[1] = Vector3Int.left;
@@ -34,10 +36,10 @@ namespace Implementation.Pathfinding.Scripts
             neighbourOffsets[6] = Vector3Int.down + Vector3Int.right;
             neighbourOffsets[7] = Vector3Int.down + Vector3Int.left;
 
-            while (openList.Count() != 0)
+            while (openListHeap.items.Length != 0)
             {
                 // Assign current node to lowest F cost in open list
-                _currentNode = LowestFCostInList(openList);
+                _currentNode = openListHeap.Pop();
                 closedList.TryAdd(_currentNode.position, _currentNode);
 
                 // Check all neighbours of the current node
@@ -58,16 +60,11 @@ namespace Implementation.Pathfinding.Scripts
 
                     if (neighbour.untraversable) continue;
 
-                    if (openList.ContainsKey(neighbour.position) && neighbour.gCost < openList[neighbour.position].gCost)
+                    if (!openListHeap.Contains(neighbour.position))
                     {
-                        openList[neighbour.position] = neighbour;
-                    }
-                    else if (!openList.ContainsKey(neighbour.position))
-                    {
-                        openList.TryAdd(neighbour.position, neighbour);
+                        openListHeap.Add(neighbour);
                     }
                 }
-                openList.Remove(_currentNode.position);
 
                 // Exit out of loop if we reached the end node
                 if (_currentNode.position == endNode.position)
@@ -108,25 +105,6 @@ namespace Implementation.Pathfinding.Scripts
             float yCost = Mathf.Abs(endNodePosition.y - currentNodePosition.y);
 
             return xCost * xCost + yCost * yCost;
-        }
-
-        /// <summary>
-        /// Get the lowest f cost in a given list of nodes
-        /// </summary>
-        Node LowestFCostInList(NativeHashMap<Vector3Int, Node> nodeList)
-        {
-            float lowestFcost = float.MaxValue;
-            Node currentNode = new Node();
-
-            foreach (var item in nodeList)
-            {
-                if (item.Value.fCost < lowestFcost)
-                {
-                    lowestFcost = item.Value.fCost;
-                    currentNode = item.Value;
-                }
-            }
-            return currentNode;
         }
     }
 }
