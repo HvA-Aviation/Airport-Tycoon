@@ -37,26 +37,18 @@ namespace Features.Workers
 
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
         {
-            StartCoroutine(CheckReached(target, onReachedPosition, onDone));
+            _npcController.SetTarget(
+                new Vector3Int(target.x, target.y, 0),
+                () => CheckTaskExists(target, onDone),
+                onReachedPosition);
         }
 
-        private IEnumerator CheckReached(Vector3Int target, Action onReachedPosition, Action onDone)
+        /// <summary>
+        /// Checks if task is still needed
+        /// </summary>
+        private void CheckTaskExists(Vector3Int target, Action onDone)
         {
-            _npcController.SetTarget(new Vector3Int(target.x, target.y, 0));
-            while (!_npcController.PathCompleted)
-            {
-                //Checks if task is still needed
-                if (_grid.Get(target) == -1)
-                {
-                    onDone.Invoke();
-                    _npcController.StopAllCoroutines();
-                    yield break;
-                }
-
-                yield return new WaitForSeconds(.5f);
-            }
-
-            onReachedPosition.Invoke();
+            if (_grid.Get(target) == -1) onDone.Invoke();
         }
     }
 }

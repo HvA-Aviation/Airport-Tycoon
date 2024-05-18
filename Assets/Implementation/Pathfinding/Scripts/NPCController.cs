@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
@@ -31,7 +32,13 @@ namespace Implementation.Pathfinding.Scripts
             _gridHeight = _grid.GridSize.y;
         }
 
-        public void SetTarget(Vector3Int position)
+        /// <summary>
+        /// Use this function to set the target of an NPC
+        /// </summary>
+        /// <param name="position">destination of path</param>
+        /// <param name="checkIfTaskIsStillNeeded">Callback to check if task is still needed</param>
+        /// <param name="onDestinationReached">Callback to handle what to do when the destination has been reached</param>
+        public void SetTarget(Vector3Int position, Action checkIfTaskIsStillNeeded, Action onDestinationReached)
         {
             CreateGrid();
             StopAllCoroutines();
@@ -41,15 +48,17 @@ namespace Implementation.Pathfinding.Scripts
             _endNode = new Vector3Int(position.x, position.y, 0);
 
             FindPath(_endNode);
-            StartCoroutine(MoveToTarget(_backtrackedPath));
+            StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached));
         }
 
         /// <summary>
-        /// Move the NPC to the target (This is just for visualisation purposes, needs to be replanced with actual movement system)
+        /// Move the NPC to the target
         /// </summary>
-        private IEnumerator MoveToTarget(List<Node> path)
+        private IEnumerator MoveToTarget(List<Node> path, Action checkIfTaskIsStillNeeded, Action onDestinationReached)
         {
-            _pathCompleted = false;
+            // if there is no path break out of this coroutine
+            if (path.Count <= 0) yield break;
+
             for (int i = path.Count - 1; i >= 0; i--)
             {
                 while (Vector3.Distance(path[i].position, transform.position) > 0.1f)
@@ -59,8 +68,9 @@ namespace Implementation.Pathfinding.Scripts
                     yield return new WaitForEndOfFrame();
                 }
                 transform.position = path[i].position;
+                checkIfTaskIsStillNeeded.Invoke();
             }
-            _pathCompleted = true;
+            onDestinationReached.Invoke();
         }
 
         /// <summary>
