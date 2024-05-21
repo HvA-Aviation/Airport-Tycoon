@@ -12,24 +12,18 @@ namespace Implementation.Pathfinding.Scripts
     {
         [Header("Dependecies")]
         [SerializeField] private Grid _grid;
-        [SerializeField] private bool _drawGizmos;
 
         [Header("Movement variables")]
         [SerializeField] private float _moveSpeed = 1f;
 
-        private Node[,,] _nodeGrid;
+        private NativeHashMap<Vector3Int, Node> nodeGrid;
         private List<Node> _backtrackedPath = new List<Node>();
         private Vector3Int _endNode;
-        private int _gridWidth, _gridHeight;
-        private bool _pathCompleted = true;
         private Node[] open, closed;
-
-        public bool PathCompleted => _pathCompleted;
 
         private void Start()
         {
-            _gridWidth = _grid.GridSize.x;
-            _gridHeight = _grid.GridSize.y;
+            StartCoroutine(CreateGrid());
         }
 
         /// <summary>
@@ -40,14 +34,13 @@ namespace Implementation.Pathfinding.Scripts
         /// <param name="onDestinationReached">Callback to handle what to do when the destination has been reached</param>
         public void SetTarget(Vector3Int position, Action checkIfTaskIsStillNeeded, Action onDestinationReached)
         {
-            CreateGrid();
             StopAllCoroutines();
 
             _backtrackedPath.Clear();
 
             _endNode = new Vector3Int(position.x, position.y, 0);
 
-            FindPath(_endNode);
+            FindPath(_endNode, nodeGrid);
             StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached));
         }
 
@@ -76,34 +69,30 @@ namespace Implementation.Pathfinding.Scripts
         /// <summary>
         /// Find the path from current position to the end node
         /// </summary>
-        void FindPath(Vector3Int destination)
+        void FindPath(Vector3Int destination, NativeHashMap<Vector3Int, Node> nodeGrid)
         {
-            int arraySize = _gridHeight * _gridWidth;
+            int arraySize = _grid.GridSize.x * _grid.GridSize.y;
 
             // Declare the variables
-            NativeHashMap<Vector3Int, Node> _gridNodes = new NativeHashMap<Vector3Int, Node>(arraySize, Allocator.TempJob);
             Heap _openListHeap = new Heap(arraySize / 2);
-            NativeHashMap<Vector3Int, Node> _closedList =
-                new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
+            NativeHashMap<Vector3Int, Node> _closedList = new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
             NativeArray<Vector3Int> _neighbourOffsets = new NativeArray<Vector3Int>(8, Allocator.TempJob);
             NativeArray<Node> _backtrackedPath = new NativeArray<Node>(arraySize, Allocator.TempJob);
             NativeArray<int> _backtrackedPathLength = new NativeArray<int>(1, Allocator.TempJob);
 
-            // Add all nodes in the generated grid to the NativeHashMap (Replace this with cody's grid system)
-            foreach (var item in _nodeGrid)
-            {
-                _gridNodes.Add(item.position, item);
-            }
+            // Get the start and end nodes from the node grid
+            nodeGrid.TryGetValue(new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z), out Node _startNode);
+            nodeGrid.TryGetValue(destination, out Node _endNode);
 
             // Create a new instance of the AStar job and assign its variables
             AStar aStar = new AStar
             {
-                gridNodes = _gridNodes,
+                gridNodes = nodeGrid,
                 closedList = _closedList,
                 openListHeap = _openListHeap,
                 neighbourOffsets = _neighbourOffsets,
-                startNode = _nodeGrid[(int)transform.position.x, (int)transform.position.y, (int)transform.position.z],
-                endNode = _nodeGrid[destination.x, destination.y, destination.z],
+                startNode = _startNode,
+                endNode = _endNode,
                 backtrackedPath = _backtrackedPath,
                 backTrackedPathLength = _backtrackedPathLength
             };
@@ -122,7 +111,6 @@ namespace Implementation.Pathfinding.Scripts
             closed = _closedList.GetValueArray(Allocator.Temp).ToArray();
 
             // Dispose all the NativeContainers to avoid memory leaks
-            _gridNodes.Dispose();
             _openListHeap.DisposeOfLists();
             _closedList.Dispose();
             _neighbourOffsets.Dispose();
@@ -133,29 +121,37 @@ namespace Implementation.Pathfinding.Scripts
         /// <summary>
         /// Create a grid of nodes
         /// </summary>
-        void CreateGrid()
+        IEnumerator CreateGrid()
         {
-            _nodeGrid = new Node[_gridWidth, _gridHeight, 1];
-
-            var traversable = _grid.TraversableTiles;
-            for (int x = 0; x < _gridWidth; x++)
+            // This is very ugly but _grid.TraversableTiles is null when I call it at start so this was a quick dirty fix
+            while (_grid.TraversableTiles == null)
             {
-                for (int y = 0; y < _gridHeight; y++)
+                yield return new WaitForEndOfFrame();
+            }
+
+            nodeGrid = new NativeHashMap<Vector3Int, Node>(_grid.GridSize.x * _grid.GridSize.y, Allocator.Persistent);
+
+            for (int x = 0; x < _grid.GridSize.x; x++)
+            {
+                for (int y = 0; y < _grid.GridSize.y; y++)
                 {
                     Node node = new Node()
                     {
                         position = new Vector3Int(x, y, 0),
-                        untraversable = !traversable[x, y]
+                        untraversable = !_grid.TraversableTiles[x, y]
                     };
-                    _nodeGrid[x, y, 0] = node;
+                    nodeGrid.TryAdd(new Vector3Int(x, y, 0), node);
                 }
             }
+            yield break;
         }
 
         public float RoundToMultiple(float value, float roundTo)
         {
             return Mathf.RoundToInt(value / roundTo) * roundTo;
         }
+
+        private void OnApplicationQuit() => nodeGrid.Dispose();
 
         private void OnDrawGizmosSelected()
         {
