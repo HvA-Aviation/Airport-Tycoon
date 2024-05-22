@@ -1,15 +1,17 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ShowStaffInList : MonoBehaviour
 {
-    [SerializeField] private GameObject _content;
+    [SerializeField] private TMP_Text _nameText, _jobTypeText, _salaryText;
 
-    [SerializeField] private GameObject _staffButton;
-    public void AddItemToList()
+    [HideInInspector]public Employee ThisEmployee;
+
+    private void Start()
     {
-        Instantiate(_staffButton, _content.transform);   
+        _nameText.text = ThisEmployee.Name;
+        _jobTypeText.text = ThisEmployee.EmployeeType.ToString();
+        _salaryText.text = ThisEmployee.LoanAmount.ToString();
     }
-
-    
 }

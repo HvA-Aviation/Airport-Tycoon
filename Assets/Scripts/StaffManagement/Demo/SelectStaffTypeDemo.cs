@@ -11,6 +11,9 @@ public class SelectStaffTypeDemo : MonoBehaviour
     [SerializeField] private TMP_Dropdown _hireDropDown;
     [SerializeField] private TMP_Dropdown _fireDropDown;
 
+    [SerializeField] private Transform _parent;
+    [SerializeField] private GameObject _listObject;
+
     private int _fireEmployeeID;
 
     private EmployeeTypes.EmployeeType _employeeTypeToHire;
@@ -41,8 +44,11 @@ public class SelectStaffTypeDemo : MonoBehaviour
         _staffManager.HireEmployee(_employeeTypeToHire);
         string name = _staffManager.GetNameOfEmployee(_staffManager.LastEmployeeID);
         Debug.Log(_staffManager.LastEmployeeID);
-        _employees.Add(name);
-        UpdateFireDropDown();
+
+        GameObject temp = Instantiate(_listObject, _parent);
+        temp.GetComponent<ShowStaffInList>().ThisEmployee = _staffManager.Employees[_staffManager.LastEmployeeID];
+        /*_employees.Add(name);
+        UpdateFireDropDown();*/
     }
 
     public void SetEmployeeToFire(int val)
