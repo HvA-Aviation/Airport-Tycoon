@@ -11,10 +11,12 @@ public class SelectStaffTypeDemo : MonoBehaviour
     [SerializeField] private TMP_Dropdown _hireDropDown;
     [SerializeField] private TMP_Dropdown _fireDropDown;
 
+    private int _fireEmployeeID;
+
     private EmployeeTypes.EmployeeType _employeeTypeToHire;
 
     private string[] _employeeTypes;
-
+    private List<string> _employees = new List<string>();
     private void Awake()
     {
         _employeeTypes = Enum.GetNames(typeof(EmployeeTypes.EmployeeType));
@@ -22,9 +24,11 @@ public class SelectStaffTypeDemo : MonoBehaviour
 
     private void Start()
     {
-        _fireDropDown.ClearOptions();
+        _hireDropDown.ClearOptions();
 
-        _fireDropDown.AddOptions(_employeeTypes.ToList());
+        _hireDropDown.AddOptions(_employeeTypes.ToList());
+
+        _fireDropDown.ClearOptions();
     }
 
     public void SetEmployeeToHire(int val)
@@ -35,10 +39,28 @@ public class SelectStaffTypeDemo : MonoBehaviour
     public void Hire()
     {
         _staffManager.HireEmployee(_employeeTypeToHire);
+        string name = _staffManager.GetNameOfEmployee(_staffManager.LastEmployeeID);
+        Debug.Log(_staffManager.LastEmployeeID);
+        _employees.Add(name);
+        UpdateFireDropDown();
     }
 
     public void SetEmployeeToFire(int val)
     {
-        _staffManager.FireEmployee(val);
+        _fireEmployeeID = val;
+        
+    }
+
+    public void Fire()
+    {
+        _employees.Remove(_staffManager.GetNameOfEmployee(_fireEmployeeID));
+        _staffManager.FireEmployee(_fireEmployeeID);
+        UpdateFireDropDown();
+    }
+
+    void UpdateFireDropDown()
+    {
+        _fireDropDown.ClearOptions();
+        _fireDropDown.AddOptions(_employees);
     }
 }

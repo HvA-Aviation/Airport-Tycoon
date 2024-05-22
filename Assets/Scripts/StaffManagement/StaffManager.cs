@@ -8,6 +8,7 @@ public class StaffManager : MonoBehaviour
 
     private int _nextEmployeeID = 0;
     
+    public int LastEmployeeID => _nextEmployeeID - 1;
     public Dictionary<int, Employee> Employees { get; private set; }
 
     private void Awake()
@@ -34,6 +35,8 @@ public class StaffManager : MonoBehaviour
 
         employee.SetEmployeeType(type);
 
+        employee.SetID(_nextEmployeeID);
+
         AddEmployeeToDictionary(employee);
     }
 
@@ -49,4 +52,12 @@ public class StaffManager : MonoBehaviour
             Employees.Remove(employeeID);            
         }
     }
+
+    public GameObject GetGameObjectOfEmployee(int employeeID) => Employees[employeeID].gameObject;
+
+    public int GetSalaryOfEmployee(int employeeID) => Employees[employeeID].LoanAmount;
+
+    public string GetNameOfEmployee(int employeeID) => Employees[employeeID].Name;
+
+    public EmployeeTypes.EmployeeType GetEmployeeType(int employeeID) => Employees[employeeID].EmployeeType;
 }
