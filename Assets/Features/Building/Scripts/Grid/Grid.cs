@@ -165,7 +165,7 @@ namespace Features.Building.Scripts.Grid
             {
                 if (_cellGroup[i].Contains(gridVector))
                 {
-                    foreach (var child in _cellGroup[i])
+                    foreach (Vector3Int child in _cellGroup[i])
                     {
                         if (child != buildTiles[0])
                             buildTiles.Add(child);
@@ -174,7 +174,7 @@ namespace Features.Building.Scripts.Grid
             }
 
             bool isFinished = false;
-            foreach (var tile in buildTiles)
+            foreach (Vector3Int tile in buildTiles)
             {
                 _cells[tile.x, tile.y, tile.z].CurrentWorkLoad = Mathf.Clamp(_cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * Time.deltaTime, 0, _cells[tile.x, tile.y, tile.z].WorkLoad);
                 
@@ -257,7 +257,7 @@ namespace Features.Building.Scripts.Grid
         public bool SetGroup(List<Vector3Int> gridVectors, List<Tile> tiles, int rotation)
         {
             //check if all the positions are available
-            foreach (var position in gridVectors)
+            foreach (Vector3Int position in gridVectors)
             {
                 if (Get(position) != -1)
                     return false;
@@ -274,7 +274,7 @@ namespace Features.Building.Scripts.Grid
                     return false;
                 }
 
-                var cellData = _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z];
+                CellData cellData = _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z];
 
                 cellData.Tile = Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile);
                 cellData.Rotation = rotation;
@@ -307,7 +307,7 @@ namespace Features.Building.Scripts.Grid
                     group = new List<Vector3Int>() { gridVector };
 
                 //Remove from array
-                foreach (var item in group)
+                foreach (Vector3Int item in group)
                 {
                     _cells[item.x, item.y, item.z].Clear();
                 }
@@ -374,7 +374,7 @@ namespace Features.Building.Scripts.Grid
                 for (int y = 0; y < _gridSize.y; y++)
                 {
                     Vector2 origin = new Vector2(x, y) * _cellSize - (Vector2)transform.position;
-                    var offset = _cellSize / 2;
+                    float offset = _cellSize / 2;
 
                     Gizmos.color = Color.gray;
                     Gizmos.DrawLine(origin + new Vector2(-offset, offset), origin + new Vector2(offset, offset));
@@ -387,7 +387,7 @@ namespace Features.Building.Scripts.Grid
 
             if (Application.isPlaying)
             {
-                var traversable = TraversableTiles;
+                bool[,] traversable = TraversableTiles;
 
                 for (int x = 0; x < _gridSize.x; x++)
                 {

@@ -71,7 +71,7 @@ namespace Brushes
                 //rotate the shape
                 for (int i = 0; i < _shape.Count; i++)
                 {
-                    var gridPosition = _shape[i].GridPosition.Position;
+                    Vector2Int gridPosition = _shape[i].GridPosition.Position;
                     _shape[i].GridPosition.Position = new Vector2Int(gridPosition.y, gridPosition.x) * dir;
                 }
 
@@ -88,7 +88,7 @@ namespace Brushes
             //place the tiles in the shape of the selection
             List<Vector3Int> positions = new List<Vector3Int>();
             List<Tile> indices = new List<Tile>();
-            foreach (var selected in _selectedTiles)
+            foreach (SubBuildItem selected in _selectedTiles)
             {
                 positions.Add(selected.GridPosition);
                 indices.Add(selected.Tile);

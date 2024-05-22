@@ -127,7 +127,7 @@ namespace Features.Building.Scripts.Grid
             bool valid = true;
             if (requireAllAvailable)
             {
-                foreach (var gridPosition in selectedGroup)
+                foreach (SubBuildItem gridPosition in selectedGroup)
                 {
                     if (!_grid.IsEmpty(gridPosition.GridPosition))
                     {
