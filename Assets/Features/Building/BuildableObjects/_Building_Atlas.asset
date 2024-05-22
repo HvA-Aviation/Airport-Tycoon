@@ -27,7 +27,7 @@ MonoBehaviour:
     UnTraversable: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: fbfe88272625d5c47979b613d9233838,
       type: 2}
-    WorkLoad: 10
+    WorkLoad: 2
     UnTraversable: 1
   - <Tile>k__BackingField: {fileID: 11400000, guid: 188e4c7d9c6ce694a8392e304280d246,
       type: 2}
