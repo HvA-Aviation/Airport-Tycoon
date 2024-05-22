@@ -4,22 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SelectStaffTypeDemo : MonoBehaviour
-{
-    [SerializeField] private StaffManager _staffManager;
+{    
     [SerializeField] private TMP_Dropdown _hireDropDown;
-    [SerializeField] private TMP_Dropdown _fireDropDown;
 
     [SerializeField] private Transform _parent;
     [SerializeField] private GameObject _listObject;
 
-    private int _fireEmployeeID;
-
     private EmployeeTypes.EmployeeType _employeeTypeToHire;
 
     private string[] _employeeTypes;
-    private List<string> _employees = new List<string>();
+
+    public StaffManager StaffManager;
+    public UnityEvent Event = new UnityEvent();
+
     private void Awake()
     {
         _employeeTypes = Enum.GetNames(typeof(EmployeeTypes.EmployeeType));
@@ -30,8 +30,6 @@ public class SelectStaffTypeDemo : MonoBehaviour
         _hireDropDown.ClearOptions();
 
         _hireDropDown.AddOptions(_employeeTypes.ToList());
-
-        _fireDropDown.ClearOptions();
     }
 
     public void SetEmployeeToHire(int val)
@@ -41,32 +39,18 @@ public class SelectStaffTypeDemo : MonoBehaviour
 
     public void Hire()
     {
-        _staffManager.HireEmployee(_employeeTypeToHire);
-        string name = _staffManager.GetNameOfEmployee(_staffManager.LastEmployeeID);
-        Debug.Log(_staffManager.LastEmployeeID);
+        StaffManager.HireEmployee(_employeeTypeToHire);
+        string name = StaffManager.GetNameOfEmployee(StaffManager.LastEmployeeID);
+        Debug.Log(StaffManager.LastEmployeeID);
 
         GameObject temp = Instantiate(_listObject, _parent);
-        temp.GetComponent<ShowStaffInList>().ThisEmployee = _staffManager.Employees[_staffManager.LastEmployeeID];
-        /*_employees.Add(name);
-        UpdateFireDropDown();*/
-    }
-
-    public void SetEmployeeToFire(int val)
-    {
-        _fireEmployeeID = val;
-        
-    }
+        temp.GetComponent<ShowStaffInList>().ThisEmployee = StaffManager.Employees[StaffManager.LastEmployeeID];
+        temp.GetComponent<ShowStaffInList>().Demo = this;
+    }    
 
     public void Fire()
     {
-        _employees.Remove(_staffManager.GetNameOfEmployee(_fireEmployeeID));
-        _staffManager.FireEmployee(_fireEmployeeID);
-        UpdateFireDropDown();
-    }
-
-    void UpdateFireDropDown()
-    {
-        _fireDropDown.ClearOptions();
-        _fireDropDown.AddOptions(_employees);
-    }
+        Event.Invoke();
+        Event.RemoveAllListeners();
+    }    
 }
