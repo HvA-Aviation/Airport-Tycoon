@@ -3,15 +3,32 @@ using UnityEngine;
 
 public class StaffManager : MonoBehaviour
 {
-    public List<Employee> Employees { get; private set; }
+    [SerializeField] private SpawnNewStaff _spawnNewStaff;
+
+    private int _nextEmployeeID = 0;
+    
+    public Dictionary<int, Employee> Employees { get; private set; }
 
     private void Awake()
     {
-        Employees = new List<Employee>();
+        Employees = new Dictionary<int, Employee>();
     }
 
-    public void HireEmployees()
+    private void AddEmployeeToDictionary(Employee employee)
     {
-        Employees.Add(new Employee());
+        Employees.Add(_nextEmployeeID, employee);
+
+        _nextEmployeeID++;
+    }
+
+    public void HireEmployees(EmployeeTypes.EmployeeType type)
+    {
+        _spawnNewStaff.InstantiateEmployee(type);
+
+        Employee employee = _spawnNewStaff.NewEmployeeObjectSpawned.GetComponent<Employee>();
+
+        employee.SetEmployeeType(type);
+
+        AddEmployeeToDictionary(employee);
     }
 }

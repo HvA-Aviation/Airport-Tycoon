@@ -3,15 +3,10 @@ using UnityEngine;
 public class Employee : MonoBehaviour
 {
     [SerializeField] private StaffManager _staffManager;
+    public int LoanAmount { get; private set; }
+    public EmployeeTypes.EmployeeType EmployeeType {  get; private set; }
 
-    [SerializeField] private int _hireCost;
-    [SerializeField] private int _loanAmount;
+    public void SetEmployeeType(EmployeeTypes.EmployeeType type) => EmployeeType = type;
 
-    [SerializeField] Job _job;
-
-    public int HireCost => _hireCost;
-    public int LoanAmount => _loanAmount;
-    public Job JobSite => _job;
-
-    public enum Job { all }
+    public void SetLoanAmount(int amount) => LoanAmount = amount;   
 }
