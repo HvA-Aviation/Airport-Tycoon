@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class StaffManager : MonoBehaviour
 {
@@ -21,7 +22,11 @@ public class StaffManager : MonoBehaviour
         _nextEmployeeID++;
     }
 
-    public void HireEmployees(EmployeeTypes.EmployeeType type)
+    /// <summary>
+    /// This function is called when you want to hire a type of employee
+    /// </summary>
+    /// <param name="type">The type of employee you want to hire</param>
+    public void HireEmployee(EmployeeTypes.EmployeeType type)
     {
         _spawnNewStaff.InstantiateEmployee(type);
 
@@ -30,5 +35,18 @@ public class StaffManager : MonoBehaviour
         employee.SetEmployeeType(type);
 
         AddEmployeeToDictionary(employee);
+    }
+
+    /// <summary>
+    /// This function is called when you want to fire an employee
+    /// </summary>
+    /// <param name="employeeID">The index of the employee you want to fire</param>
+    public void FireEmployee(int employeeID)
+    {
+        if(Employees.TryGetValue(employeeID, out Employee employee))
+        {
+            _spawnNewStaff.DespawnEmployeeOBJ(employeeID);
+            Employees.Remove(employeeID);            
+        }
     }
 }

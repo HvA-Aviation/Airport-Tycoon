@@ -8,7 +8,8 @@ using UnityEngine;
 public class SelectStaffTypeDemo : MonoBehaviour
 {
     [SerializeField] private StaffManager _staffManager;
-    [SerializeField] private TMP_Dropdown _dropDown;
+    [SerializeField] private TMP_Dropdown _hireDropDown;
+    [SerializeField] private TMP_Dropdown _fireDropDown;
 
     private EmployeeTypes.EmployeeType _employeeTypeToHire;
 
@@ -21,19 +22,23 @@ public class SelectStaffTypeDemo : MonoBehaviour
 
     private void Start()
     {
-        _dropDown.ClearOptions();
+        _fireDropDown.ClearOptions();
 
-        _dropDown.AddOptions(_employeeTypes.ToList());
+        _fireDropDown.AddOptions(_employeeTypes.ToList());
     }
 
     public void SetEmployeeToHire(int val)
     {
         _employeeTypeToHire = (EmployeeTypes.EmployeeType)val;
-        Debug.Log(_employeeTypeToHire);
     }
 
     public void Hire()
     {
-        _staffManager.HireEmployees(_employeeTypeToHire);
+        _staffManager.HireEmployee(_employeeTypeToHire);
+    }
+
+    public void SetEmployeeToFire(int val)
+    {
+        _staffManager.FireEmployee(val);
     }
 }
