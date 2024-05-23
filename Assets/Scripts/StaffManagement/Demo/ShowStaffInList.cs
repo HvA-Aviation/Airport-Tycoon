@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +8,7 @@ public class ShowStaffInList : MonoBehaviour
 
     private Button _button;
 
-    [HideInInspector]public Employee ThisEmployee;
+    [HideInInspector] public Employee ThisEmployee;
     [HideInInspector] public SelectStaffTypeDemo Demo;
 
     private void Start()
@@ -17,7 +16,7 @@ public class ShowStaffInList : MonoBehaviour
         _button = GetComponent<Button>();
         _nameText.text = ThisEmployee.Name;
         _jobTypeText.text = ThisEmployee.EmployeeType.ToString();
-        _salaryText.text = ThisEmployee.LoanAmount.ToString();
+        _salaryText.text = ThisEmployee.SalaryAmount.ToString();
         _button.onClick.AddListener(Select);
     }
 

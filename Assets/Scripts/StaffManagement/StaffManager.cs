@@ -1,20 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class StaffManager : MonoBehaviour
 {
     [SerializeField] private SpawnNewStaff _spawnNewStaff;
 
     private int _nextEmployeeID = 0;
-    
+
     public int LastEmployeeID => _nextEmployeeID - 1;
     public Dictionary<int, Employee> Employees { get; private set; }
 
-    private void Awake()
-    {
-        Employees = new Dictionary<int, Employee>();
-    }
+    private void Awake() => Employees = new Dictionary<int, Employee>();
 
     private void AddEmployeeToDictionary(Employee employee)
     {
@@ -46,16 +42,16 @@ public class StaffManager : MonoBehaviour
     /// <param name="employeeID">The index of the employee you want to fire</param>
     public void FireEmployee(int employeeID)
     {
-        if(Employees.TryGetValue(employeeID, out Employee employee))
+        if (Employees.TryGetValue(employeeID, out Employee employee))
         {
             _spawnNewStaff.DespawnEmployeeOBJ(employeeID);
-            Employees.Remove(employeeID);            
+            Employees.Remove(employeeID);
         }
     }
 
     public GameObject GetGameObjectOfEmployee(int employeeID) => Employees[employeeID].gameObject;
 
-    public int GetSalaryOfEmployee(int employeeID) => Employees[employeeID].LoanAmount;
+    public int GetSalaryOfEmployee(int employeeID) => Employees[employeeID].SalaryAmount;
 
     public string GetNameOfEmployee(int employeeID) => Employees[employeeID].Name;
 

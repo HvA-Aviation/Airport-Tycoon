@@ -1,13 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class SelectStaffTypeDemo : MonoBehaviour
-{    
+{
     [SerializeField] private TMP_Dropdown _hireDropDown;
 
     [SerializeField] private Transform _parent;
@@ -41,16 +39,15 @@ public class SelectStaffTypeDemo : MonoBehaviour
     {
         StaffManager.HireEmployee(_employeeTypeToHire);
         string name = StaffManager.GetNameOfEmployee(StaffManager.LastEmployeeID);
-        Debug.Log(StaffManager.LastEmployeeID);
 
         GameObject temp = Instantiate(_listObject, _parent);
         temp.GetComponent<ShowStaffInList>().ThisEmployee = StaffManager.Employees[StaffManager.LastEmployeeID];
         temp.GetComponent<ShowStaffInList>().Demo = this;
-    }    
+    }
 
     public void Fire()
     {
         Event.Invoke();
         Event.RemoveAllListeners();
-    }    
+    }
 }

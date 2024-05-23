@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnNewStaff : MonoBehaviour
@@ -7,7 +5,11 @@ public class SpawnNewStaff : MonoBehaviour
     [SerializeField] private GameObject _employeeOBJ;
     [SerializeField] private StaffManager _staffManager;
 
-    public GameObject NewEmployeeObjectSpawned {  get; private set; }
+    private GameObject _parentOBJ;
+
+    public GameObject NewEmployeeObjectSpawned { get; private set; }
+
+    private void Start() => _parentOBJ = new GameObject("EmployeesParent");
 
     /// <summary>
     /// This function is called when you hired an employee and the employee is then seen on the screen
@@ -15,7 +17,7 @@ public class SpawnNewStaff : MonoBehaviour
     /// <param name="type">The type of employee to instantiate</param>
     public void InstantiateEmployee(EmployeeTypes.EmployeeType type)
     {
-        GameObject newEmployeeOBJ = Instantiate(_employeeOBJ, Vector3.zero, Quaternion.identity);
+        GameObject newEmployeeOBJ = Instantiate(_employeeOBJ, Vector3.zero, Quaternion.identity, _parentOBJ.transform);
         NewEmployeeObjectSpawned = newEmployeeOBJ;
     }
 
