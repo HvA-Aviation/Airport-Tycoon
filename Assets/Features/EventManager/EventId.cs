@@ -3,6 +3,7 @@
     public enum EventId
     {
         DefaultEvent,
-        ChangeBrush
+        ChangeBrush,
+        UnlockBuilding
     }
 }

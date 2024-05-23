@@ -28,6 +28,7 @@ namespace Features.Managers
             if (index != -1)
             {
                 BuildingStatuses[index].IsUnlocked = true;
+                GameManager.Instance.EventManager.TriggerEvent(EventId.UnlockBuilding);
             }
             else
             {

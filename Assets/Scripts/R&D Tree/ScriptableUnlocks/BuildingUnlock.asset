@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: BuildingUnlock
   m_EditorClassIdentifier: 
   <BuildableObjects>k__BackingField:
-  - {fileID: 11400000, guid: add816ad7c0618e45bc6275e18b3444f, type: 2}
-  - {fileID: 11400000, guid: 614598fcdcd206e4c90eab112bfbd081, type: 2}
+  - {fileID: 11400000, guid: 4240fc810619a194bb03633333b32553, type: 2}

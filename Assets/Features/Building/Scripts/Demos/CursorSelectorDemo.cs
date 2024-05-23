@@ -1,3 +1,5 @@
+using System.Linq;
+using Features.EventManager;
 using Features.Managers;
 using TMPro;
 using UnityEngine;
@@ -12,13 +14,22 @@ namespace Features.Building.Scripts.Demos
 
         private void Start()
         {
-            foreach (BuildingStatus buildingStatus in GameManager.Instance.BuildingManager.BuildingStatuses)
-            {
-                _dropdown.options.Add(new TMP_Dropdown.OptionData(buildingStatus.BuildableObject.name, buildingStatus.BuildableObject.BuildItems[0].Tile.sprite));
-            }
+            UpdateDropDown();
 
             _dropdown.onValueChanged.AddListener(Select);
             _dropdown.RefreshShownValue();
+            
+            GameManager.Instance.EventManager.Subscribe(EventId.UnlockBuilding, (args) => UpdateDropDown());
+        }
+
+        private void UpdateDropDown()
+        {
+            _dropdown.options.Clear();
+            
+            foreach (BuildingStatus buildingStatus in GameManager.Instance.BuildingManager.BuildingStatuses.Where(x => x.IsUnlocked))
+            {
+                _dropdown.options.Add(new TMP_Dropdown.OptionData(buildingStatus.BuildableObject.name, buildingStatus.BuildableObject.BuildItems[0].Tile.sprite));
+            }
         }
 
         private void Select(int index)
