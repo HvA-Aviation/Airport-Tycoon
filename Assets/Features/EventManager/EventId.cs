@@ -2,6 +2,8 @@
 {
     public enum EventId
     {
-        DefaultEvent
+        DefaultEvent,
+        OnMoneyAdded,
+        OnMoneyRemoved,
     }
 }
