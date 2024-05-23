@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Features.Building.Scripts.Datatypes;
+using Features.Managers;
 using TMPro;
 using UnityEngine;
 using Cursor = Features.Building.Scripts.Grid.Cursor;
@@ -18,7 +19,7 @@ namespace Features.Building.Scripts.Demos
 
         private void Select(int index)
         {
-            _cursor.ChangeSelectedBuildable(_buildable[index]);
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildable(_buildable[index]);
         }
 
     }
