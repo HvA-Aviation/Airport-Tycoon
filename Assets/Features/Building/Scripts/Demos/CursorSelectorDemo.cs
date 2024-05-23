@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Features.Building.Scripts.Datatypes;
 using Features.Managers;
 using TMPro;
 using UnityEngine;
@@ -9,18 +7,23 @@ namespace Features.Building.Scripts.Demos
 {
     public class CursorSelectorDemo : MonoBehaviour
     {
-        [SerializeField] private List<BuildableObject> _buildable;
         [SerializeField] private Cursor _cursor;
+        [SerializeField] private TMP_Dropdown _dropdown;
 
         private void Start()
         {
-            GetComponent<TMP_Dropdown>().onValueChanged.AddListener(Select);
+            foreach (BuildingStatus buildingStatus in GameManager.Instance.BuildingManager.BuildingStatuses)
+            {
+                _dropdown.options.Add(new TMP_Dropdown.OptionData(buildingStatus.BuildableObject.name, buildingStatus.BuildableObject.BuildItems[0].Tile.sprite));
+            }
+
+            _dropdown.onValueChanged.AddListener(Select);
+            _dropdown.RefreshShownValue();
         }
 
         private void Select(int index)
         {
-            GameManager.Instance.BuildingManager.ChangeSelectedBuildable(_buildable[index]);
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildable(GameManager.Instance.BuildingManager.BuildingStatuses[index].BuildableObject);
         }
-
     }
 }

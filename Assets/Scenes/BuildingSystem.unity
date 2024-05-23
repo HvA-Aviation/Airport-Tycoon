@@ -529,7 +529,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tile Floor
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1221,19 +1221,7 @@ MonoBehaviour:
   m_ItemImage: {fileID: 0}
   m_Value: 0
   m_Options:
-    m_Options:
-    - m_Text: Tile Floor
-      m_Image: {fileID: 21300000, guid: 66c5aa08571c67e468c0d9b4782432af, type: 3}
-    - m_Text: Couch
-      m_Image: {fileID: 1775020938, guid: 862095459d95f1449a30135b9b662060, type: 3}
-    - m_Text: Wall
-      m_Image: {fileID: 21300000, guid: 17373be14ce236247b835dcf32e280a4, type: 3}
-    - m_Text: Door
-      m_Image: {fileID: 21300000, guid: f6a22b56bdc365449b029b97d142627b, type: 3}
-    - m_Text: Remove Floor
-      m_Image: {fileID: 21300000, guid: 8486da64919f72b4ead1bb47afb73c7c, type: 3}
-    - m_Text: Remove Objects
-      m_Image: {fileID: 21300000, guid: 8486da64919f72b4ead1bb47afb73c7c, type: 3}
+    m_Options: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1296,6 +1284,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: abf38142527b0b440b726bd2f269251f, type: 2}
   - {fileID: 11400000, guid: 1d4e7c6ac9c756a47b3979550bff5f38, type: 2}
   _cursor: {fileID: 1474057266}
+  _dropdown: {fileID: 371306862}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2822,7 +2811,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f3d096d694c4948af519cd8ea4ab1e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _buildingStatuses:
+  <CurrentBuildableObject>k__BackingField: {fileID: 0}
+  <BuildingStatuses>k__BackingField:
   - <BuildableObject>k__BackingField: {fileID: 11400000, guid: add816ad7c0618e45bc6275e18b3444f,
       type: 2}
     <IsLocked>k__BackingField: 0
@@ -4182,7 +4172,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890275166}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -4195,7 +4185,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 66c5aa08571c67e468c0d9b4782432af, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
