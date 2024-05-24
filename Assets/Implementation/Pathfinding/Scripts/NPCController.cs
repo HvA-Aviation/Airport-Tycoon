@@ -76,13 +76,13 @@ namespace Implementation.Pathfinding.Scripts
             NativeArray<int> _backtrackedPathLength = new NativeArray<int>(1, Allocator.TempJob);
 
             // Get the start and end nodes from the node grid
-            GameManager.Instance.GridManager.NodeGrid.TryGetValue(new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z), out Node _startNode);
-            GameManager.Instance.GridManager.NodeGrid.TryGetValue(destination, out Node _endNode);
+            nodeGrid.TryGetValue(new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z), out Node _startNode);
+            nodeGrid.TryGetValue(destination, out Node _endNode);
 
             // Create a new instance of the AStar job and assign its variables
             AStar aStar = new AStar
             {
-                gridNodes = GameManager.Instance.GridManager.NodeGrid,
+                gridNodes = nodeGrid,
                 closedList = _closedList,
                 openListHeap = _openListHeap,
                 neighbourOffsets = _neighbourOffsets,
