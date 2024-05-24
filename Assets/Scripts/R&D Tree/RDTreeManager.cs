@@ -31,7 +31,6 @@ public class RDTreeManager : MonoBehaviour
 
     public void Unlock(Unlockable unlockable)
     {
-        Debug.Log("Test");
         unlockable.Execute();
     }
 
