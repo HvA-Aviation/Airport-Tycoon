@@ -116,7 +116,6 @@ namespace Features.Building.Scripts.Grid
 
         /// <summary>
         /// Loops through the whole grid and sets all the cells to what they are supposed to be
-        /// TODO add a buffer, so correct tiles aren't changed
         /// </summary>
         private void UpdateMap()
         {
@@ -170,10 +169,13 @@ namespace Features.Building.Scripts.Grid
                 CellData cellData = _cells[tile.x, tile.y, tile.z];
 
                 float buildAmount = _buildingStaringOpacity + (cellData.CurrentWorkLoad / cellData.WorkLoad * (1 - _buildingStaringOpacity));
+
+                Color color = _tilemap.GetColor(tile);
+                color.a = buildAmount;
                 _gridColorBuffer.Add(new TileColorData()
                 {
                     Position = tile,
-                    Color = new Color(1, 1, 1, buildAmount),
+                    Color = color,
                 });
 
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
@@ -214,10 +216,13 @@ namespace Features.Building.Scripts.Grid
 
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
 
+                Color color = _atlas.Items[buildIndex].Color;
+                color.a = _buildingStaringOpacity;
+                
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVector,
-                    color = new Color(1, 1, 1, _buildingStaringOpacity),
+                    color = color,
                     tile = _atlas.Items[buildIndex].Tile,
                     transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });
@@ -285,10 +290,13 @@ namespace Features.Building.Scripts.Grid
 
                 _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
 
+                Color color = _atlas.Items[cellData.Tile].Color;
+                color.a = _buildingStaringOpacity;
+                
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVectors[i],
-                    color = new Color(1, 1, 1, _buildingStaringOpacity),
+                    color = color,
                     tile = tileData.Tile,
                     transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });
