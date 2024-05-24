@@ -16,7 +16,7 @@ namespace Features.Building.Scripts.Demos
 
         private void Start()
         {
-            GameManager.Instance.BuildingManager.ChangeSelectedBuildable(_defaultSelectedBuilding);
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildable(0);
         }
 
         private void Update()

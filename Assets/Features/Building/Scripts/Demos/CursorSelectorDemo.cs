@@ -34,7 +34,7 @@ namespace Features.Building.Scripts.Demos
 
         private void Select(int index)
         {
-            GameManager.Instance.BuildingManager.ChangeSelectedBuildable(GameManager.Instance.BuildingManager.BuildingStatuses[index].BuildableObject);
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildable(index);
         }
     }
 }

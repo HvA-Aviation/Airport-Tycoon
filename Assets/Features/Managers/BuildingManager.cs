@@ -16,9 +16,9 @@ namespace Features.Managers
         /// Set other buildable
         /// </summary>
         /// <param name="buildableObject">Building that is going to be placed</param>
-        public void ChangeSelectedBuildable(BuildableObject buildableObject)
+        public void ChangeSelectedBuildable(int index)
         {
-            CurrentBuildableObject = buildableObject;
+            CurrentBuildableObject = BuildingStatuses[index].BuildableObject;
             GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeBrush);
         }
 
