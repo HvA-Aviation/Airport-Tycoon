@@ -9,14 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29d11b396c214f51a51ce3fe8885b523, type: 3}
+  m_Script: {fileID: 11500000, guid: 0724532d99bc42039408cdd8ee351cc4, type: 3}
   m_Name: Metal Detector
   m_EditorClassIdentifier: 
-  Name: Metal Detector
+  Name: 
   BrushType: 0
-  BuildItems:
-  - <Tile>k__BackingField: {fileID: 11400000, guid: a34c6e45faeba8a4c9340342d4aa948a,
-      type: 2}
-    <GridPosition>k__BackingField:
-      <Position>k__BackingField: {x: 0, y: 0}
-      <Layer>k__BackingField: 1
+  BuildItems: []
+  <SecurityWorkLoad>k__BackingField: 0
