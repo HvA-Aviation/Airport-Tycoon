@@ -95,7 +95,6 @@ namespace Implementation.Pathfinding.Scripts
         {
             // Get parents index
             int parentIndex = index / 2;
-            //Debug.Log($"Parent index: {parentIndex} | index: {index}");
             if (items[parentIndex].fCost > items[index].fCost)
             {
                 Node temp = items[parentIndex];
