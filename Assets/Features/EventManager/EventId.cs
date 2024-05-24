@@ -2,6 +2,7 @@
 {
     public enum EventId
     {
-        DefaultEvent
+        DefaultEvent,
+        GridUpdateEvent
     }
 }

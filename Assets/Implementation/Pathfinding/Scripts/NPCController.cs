@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Features.Managers;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -16,15 +17,9 @@ namespace Implementation.Pathfinding.Scripts
         [Header("Movement variables")]
         [SerializeField] private float _moveSpeed = 1f;
 
-        private NativeHashMap<Vector3Int, Node> nodeGrid;
         private List<Node> _backtrackedPath = new List<Node>();
         private Vector3Int _endNode;
         private Node[] open, closed;
-
-        private void Start()
-        {
-            StartCoroutine(CreateGrid());
-        }
 
         /// <summary>
         /// Use this function to set the target of an NPC
@@ -40,7 +35,7 @@ namespace Implementation.Pathfinding.Scripts
 
             _endNode = new Vector3Int(position.x, position.y, 0);
 
-            FindPath(_endNode, nodeGrid);
+            FindPath(_endNode, GameManager.Instance.GridManager.NodeGrid);
             StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached));
         }
 
@@ -81,13 +76,13 @@ namespace Implementation.Pathfinding.Scripts
             NativeArray<int> _backtrackedPathLength = new NativeArray<int>(1, Allocator.TempJob);
 
             // Get the start and end nodes from the node grid
-            nodeGrid.TryGetValue(new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z), out Node _startNode);
-            nodeGrid.TryGetValue(destination, out Node _endNode);
+            GameManager.Instance.GridManager.NodeGrid.TryGetValue(new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z), out Node _startNode);
+            GameManager.Instance.GridManager.NodeGrid.TryGetValue(destination, out Node _endNode);
 
             // Create a new instance of the AStar job and assign its variables
             AStar aStar = new AStar
             {
-                gridNodes = nodeGrid,
+                gridNodes = GameManager.Instance.GridManager.NodeGrid,
                 closedList = _closedList,
                 openListHeap = _openListHeap,
                 neighbourOffsets = _neighbourOffsets,
@@ -118,40 +113,10 @@ namespace Implementation.Pathfinding.Scripts
             _backtrackedPathLength.Dispose();
         }
 
-        /// <summary>
-        /// Create a grid of nodes
-        /// </summary>
-        IEnumerator CreateGrid()
-        {
-            // This is very ugly but _grid.TraversableTiles is null when I call it at start so this was a quick dirty fix
-            while (_grid.TraversableTiles == null)
-            {
-                yield return new WaitForEndOfFrame();
-            }
-
-            nodeGrid = new NativeHashMap<Vector3Int, Node>(_grid.GridSize.x * _grid.GridSize.y, Allocator.Persistent);
-
-            for (int x = 0; x < _grid.GridSize.x; x++)
-            {
-                for (int y = 0; y < _grid.GridSize.y; y++)
-                {
-                    Node node = new Node()
-                    {
-                        position = new Vector3Int(x, y, 0),
-                        untraversable = !_grid.TraversableTiles[x, y]
-                    };
-                    nodeGrid.TryAdd(new Vector3Int(x, y, 0), node);
-                }
-            }
-            yield break;
-        }
-
         public float RoundToMultiple(float value, float roundTo)
         {
             return Mathf.RoundToInt(value / roundTo) * roundTo;
         }
-
-        private void OnApplicationQuit() => nodeGrid.Dispose();
 
         private void OnDrawGizmosSelected()
         {

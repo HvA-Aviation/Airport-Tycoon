@@ -82,6 +82,8 @@ namespace Features.Building.Scripts.Grid
                     TraversableTiles[x, y] = !unTraversable[x, y];
                 }
             }
+
+            GameManager.Instance.EventManager.TriggerEvent(EventManager.EventId.GridUpdateEvent);
         }
 
         /// <summary>
@@ -159,7 +161,7 @@ namespace Features.Building.Scripts.Grid
         {
             if (Get(gridVector) == -1)
                 return true;
-        
+
             List<Vector3Int> buildTiles = new List<Vector3Int>() { gridVector };
             for (int i = 0; i < _cellGroup.Count; i++)
             {
@@ -177,7 +179,7 @@ namespace Features.Building.Scripts.Grid
             foreach (var tile in buildTiles)
             {
                 _cells[tile.x, tile.y, tile.z].CurrentWorkLoad = Mathf.Clamp(_cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * Time.deltaTime, 0, _cells[tile.x, tile.y, tile.z].WorkLoad);
-                
+
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
             }
 
@@ -219,7 +221,7 @@ namespace Features.Building.Scripts.Grid
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
 
                 GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVector));
-            
+
                 _mapUpdated = true;
                 return true;
             }
@@ -281,7 +283,7 @@ namespace Features.Building.Scripts.Grid
                 cellData.WorkLoad = tileData.WorkLoad;
 
                 _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
-            
+
 
                 _mapUpdated = true;
             }
@@ -368,7 +370,7 @@ namespace Features.Building.Scripts.Grid
             {
                 _cells = new CellData[_gridSize.x, _gridSize.y, _gridSize.z];
             }
-            
+
             for (int x = 0; x < _gridSize.x; x++)
             {
                 for (int y = 0; y < _gridSize.y; y++)
