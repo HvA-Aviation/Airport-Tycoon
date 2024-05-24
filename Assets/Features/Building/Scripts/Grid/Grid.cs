@@ -338,9 +338,10 @@ namespace Features.Building.Scripts.Grid
                 foreach (var item in group)
                 {
                     CellData cell = _cells[item.x, item.y, item.z];
-
-                    if (_atlas.Items[cell.Tile].UtilityType != UtilityType.None)
-                        _utilityLocations[_atlas.Items[cell.Tile].UtilityType].Remove(item);
+                    UtilityType type = _atlas.Items[cell.Tile].UtilityType;
+                    
+                    if (type != UtilityType.None)
+                        _utilityLocations[type].Remove(item);
 
                     _cells[item.x, item.y, item.z].Clear();
                 }
