@@ -62,17 +62,11 @@ namespace Features.Building.Scripts.Grid
         public List<Vector3Int> GetUtilities(UtilityType utilityType)
         {
             List<Vector3Int> positions = new List<Vector3Int>();
-            foreach (Vector3Int position in _utilityLocations[utilityType])
-            {
-                //check if cell is built
-                CellData cell = _cells[position.x, position.y, position.z];
-                if (cell.CurrentWorkLoad == cell.WorkLoad)
-                    positions.Add(position);
-            }
+            positions.AddRange(_utilityLocations[utilityType]);
 
             return positions;
         }
-        
+
         /// <summary>
         /// Creates a flattend 2d array to see if the cell position is traversable
         /// </summary>
@@ -202,6 +196,15 @@ namespace Features.Building.Scripts.Grid
                     _cells[tile.x, tile.y, tile.z].WorkLoad);
 
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
+
+                if (isFinished)
+                {
+                    CellData cellData = _cells[tile.x, tile.y, tile.z];
+                    UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
+
+                    if (utilityType != UtilityType.None)
+                        _utilityLocations[utilityType].Add(gridVector);
+                }
             }
 
             _mapUpdated = true;
@@ -240,9 +243,6 @@ namespace Features.Building.Scripts.Grid
                 cellData.WorkLoad = _atlas.Items[buildIndex].WorkLoad;
 
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
-
-                if (_atlas.Items[cellData.Tile].UtilityType != UtilityType.None)
-                    _utilityLocations[_atlas.Items[cellData.Tile].UtilityType].Add(gridVector);
 
                 GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVector));
 
@@ -308,9 +308,6 @@ namespace Features.Building.Scripts.Grid
 
                 _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
 
-                if (_atlas.Items[cellData.Tile].UtilityType != UtilityType.None)
-                    _utilityLocations[_atlas.Items[cellData.Tile].UtilityType].Add(gridVectors[i]);
-
                 _mapUpdated = true;
             }
 
@@ -339,7 +336,7 @@ namespace Features.Building.Scripts.Grid
                 {
                     CellData cell = _cells[item.x, item.y, item.z];
                     UtilityType type = _atlas.Items[cell.Tile].UtilityType;
-                    
+
                     if (type != UtilityType.None)
                         _utilityLocations[type].Remove(item);
 
