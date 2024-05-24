@@ -29,11 +29,13 @@ namespace Features.Building.Scripts.Grid
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
 
+        private Dictionary<UtilityType, List<Vector3Int>> _utilityLocations =
+            new Dictionary<UtilityType, List<Vector3Int>>() { { UtilityType.Security, new List<Vector3Int>() } };
+
         /// <summary>
         /// If true the map will be updated at the end of the frame and set to false
         /// </summary>
         private bool _mapUpdated;
-
 
         public Vector3Int GridSize => _gridSize;
         public float CellSize => _cellSize;
@@ -50,6 +52,19 @@ namespace Features.Building.Scripts.Grid
             //create and populate traversabletiles
             TraversableTiles = new bool[_gridSize.x, _gridSize.y];
             UpdateTraversable();
+        }
+
+        /// <summary>
+        /// Gets the utilities of a given type. This will only return the ones that have been built
+        /// </summary>
+        /// <param name="utilityType">The type of the utility</param>
+        /// <returns>A list with all the utilities</returns>
+        public List<Vector3Int> GetUtilities(UtilityType utilityType)
+        {
+            List<Vector3Int> positions = new List<Vector3Int>();
+            positions.AddRange(_utilityLocations[utilityType]);
+
+            return positions;
         }
 
         /// <summary>
@@ -82,8 +97,6 @@ namespace Features.Building.Scripts.Grid
                     TraversableTiles[x, y] = !unTraversable[x, y];
                 }
             }
-
-            GameManager.Instance.EventManager.TriggerEvent(EventManager.EventId.GridUpdateEvent);
         }
 
         /// <summary>
@@ -178,9 +191,20 @@ namespace Features.Building.Scripts.Grid
             bool isFinished = false;
             foreach (Vector3Int tile in buildTiles)
             {
-                _cells[tile.x, tile.y, tile.z].CurrentWorkLoad = Mathf.Clamp(_cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * Time.deltaTime, 0, _cells[tile.x, tile.y, tile.z].WorkLoad);
+                _cells[tile.x, tile.y, tile.z].CurrentWorkLoad = Mathf.Clamp(
+                    _cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * Time.deltaTime, 0,
+                    _cells[tile.x, tile.y, tile.z].WorkLoad);
 
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
+
+                if (isFinished)
+                {
+                    CellData cellData = _cells[tile.x, tile.y, tile.z];
+                    UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
+
+                    if (utilityType != UtilityType.None)
+                        _utilityLocations[utilityType].Add(gridVector);
+                }
             }
 
             _mapUpdated = true;
@@ -284,7 +308,6 @@ namespace Features.Building.Scripts.Grid
 
                 _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
 
-
                 _mapUpdated = true;
             }
 
@@ -311,6 +334,12 @@ namespace Features.Building.Scripts.Grid
                 //Remove from array
                 foreach (Vector3Int item in group)
                 {
+                    CellData cell = _cells[item.x, item.y, item.z];
+                    UtilityType type = _atlas.Items[cell.Tile].UtilityType;
+
+                    if (type != UtilityType.None)
+                        _utilityLocations[type].Remove(item);
+
                     _cells[item.x, item.y, item.z].Clear();
                 }
 
@@ -331,7 +360,8 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True when within the grid</returns>
         private bool OutOfBounds(Vector3Int gridVector)
         {
-            if (gridVector.x < 0 || gridVector.x > _gridSize.x - 1 || gridVector.y < 0 || gridVector.y > _gridSize.y - 1 ||
+            if (gridVector.x < 0 || gridVector.x > _gridSize.x - 1 || gridVector.y < 0 ||
+                gridVector.y > _gridSize.y - 1 ||
                 gridVector.z < 0 || gridVector.z > _gridSize.z - 1)
                 return true;
 
