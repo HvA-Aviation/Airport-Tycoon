@@ -25,6 +25,7 @@ namespace Features.Building.Scripts.Grid
 
         [SerializeField] private Vector3Int _gridSize;
         [SerializeField] private float _cellSize;
+        [SerializeField] private float _buildingStaringOpacity;
 
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
@@ -168,7 +169,7 @@ namespace Features.Building.Scripts.Grid
 
                 CellData cellData = _cells[tile.x, tile.y, tile.z];
 
-                float buildAmount = 0.4f + (cellData.CurrentWorkLoad / cellData.WorkLoad * .6f);
+                float buildAmount = _buildingStaringOpacity + (cellData.CurrentWorkLoad / cellData.WorkLoad * (1 - _buildingStaringOpacity));
                 _gridColorBuffer.Add(new TileColorData()
                 {
                     Position = tile,
@@ -216,7 +217,7 @@ namespace Features.Building.Scripts.Grid
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVector,
-                    color = new Color(1, 1, 1, 0.4f),
+                    color = new Color(1, 1, 1, _buildingStaringOpacity),
                     tile = _atlas.Items[buildIndex].Tile,
                     transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });
@@ -287,7 +288,7 @@ namespace Features.Building.Scripts.Grid
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVectors[i],
-                    color = new Color(1, 1, 1, 0.4f),
+                    color = new Color(1, 1, 1, _buildingStaringOpacity),
                     tile = tileData.Tile,
                     transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });

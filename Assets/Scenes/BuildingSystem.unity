@@ -976,6 +976,7 @@ MonoBehaviour:
   _tilemap: {fileID: 488230465}
   _gridSize: {x: 20, y: 15, z: 3}
   _cellSize: 1
+  _buildingStaringOpacity: 0.4
 --- !u!4 &327049623
 Transform:
   m_ObjectHideFlags: 0
