@@ -19,7 +19,7 @@ namespace Features.Building.Scripts.Demos
             _dropdown.onValueChanged.AddListener(Select);
             _dropdown.RefreshShownValue();
             
-            GameManager.Instance.EventManager.Subscribe(EventId.UnlockBuilding, (args) => UpdateDropDown());
+            GameManager.Instance.EventManager.Subscribe(EventId.OnUnlockBuilding, (args) => UpdateDropDown());
         }
 
         private void UpdateDropDown()

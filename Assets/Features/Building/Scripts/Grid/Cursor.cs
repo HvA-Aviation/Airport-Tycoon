@@ -28,7 +28,7 @@ namespace Features.Building.Scripts.Grid
 
         private void Start()
         {
-            GameManager.Instance.EventManager.Subscribe(EventId.ChangeBrush, args => { AssignBrush(); });
+            GameManager.Instance.EventManager.Subscribe(EventId.OnChangeBrush, args => { AssignBrush(); });
 
             _brushes = new Dictionary<BrushType, Brush>()
             {

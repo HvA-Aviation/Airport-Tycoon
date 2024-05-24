@@ -2,8 +2,8 @@
 {
     public enum EventId
     {
-        DefaultEvent,
-        ChangeBrush,
-        UnlockBuilding
+        OnDefaultEvent,
+        OnChangeBrush,
+        OnUnlockBuilding
     }
 }

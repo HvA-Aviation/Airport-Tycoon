@@ -19,7 +19,7 @@ namespace Features.Managers
         public void ChangeSelectedBuildable(BuildableObject buildableObject)
         {
             CurrentBuildableObject = buildableObject;
-            GameManager.Instance.EventManager.TriggerEvent(EventId.ChangeBrush);
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeBrush);
         }
 
         public void UnlockBuilding(BuildableObject buildableObject)
@@ -28,7 +28,7 @@ namespace Features.Managers
             if (index != -1)
             {
                 BuildingStatuses[index].IsUnlocked = true;
-                GameManager.Instance.EventManager.TriggerEvent(EventId.UnlockBuilding);
+                GameManager.Instance.EventManager.TriggerEvent(EventId.OnUnlockBuilding);
             }
             else
             {
