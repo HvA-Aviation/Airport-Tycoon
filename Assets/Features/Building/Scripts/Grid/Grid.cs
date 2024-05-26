@@ -52,6 +52,8 @@ namespace Features.Building.Scripts.Grid
             //create and populate traversabletiles
             TraversableTiles = new bool[_gridSize.x, _gridSize.y];
             UpdateTraversable();
+
+            GameManager.Instance.EventManager.TriggerEvent(EventManager.EventId.GridUpdateEvent);
         }
 
         /// <summary>
@@ -97,6 +99,8 @@ namespace Features.Building.Scripts.Grid
                     TraversableTiles[x, y] = !unTraversable[x, y];
                 }
             }
+
+            GameManager.Instance.EventManager.TriggerEvent(EventManager.EventId.GridUpdateEvent);
         }
 
         /// <summary>

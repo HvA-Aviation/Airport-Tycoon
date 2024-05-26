@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using Unity.Collections;
 using UnityEngine;
 using Grid = Features.Building.Scripts.Grid.Grid;
+using Utilities = Features.Building.Scripts.Datatypes.UtilityType;
 
 public class GridManager : MonoBehaviour
 {
@@ -40,6 +42,8 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+
+    public List<Vector3Int> GetUtilities(Utilities utilityType) => _grid.GetUtilities(utilityType);
 
     private void OnApplicationQuit()
     {
