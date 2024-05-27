@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Features.Building.Scripts.Datatypes;
+using Features.EventManager;
 using Features.Managers;
 using Features.Workers.TaskCommands;
 using UnityEngine;
@@ -55,6 +56,7 @@ namespace Features.Building.Scripts.Grid
             //create and populate traversabletiles
             TraversableTiles = new bool[_gridSize.x, _gridSize.y];
             UpdateTraversable();
+            GameManager.Instance.EventManager.TriggerEvent(EventId.GridUpdateEvent);
         }
 
         /// <summary>
@@ -100,6 +102,8 @@ namespace Features.Building.Scripts.Grid
                     TraversableTiles[x, y] = !unTraversable[x, y];
                 }
             }
+            
+            GameManager.Instance.EventManager.TriggerEvent(EventId.GridUpdateEvent);
         }
 
         /// <summary>
