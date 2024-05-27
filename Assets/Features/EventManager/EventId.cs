@@ -1,10 +1,12 @@
 ﻿namespace Features.EventManager
 {
-        public enum EventId
-        {
-                DefaultEvent,
-                GridUpdateEvent,
-                OnMoneyAdded,
-                OnMoneyRemoved,
-        }
+    public enum EventId
+    {
+        OnDefaultEvent,
+        OnChangeBrush,
+        OnUnlockBuilding,
+        GridUpdateEvent,
+        OnMoneyAdded,
+        OnMoneyRemoved,
+    }
 }
