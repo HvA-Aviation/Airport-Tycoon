@@ -3,7 +3,6 @@ using UnityEngine;
 public class Employee : MonoBehaviour
 {
     [SerializeField] private StaffManager _staffManager;
-    [SerializeField] private StaffNames _staffNames;
     public string Name { get; private set; }
     public int SalaryAmount { get; private set; }
     public int EmployeeID { get; private set; }
@@ -11,7 +10,7 @@ public class Employee : MonoBehaviour
 
     private void Awake()
     {
-        Name = _staffNames.GetRandomFirstName() + " " + _staffNames.GetRandomLastName();
+        Name = StaffNames.GetRandomFirstName() + " " + StaffNames.GetRandomLastName();
     }
 
     public void SetEmployeeType(EmployeeTypes.EmployeeType type) => EmployeeType = type;

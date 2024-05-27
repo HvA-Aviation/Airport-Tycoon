@@ -287,7 +287,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _staffManager: {fileID: 1951720785}
-  _staffNames: {fileID: 1951720787}
 --- !u!4 &77953563
 Transform:
   m_ObjectHideFlags: 0
@@ -2719,7 +2718,6 @@ GameObject:
   - component: {fileID: 1951720786}
   - component: {fileID: 1951720785}
   - component: {fileID: 1951720784}
-  - component: {fileID: 1951720787}
   m_Layer: 0
   m_Name: EmployeeManager
   m_TagString: Untagged
@@ -2740,7 +2738,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _employeeOBJ: {fileID: 77953561}
-  _staffManager: {fileID: 1951720785}
 --- !u!114 &1951720785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2769,18 +2766,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1951720787
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1951720783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7135d5a44e2c1542b57b94d15970132, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2084908821
 GameObject:
   m_ObjectHideFlags: 0
