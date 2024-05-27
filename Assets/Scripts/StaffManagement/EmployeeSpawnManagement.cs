@@ -7,26 +7,24 @@ public class EmployeeSpawnManagement : MonoBehaviour
 
     private GameObject _parentOBJ;
 
-    public GameObject NewEmployeeObjectSpawned { get; private set; }
-
     private void Start() => _parentOBJ = new GameObject("EmployeesParent");
 
-    /// <summary>
-    /// This function is called when you hired an employee and the employee is then seen on the screen
-    /// </summary>
-    /// <param name="type">The type of employee to instantiate</param>
-    public void InstantiateEmployee(EmployeeTypes.EmployeeType type)
+   /// <summary>
+   /// This function will return a gameobject that is instantiated of the type of employee that is spawned
+   /// </summary>
+   /// <param name="type">The type of employee that needs to be spawned</param>
+   /// <returns>The gameobject of the typpe of employee</returns>
+    public GameObject InstantiateEmployee(EmployeeTypes.EmployeeType type)
     {
-        GameObject newEmployeeOBJ = Instantiate(_employeeOBJ, Vector3.zero, Quaternion.identity, _parentOBJ.transform);
-        NewEmployeeObjectSpawned = newEmployeeOBJ;
+        return Instantiate(_employeeOBJ, Vector3.zero, Quaternion.identity, _parentOBJ.transform);        
     }
 
     /// <summary>
     /// This function is called when you fire an employee and then destroy the object
     /// </summary>
-    /// <param name="employeeID">The employeeID you want to destroy</param>
-    public void DespawnEmployeeOBJ(int employeeID)
+    /// <param name="employeeOBJ">The object that needs to be destroyed</param>
+    public void DespawnEmployeeOBJ(GameObject employeeOBJ)
     {
-        Destroy(_staffManager.Employees[employeeID].gameObject);
+        Destroy(employeeOBJ);
     }
 }

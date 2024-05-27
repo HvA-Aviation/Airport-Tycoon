@@ -38,7 +38,7 @@ public class SelectStaffTypeDemo : MonoBehaviour
     public void Hire()
     {
         StaffManager.HireEmployee(_employeeTypeToHire);
-        string name = StaffManager.GetNameOfEmployee(StaffManager.LastEmployeeID);
+        string name = StaffManager.GetEmployeeName(StaffManager.LastEmployeeID);
 
         GameObject temp = Instantiate(_listObject, _parent);
         temp.GetComponent<ShowStaffInList>().ThisEmployee = StaffManager.Employees[StaffManager.LastEmployeeID];

@@ -28,10 +28,8 @@ public class StaffManager : MonoBehaviour
     /// <param name="type">The type of employee you want to hire</param>
     public void HireEmployee(EmployeeTypes.EmployeeType type)
     {
-        _spawnNewStaff.InstantiateEmployee(type);
-
-        Employee employee = _spawnNewStaff.NewEmployeeObjectSpawned.GetComponent<Employee>();
-
+        Employee employee = _spawnNewStaff.InstantiateEmployee(type).GetComponent<Employee>();
+        
         employee.SetEmployeeType(type);
 
         employee.SetID(_nextEmployeeID);
@@ -47,16 +45,16 @@ public class StaffManager : MonoBehaviour
     {
         if (Employees.TryGetValue(employeeID, out Employee employee))
         {
-            _spawnNewStaff.DespawnEmployeeOBJ(employeeID);
+            _spawnNewStaff.DespawnEmployeeOBJ(employee.gameObject);
             Employees.Remove(employeeID);
         }
     }
 
-    public GameObject GetGameObjectOfEmployee(int employeeID) => Employees[employeeID].gameObject;
+    public GameObject GetEmployeeGameObject(int employeeID) => Employees[employeeID].gameObject;
 
-    public int GetSalaryOfEmployee(int employeeID) => Employees[employeeID].SalaryAmount;
+    public int GetEmployeeSalary(int employeeID) => Employees[employeeID].SalaryAmount;
 
-    public string GetNameOfEmployee(int employeeID) => Employees[employeeID].Name;
+    public string GetEmployeeName(int employeeID) => Employees[employeeID].Name;
 
     public EmployeeTypes.EmployeeType GetEmployeeType(int employeeID) => Employees[employeeID].EmployeeType;
 }
