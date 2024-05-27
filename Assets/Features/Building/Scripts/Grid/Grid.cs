@@ -29,20 +29,12 @@ namespace Features.Building.Scripts.Grid
 
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
-<<<<<<< feature/building-buffer
         private Vector3Int _gridOffset;
         private List<TileChangeData> _gridChangeBuffer = new List<TileChangeData>();
         private List<TileColorData> _gridColorBuffer = new List<TileColorData>();
-=======
 
         private Dictionary<UtilityType, List<Vector3Int>> _utilityLocations =
             new Dictionary<UtilityType, List<Vector3Int>>() { { UtilityType.Security, new List<Vector3Int>() } };
-
-        /// <summary>
-        /// If true the map will be updated at the end of the frame and set to false
-        /// </summary>
-        private bool _mapUpdated;
->>>>>>> development
 
         public Vector3Int GridSize => _gridSize;
         public float CellSize => _cellSize;
@@ -190,7 +182,6 @@ namespace Features.Building.Scripts.Grid
                     _cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * Time.deltaTime, 0,
                     _cells[tile.x, tile.y, tile.z].WorkLoad);
 
-<<<<<<< feature/building-buffer
                 CellData cellData = _cells[tile.x, tile.y, tile.z];
 
                 float buildAmount = _buildingStaringOpacity + (cellData.CurrentWorkLoad / cellData.WorkLoad * (1 - _buildingStaringOpacity));
@@ -203,13 +194,10 @@ namespace Features.Building.Scripts.Grid
                     Color = color,
                 });
 
-=======
->>>>>>> development
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
 
                 if (isFinished)
                 {
-                    CellData cellData = _cells[tile.x, tile.y, tile.z];
                     UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
 
                     if (utilityType != UtilityType.None)
@@ -265,10 +253,6 @@ namespace Features.Building.Scripts.Grid
 
                 GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVector));
 
-<<<<<<< feature/building-buffer
-=======
-                _mapUpdated = true;
->>>>>>> development
                 return true;
             }
 
