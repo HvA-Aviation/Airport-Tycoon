@@ -156,6 +156,7 @@ MonoBehaviour:
   <EventManager>k__BackingField: {fileID: 872495805}
   <TaskManager>k__BackingField: {fileID: 1179201915}
   <GridManager>k__BackingField: {fileID: 494020287}
+  <QueueManager>k__BackingField: {fileID: 325803756}
 --- !u!4 &61372903
 Transform:
   m_ObjectHideFlags: 0
@@ -172,6 +173,7 @@ Transform:
   - {fileID: 872495804}
   - {fileID: 1179201917}
   - {fileID: 494020286}
+  - {fileID: 325803755}
   m_Father: {fileID: 815534689}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -828,6 +830,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 321336758}
   m_CullTransparentMesh: 1
+--- !u!1 &325803754
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 325803755}
+  - component: {fileID: 325803756}
+  m_Layer: 0
+  m_Name: QueueManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &325803755
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325803754}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 61372903}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &325803756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325803754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e37d714561c74e4489c3014f8a4a54c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &327049621
 GameObject:
   m_ObjectHideFlags: 0
@@ -2398,8 +2444,8 @@ MonoBehaviour:
   _zoomSpeed: 100
   _boundingBox:
     serializedVersion: 2
-    x: 12.5
-    y: 10
+    x: 5
+    y: 5
     width: 25
     height: 20
   _minZoom: 20
@@ -4259,7 +4305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2119232245
 Transform:
   m_ObjectHideFlags: 0
@@ -4287,6 +4333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a110485a6c0a354790f046aedc516ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _npcController: {fileID: 2119232247}
 --- !u!114 &2119232247
 MonoBehaviour:
   m_ObjectHideFlags: 0
