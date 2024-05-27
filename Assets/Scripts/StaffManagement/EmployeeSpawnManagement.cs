@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SpawnNewStaff : MonoBehaviour
+public class EmployeeSpawnManagement : MonoBehaviour
 {
     [SerializeField] private GameObject _employeeOBJ;
     [SerializeField] private StaffManager _staffManager;

@@ -3,15 +3,18 @@ using UnityEngine;
 
 public class StaffManager : MonoBehaviour
 {
-    [SerializeField] private SpawnNewStaff _spawnNewStaff;
+    [SerializeField] private EmployeeSpawnManagement _spawnNewStaff;
 
     private int _nextEmployeeID = 0;
-
     public int LastEmployeeID => _nextEmployeeID - 1;
     public Dictionary<int, Employee> Employees { get; private set; }
 
     private void Awake() => Employees = new Dictionary<int, Employee>();
 
+    /// <summary>
+    /// Adds an employee to the dictionary with the employeesID connected to it
+    /// </summary>
+    /// <param name="employee">The employee that needs to be added to the dictionary</param>
     private void AddEmployeeToDictionary(Employee employee)
     {
         Employees.Add(_nextEmployeeID, employee);

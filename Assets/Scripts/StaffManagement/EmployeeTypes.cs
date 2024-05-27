@@ -2,8 +2,8 @@ public class EmployeeTypes
 {
     public enum EmployeeType
     {
-        All = 0,
+        Builder = 0,
         Security = 1,
-        Terminal = 2,
+        Janitor = 2,
     }
 }
