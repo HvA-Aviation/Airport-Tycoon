@@ -9,7 +9,7 @@ public class PassengerBehaviour : MonoBehaviour
 {
     [SerializeField] NPCController _npcController;
     Queue<Utilities> tasksToDo = new Queue<Utilities>();
-    bool isQueueing = false;
+    public bool IsQueueing { get; private set; }
 
     // Start is called before the first frame update
     void OnEnable()
@@ -71,6 +71,6 @@ public class PassengerBehaviour : MonoBehaviour
         };
 
         //Set target to the first destination in the list
-        _npcController.SetTarget(queueWithLowestQueuers + positionInQueue, () => { }, () => { isQueueing = true; });
+        _npcController.SetTarget(queueWithLowestQueuers + positionInQueue, () => { }, () => { IsQueueing = true; });
     }
 }

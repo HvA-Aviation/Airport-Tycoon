@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -8,9 +9,10 @@ public class QueueManager : MonoBehaviour
     private Dictionary<Vector3Int, Queue<GameObject>> UtilityQueue = new Dictionary<Vector3Int, Queue<GameObject>>();
     private Dictionary<Vector3Int, float> _queueProgression = new Dictionary<Vector3Int, float>();
 
-    public int QueueCount(Vector3Int position)
+    public bool IsQueued(Vector3Int position)
     {
-        return UtilityQueue[position].Count;
+        //TODO please remove this
+        return UtilityQueue[position].Count > 0 && UtilityQueue[position].Peek().GetComponent<PassengerBehaviour>().IsQueueing;
     }
 
     public bool QueueExists(Vector3Int position)

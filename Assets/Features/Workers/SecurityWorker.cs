@@ -17,13 +17,13 @@ namespace Features.Workers
         [SerializeField] private float _workLoadSpeed;
         private Vector3Int _assignment;
         private UtilityData _data;
-        
+
         private void Start()
         {
             // Register it to the task system by setting it available.
             GameManager.Instance.TaskManager.SecurityTaskSystem.SetAvailable(this);
         }
-        
+
         public void Guard(Action onDone)
         {
             StartCoroutine(WorkOn(10f, onDone));
@@ -34,15 +34,19 @@ namespace Features.Workers
             int times = 0;
             while (times < 10)
             {
-                if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed))
+                if (GameManager.Instance.QueueManager.QueueExists(_assignment) &&
+                    GameManager.Instance.QueueManager.IsQueued(_assignment))
                 {
-                    GameManager.Instance.QueueManager.RemoveFromQueue(_assignment);
-                    times++;
+                    if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed))
+                    {
+                        GameManager.Instance.QueueManager.RemoveFromQueue(_assignment);
+                        times++;
+                    }
                 }
-                
+
                 yield return null;
             }
-            
+
             onDone?.Invoke();
         }
 
@@ -53,7 +57,7 @@ namespace Features.Workers
                 time -= Time.deltaTime;
                 yield return null;
             }
-            
+
             onDone?.Invoke();
         }
 
@@ -65,7 +69,7 @@ namespace Features.Workers
                 () => CheckTaskExists(target, onDone),
                 onReachedPosition);
         }
-        
+
         /// <summary>
         /// Checks if task is still needed
         /// </summary>
