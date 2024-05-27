@@ -1229,6 +1229,8 @@ MonoBehaviour:
       m_Image: {fileID: 21300000, guid: 17373be14ce236247b835dcf32e280a4, type: 3}
     - m_Text: Door
       m_Image: {fileID: 21300000, guid: f6a22b56bdc365449b029b97d142627b, type: 3}
+    - m_Text: Security
+      m_Image: {fileID: 21300000, guid: 9e95fd4d9e4192c42932d65d2b86bf79, type: 3}
     - m_Text: Remove Floor
       m_Image: {fileID: 21300000, guid: 8486da64919f72b4ead1bb47afb73c7c, type: 3}
     - m_Text: Remove Objects
@@ -1292,6 +1294,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4240fc810619a194bb03633333b32553, type: 2}
   - {fileID: 11400000, guid: 8010ef2a2abc1c2488ba6493a5a30fd1, type: 2}
   - {fileID: 11400000, guid: 614598fcdcd206e4c90eab112bfbd081, type: 2}
+  - {fileID: 11400000, guid: 8333319ce19edf444b939d3683d28eba, type: 2}
   - {fileID: 11400000, guid: abf38142527b0b440b726bd2f269251f, type: 2}
   - {fileID: 11400000, guid: 1d4e7c6ac9c756a47b3979550bff5f38, type: 2}
   _cursor: {fileID: 1474057266}

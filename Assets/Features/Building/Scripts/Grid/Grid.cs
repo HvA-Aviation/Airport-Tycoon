@@ -29,9 +29,20 @@ namespace Features.Building.Scripts.Grid
 
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
+<<<<<<< feature/building-buffer
         private Vector3Int _gridOffset;
         private List<TileChangeData> _gridChangeBuffer = new List<TileChangeData>();
         private List<TileColorData> _gridColorBuffer = new List<TileColorData>();
+=======
+
+        private Dictionary<UtilityType, List<Vector3Int>> _utilityLocations =
+            new Dictionary<UtilityType, List<Vector3Int>>() { { UtilityType.Security, new List<Vector3Int>() } };
+
+        /// <summary>
+        /// If true the map will be updated at the end of the frame and set to false
+        /// </summary>
+        private bool _mapUpdated;
+>>>>>>> development
 
         public Vector3Int GridSize => _gridSize;
         public float CellSize => _cellSize;
@@ -52,6 +63,19 @@ namespace Features.Building.Scripts.Grid
             //create and populate traversabletiles
             TraversableTiles = new bool[_gridSize.x, _gridSize.y];
             UpdateTraversable();
+        }
+
+        /// <summary>
+        /// Gets the utilities of a given type. This will only return the ones that have been built
+        /// </summary>
+        /// <param name="utilityType">The type of the utility</param>
+        /// <returns>A list with all the utilities</returns>
+        public List<Vector3Int> GetUtilities(UtilityType utilityType)
+        {
+            List<Vector3Int> positions = new List<Vector3Int>();
+            positions.AddRange(_utilityLocations[utilityType]);
+
+            return positions;
         }
 
         /// <summary>
@@ -166,6 +190,7 @@ namespace Features.Building.Scripts.Grid
                     _cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * Time.deltaTime, 0,
                     _cells[tile.x, tile.y, tile.z].WorkLoad);
 
+<<<<<<< feature/building-buffer
                 CellData cellData = _cells[tile.x, tile.y, tile.z];
 
                 float buildAmount = _buildingStaringOpacity + (cellData.CurrentWorkLoad / cellData.WorkLoad * (1 - _buildingStaringOpacity));
@@ -178,7 +203,18 @@ namespace Features.Building.Scripts.Grid
                     Color = color,
                 });
 
+=======
+>>>>>>> development
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
+
+                if (isFinished)
+                {
+                    CellData cellData = _cells[tile.x, tile.y, tile.z];
+                    UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
+
+                    if (utilityType != UtilityType.None)
+                        _utilityLocations[utilityType].Add(gridVector);
+                }
             }
 
             return isFinished;
@@ -229,6 +265,10 @@ namespace Features.Building.Scripts.Grid
 
                 GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVector));
 
+<<<<<<< feature/building-buffer
+=======
+                _mapUpdated = true;
+>>>>>>> development
                 return true;
             }
 
@@ -325,6 +365,12 @@ namespace Features.Building.Scripts.Grid
                 //Remove from array
                 foreach (Vector3Int item in group)
                 {
+                    CellData cell = _cells[item.x, item.y, item.z];
+                    UtilityType type = _atlas.Items[cell.Tile].UtilityType;
+
+                    if (type != UtilityType.None)
+                        _utilityLocations[type].Remove(item);
+
                     _cells[item.x, item.y, item.z].Clear();
                 }
 
