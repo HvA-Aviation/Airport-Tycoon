@@ -2622,7 +2622,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 327049622}
-  _drawGizmos: 1
+  _drawGizmos: 0
   _moveSpeed: 3
 --- !u!4 &1240337498
 Transform:
