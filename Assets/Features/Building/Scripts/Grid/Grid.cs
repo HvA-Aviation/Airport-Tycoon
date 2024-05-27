@@ -29,8 +29,8 @@ namespace Features.Building.Scripts.Grid
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
 
-        private Dictionary<UtilityType, List<Vector3Int>> _utilityLocations =
-            new Dictionary<UtilityType, List<Vector3Int>>() { { UtilityType.Security, new List<Vector3Int>() } };
+        private Dictionary<UtilityType, List<UtilityData>> _utilityLocations =
+            new Dictionary<UtilityType, List<UtilityData>>() { { UtilityType.Security, new List<UtilityData>() } };
 
         /// <summary>
         /// If true the map will be updated at the end of the frame and set to false
@@ -59,12 +59,11 @@ namespace Features.Building.Scripts.Grid
         /// </summary>
         /// <param name="utilityType">The type of the utility</param>
         /// <returns>A list with all the utilities</returns>
-        public List<Vector3Int> GetUtilities(UtilityType utilityType)
+        public List<UtilityData> GetUtilities(UtilityType utilityType)
         {
-            List<Vector3Int> positions = new List<Vector3Int>();
-            positions.AddRange(_utilityLocations[utilityType]);
-
-            return positions;
+            List<UtilityData> utilities = new List<UtilityData>();
+            utilities.AddRange(_utilityLocations[utilityType]);
+            return utilities;
         }
 
         /// <summary>
@@ -203,13 +202,36 @@ namespace Features.Building.Scripts.Grid
                     UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
 
                     if (utilityType != UtilityType.None)
-                        _utilityLocations[utilityType].Add(gridVector);
+                    {
+                        _utilityLocations[utilityType].Add(new UtilityData(gridVector));
+
+                        if (utilityType == UtilityType.Security)
+                        {
+                            GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(gridVector));
+                        }
+                    }
                 }
             }
 
             _mapUpdated = true;
 
             return isFinished;
+        }
+
+        public bool WorkOnUtility(UtilityType utilityType, Vector3Int gridVector, float speed)
+        {
+            if (Get(gridVector) == -1)
+                return true;
+
+            int index = _utilityLocations[utilityType].FindIndex(x => x.Position == gridVector);
+            if (index == -1)
+                return true;
+
+            UtilityData utilityData = _utilityLocations[utilityType][index];
+            utilityData.Progression += speed * Time.deltaTime;
+            _utilityLocations[utilityType][index] = utilityData;
+
+            return utilityData.Progression >= _cells[gridVector.x, gridVector.y, gridVector.z].WorkLoad;
         }
 
         /// <summary>
@@ -338,7 +360,7 @@ namespace Features.Building.Scripts.Grid
                     UtilityType type = _atlas.Items[cell.Tile].UtilityType;
 
                     if (type != UtilityType.None)
-                        _utilityLocations[type].Remove(item);
+                        _utilityLocations[type].RemoveAll(x => x.Position == item);
 
                     _cells[item.x, item.y, item.z].Clear();
                 }
