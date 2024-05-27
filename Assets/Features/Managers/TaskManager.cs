@@ -7,5 +7,6 @@ namespace Features.Managers
     public class TaskManager : MonoBehaviour
     {
         public TaskSystem<BuilderWorker> BuilderTaskSystem { get; } = new();
+        public TaskSystem<SecurityWorker> SecurityTaskSystem { get; } = new();
     }
 }
