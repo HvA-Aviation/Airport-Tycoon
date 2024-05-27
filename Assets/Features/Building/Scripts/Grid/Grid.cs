@@ -231,6 +231,20 @@ namespace Features.Building.Scripts.Grid
         }
 
         /// <summary>
+        /// Get the rotation of the given position
+        /// </summary>
+        /// <param name="gridVector">Position in grid</param>
+        /// <returns>0 or the cell rotation</returns>
+        public int GetRotation(Vector3Int gridVector)
+        {
+            //when out of bounds returns 0 rotation
+            if (OutOfBounds(gridVector))
+                return 0;
+
+            return _cells[gridVector.x, gridVector.y, gridVector.z].Rotation;
+        }
+
+        /// <summary>
         /// Sets the cell if it is empty
         /// </summary>
         /// <param name="gridVector">Position on grid</param>
