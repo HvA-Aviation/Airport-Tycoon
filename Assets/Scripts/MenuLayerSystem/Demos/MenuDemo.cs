@@ -21,12 +21,7 @@ public class MenuDemo : MonoBehaviour
 
                 interactable.DisableInteraction();
             }
-            /*foreach (IInteractable interactbale in _manager.Interactables)
-            {
-                if (_interactable == interactbale) continue;
-                
-                interactbale.DisableInteraction();
-            }*/
+            
             _uiOBJ.SetActive(true);
         }
 
