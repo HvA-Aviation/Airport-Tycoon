@@ -26,7 +26,7 @@ public class StaffManager : MonoBehaviour
     /// This function is called when you want to hire a type of employee
     /// </summary>
     /// <param name="type">The type of employee you want to hire</param>
-    public void HireEmployee(EmployeeTypes.EmployeeType type)
+    public void HireEmployee(Employee.EmployeeTypes type)
     {
         Employee employee = _spawnNewStaff.InstantiateEmployee(type);
         
@@ -56,5 +56,5 @@ public class StaffManager : MonoBehaviour
 
     public string GetEmployeeName(int employeeID) => Employees[employeeID].Name;
 
-    public EmployeeTypes.EmployeeType GetEmployeeType(int employeeID) => Employees[employeeID].EmployeeType;
+    public Employee.EmployeeTypes GetEmployeeType(int employeeID) => Employees[employeeID].EmployeeType;
 }

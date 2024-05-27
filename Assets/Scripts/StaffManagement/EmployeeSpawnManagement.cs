@@ -13,7 +13,7 @@ public class EmployeeSpawnManagement : MonoBehaviour
    /// </summary>
    /// <param name="type">The type of employee that needs to be spawned</param>
    /// <returns>The Employee of the type of employee</returns>
-    public Employee InstantiateEmployee(EmployeeTypes.EmployeeType type)
+    public Employee InstantiateEmployee(Employee.EmployeeTypes type)
     {
         return Instantiate(_employeeOBJ, Vector3.zero, Quaternion.identity, _parentOBJ.transform).GetComponent<Employee>();        
     }

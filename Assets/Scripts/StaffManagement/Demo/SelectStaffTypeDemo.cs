@@ -11,7 +11,7 @@ public class SelectStaffTypeDemo : MonoBehaviour
     [SerializeField] private Transform _parent;
     [SerializeField] private GameObject _listObject;
 
-    private EmployeeTypes.EmployeeType _employeeTypeToHire;
+    private Employee.EmployeeTypes _employeeTypeToHire;
 
     private string[] _employeeTypes;
 
@@ -20,7 +20,7 @@ public class SelectStaffTypeDemo : MonoBehaviour
 
     private void Awake()
     {
-        _employeeTypes = Enum.GetNames(typeof(EmployeeTypes.EmployeeType));
+        _employeeTypes = Enum.GetNames(typeof(Employee.EmployeeTypes));
     }
 
     private void Start()
@@ -32,7 +32,7 @@ public class SelectStaffTypeDemo : MonoBehaviour
 
     public void SetEmployeeToHire(int val)
     {
-        _employeeTypeToHire = (EmployeeTypes.EmployeeType)val;
+        _employeeTypeToHire = (Employee.EmployeeTypes)val;
     }
 
     public void Hire()
