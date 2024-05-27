@@ -861,6 +861,7 @@ MonoBehaviour:
   _tilemap: {fileID: 488230465}
   _gridSize: {x: 50, y: 40, z: 3}
   _cellSize: 1
+  _buildingStaringOpacity: 0.4
 --- !u!4 &327049623
 Transform:
   m_ObjectHideFlags: 0
@@ -2570,6 +2571,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 327049622}
+  _drawGizmos: 0
   _moveSpeed: 3
 --- !u!4 &1240337498
 Transform:
