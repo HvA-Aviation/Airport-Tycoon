@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class InteractableManager : MonoBehaviour
@@ -18,18 +19,9 @@ public class InteractableManager : MonoBehaviour
     /// <param name="interactable"> The interactable element that needs to be put first</param>
     public void PutElementToFirstInList(IInteractable interactable)
     {
-        List<IInteractable> tempList = new List<IInteractable>();
+        Interactables.Remove(interactable);
 
-        tempList.Add(interactable);
-
-        foreach (IInteractable iInteractable in Interactables)
-        {
-            if (iInteractable == interactable) continue;
-
-            tempList.Add(iInteractable);
-        }
-
-        Interactables = tempList;
+        Interactables.Insert(0, interactable);
     }
 
     /// <summary>
@@ -40,12 +32,7 @@ public class InteractableManager : MonoBehaviour
     {
         List<IInteractable> tempList = new List<IInteractable>();
 
-        foreach (IInteractable iInteractable in Interactables)
-        {
-            if (iInteractable == interactable) continue;
-
-            tempList.Add(iInteractable);
-        }
+        tempList = Interactables.Where(e => e != interactable).ToList();
 
         tempList.Add(interactable);
 

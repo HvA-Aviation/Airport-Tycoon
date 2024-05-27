@@ -11,7 +11,7 @@ public class NoUIElementInteractable : MonoBehaviour, IInteractable
         _uiManager.AddInteractableToList(this);
     }
 
-    public void DissableInteraction()
+    public void DisableInteraction()
     {
         _uiManager.PutElementLastInList(this);
         _isInteractable = false;

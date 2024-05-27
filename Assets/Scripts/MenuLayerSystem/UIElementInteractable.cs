@@ -5,25 +5,31 @@ public class UIElementInteractable : MonoBehaviour, IInteractable
 {
     [SerializeField] private InteractableManager _uiManager;
 
-    private CanvasGroup _thisCanvasGroup;
+    private CanvasGroup _canvasGroup;
 
     private void Start()
     {
-        _thisCanvasGroup = GetComponent<CanvasGroup>();
+        _canvasGroup = GetComponent<CanvasGroup>();
 
         _uiManager.AddInteractableToList(this);
     }
 
-    public void DissableInteraction()
+    /// <summary>
+    /// This function is called when you want to disable an UI element
+    /// </summary>
+    public void DisableInteraction()
     {
         _uiManager.PutElementLastInList(this);
-        _thisCanvasGroup.interactable = false;
+        _canvasGroup.interactable = false;
     }
 
+    /// <summary>
+    /// This function is called when you want to enable an UI element
+    /// </summary>
     public void EnableInteraction()
     {
         _uiManager.PutElementToFirstInList(this);
         transform.SetAsLastSibling();
-        _thisCanvasGroup.interactable = true;
+        _canvasGroup.interactable = true;
     }
 }

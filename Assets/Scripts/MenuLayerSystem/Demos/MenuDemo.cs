@@ -15,17 +15,24 @@ public class MenuDemo : MonoBehaviour
         {
             _interactable.EnableInteraction();
 
-            foreach (IInteractable interactbale in _manager.Interactables)
+            foreach(IInteractable interactable in _manager.Interactables)
+            {
+                if (_interactable == interactable) continue;
+
+                interactable.DisableInteraction();
+            }
+            /*foreach (IInteractable interactbale in _manager.Interactables)
             {
                 if (_interactable == interactbale) continue;
-                else interactbale.DissableInteraction();
-            }
+                
+                interactbale.DisableInteraction();
+            }*/
             _uiOBJ.SetActive(true);
         }
 
         if (Input.GetKeyDown(_disable))
         {
-            _interactable.DissableInteraction();
+            _interactable.DisableInteraction();
 
             _manager.Interactables[0].EnableInteraction();
 
