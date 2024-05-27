@@ -15,8 +15,8 @@ namespace Features.Workers
         [SerializeField] private NPCController _npcController;
         [SerializeField] private Grid _grid;
         [SerializeField] private float _workLoadSpeed;
+        [SerializeField] private int _checksBeforeShiftChange;
         private Vector3Int _assignment;
-        private UtilityData _data;
 
         private void Start()
         {
@@ -26,35 +26,25 @@ namespace Features.Workers
 
         public void Guard(Action onDone)
         {
-            StartCoroutine(WorkOn(10f, onDone));
+            StartCoroutine(WorkOn(onDone));
         }
 
-        private IEnumerator WorkOn(float time, Action onDone)
+        private IEnumerator WorkOn(Action onDone)
         {
             int times = 0;
-            while (times < 10)
+            float utilityWorkload = _grid.GetWorkLoad(_assignment);
+            while (times < _checksBeforeShiftChange)
             {
                 if (GameManager.Instance.QueueManager.QueueExists(_assignment) &&
                     GameManager.Instance.QueueManager.IsQueued(_assignment))
                 {
-                    if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed))
+                    if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed, utilityWorkload))
                     {
                         GameManager.Instance.QueueManager.RemoveFromQueue(_assignment);
                         times++;
                     }
                 }
 
-                yield return null;
-            }
-
-            onDone?.Invoke();
-        }
-
-        private IEnumerator Wait(float time, Action onDone)
-        {
-            while (time > 0)
-            {
-                time -= Time.deltaTime;
                 yield return null;
             }
 

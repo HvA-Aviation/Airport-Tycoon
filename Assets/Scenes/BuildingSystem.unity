@@ -156,7 +156,7 @@ MonoBehaviour:
   <EventManager>k__BackingField: {fileID: 872495805}
   <TaskManager>k__BackingField: {fileID: 1179201915}
   <GridManager>k__BackingField: {fileID: 494020287}
-  <QueueManager>k__BackingField: {fileID: 325803756}
+  <QueueManager>k__BackingField: {fileID: 0}
 --- !u!4 &61372903
 Transform:
   m_ObjectHideFlags: 0
@@ -1333,14 +1333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bce13b76f352cbc4bad003fb3c717195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _buildable:
-  - {fileID: 11400000, guid: add816ad7c0618e45bc6275e18b3444f, type: 2}
-  - {fileID: 11400000, guid: 4240fc810619a194bb03633333b32553, type: 2}
-  - {fileID: 11400000, guid: 8010ef2a2abc1c2488ba6493a5a30fd1, type: 2}
-  - {fileID: 11400000, guid: 614598fcdcd206e4c90eab112bfbd081, type: 2}
-  - {fileID: 11400000, guid: 8333319ce19edf444b939d3683d28eba, type: 2}
-  - {fileID: 11400000, guid: abf38142527b0b440b726bd2f269251f, type: 2}
-  - {fileID: 11400000, guid: 1d4e7c6ac9c756a47b3979550bff5f38, type: 2}
+  _buildable: []
   _cursor: {fileID: 1474057266}
 --- !u!1 &410087039
 GameObject:
@@ -4735,6 +4728,7 @@ MonoBehaviour:
   _npcController: {fileID: 1821831162}
   _grid: {fileID: 327049622}
   _workLoadSpeed: 2
+  _checksBeforeShiftChange: 10
 --- !u!114 &1821831162
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -222,21 +222,14 @@ namespace Features.Building.Scripts.Grid
             return isFinished;
         }
 
-        public bool WorkOnUtility(UtilityType utilityType, Vector3Int gridVector, float speed)
+        public float GetWorkLoad(Vector3Int gridVector)
         {
-            if (Get(gridVector) == -1)
-                return true;
-
-            /*int index = _utilityLocations[utilityType].FindIndex(x => x.Position == gridVector);
-            if (index == -1)
-                return true;
-
-            UtilityData utilityData = _utilityLocations[utilityType][index];
-            utilityData.Progression += speed * Time.deltaTime;
-            _utilityLocations[utilityType][index] = utilityData;
-
-            return utilityData.Progression >= _cells[gridVector.x, gridVector.y, gridVector.z].WorkLoad;*/
-            return true;
+            int tile = Get(gridVector);
+            
+            if (tile == -1)
+                return 0;
+            
+            return _atlas.Items[tile].WorkLoad;
         }
 
         /// <summary>

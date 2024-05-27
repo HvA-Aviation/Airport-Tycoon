@@ -52,14 +52,20 @@ public class QueueManager : MonoBehaviour
         return UtilityQueue[position].Count;
     }
 
-    public bool WorkOnQueue(Vector3Int position, float speed)
+    /// <summary>
+    /// Progresses the queue. This make sure that the passengers get through the queue. Is called by workers and their workload
+    /// </summary>
+    /// <param name="position">Position of the queue</param>
+    /// <param name="speed">Speed of the workload</param>
+    /// <param name="max">Goal for the workload</param>
+    /// <returns></returns>
+    public bool WorkOnQueue(Vector3Int position, float speed, float max)
     {
         if (!UtilityQueue.ContainsKey(position) || UtilityQueue[position].Count == 0)
             return false;
         
         _queueProgression[position] += speed * Time.deltaTime;
-        Debug.Log(_queueProgression[position]);
-        return _queueProgression[position] >= 10f;
+        return _queueProgression[position] >= max;
     }
 
     /// <summary>
