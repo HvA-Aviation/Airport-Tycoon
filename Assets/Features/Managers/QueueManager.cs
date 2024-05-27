@@ -4,6 +4,17 @@ using UnityEngine;
 public class QueueManager : MonoBehaviour
 {
     private Dictionary<Vector3Int, Queue<GameObject>> UtilityQueue = new Dictionary<Vector3Int, Queue<GameObject>>();
+    private Dictionary<Vector3Int, float> _queueProgression = new Dictionary<Vector3Int, float>();
+
+    public int QueueCount(Vector3Int position)
+    {
+        return UtilityQueue[position].Count;
+    }
+
+    public bool QueueExists(Vector3Int position)
+    {
+        return UtilityQueue.ContainsKey(position);
+    }
 
     /// <summary>
     /// Add a passenger to the queue
@@ -17,20 +28,32 @@ public class QueueManager : MonoBehaviour
         else
         {
             UtilityQueue.Add(position, new Queue<GameObject>());
+            _queueProgression.Add(position, 0);
             UtilityQueue[position].Enqueue(passenger);
         }
 
         return UtilityQueue[position].Count;
     }
 
+    public bool WorkOnQueue(Vector3Int position, float speed)
+    {
+        if (!UtilityQueue.ContainsKey(position) || UtilityQueue[position].Count == 0)
+            return false;
+        
+        _queueProgression[position] += speed * Time.deltaTime;
+        Debug.Log(_queueProgression[position]);
+        return _queueProgression[position] >= 10f;
+    }
+
     /// <summary>
     /// Remove a passenger from the queue
     /// </summary>
-    public void RemoveFromQueue(Vector3Int position, GameObject passenger)
+    public void RemoveFromQueue(Vector3Int position)
     {
         if (UtilityQueue.ContainsKey(position))
         {
             UtilityQueue[position].Dequeue();
+            _queueProgression[position] = 0;
             UpdatePositionOfQueuers(position);
         }
     }
@@ -59,6 +82,7 @@ public class QueueManager : MonoBehaviour
             {
                 // If the position does not exist in the dictionary, add it
                 UtilityQueue.Add(position, new Queue<GameObject>());
+                _queueProgression.Add(position, 0);
                 lowestQueuePosition = position;
             }
         }

@@ -26,20 +26,20 @@ namespace Features.Workers
         
         public void Guard(Action onDone)
         {
-            _data = _grid.GetUtilities(UtilityType.Security).First(x => x.Position == _assignment);
             StartCoroutine(WorkOn(10f, onDone));
         }
 
         private IEnumerator WorkOn(float time, Action onDone)
         {
-            while (time > 0)
+            int times = 0;
+            while (times < 10)
             {
-                if (_grid.WorkOnUtility(UtilityType.Security, _assignment, _workLoadSpeed))
+                if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed))
                 {
-                    
+                    GameManager.Instance.QueueManager.RemoveFromQueue(_assignment);
+                    times++;
                 }
                 
-                time -= Time.deltaTime;
                 yield return null;
             }
             

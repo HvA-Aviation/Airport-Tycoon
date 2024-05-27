@@ -29,8 +29,8 @@ namespace Features.Building.Scripts.Grid
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
 
-        private Dictionary<UtilityType, List<UtilityData>> _utilityLocations =
-            new Dictionary<UtilityType, List<UtilityData>>() { { UtilityType.Security, new List<UtilityData>() } };
+        private Dictionary<UtilityType, List<Vector3Int>> _utilityLocations =
+            new Dictionary<UtilityType, List<Vector3Int>>() { { UtilityType.Security, new List<Vector3Int>() } };
 
         /// <summary>
         /// If true the map will be updated at the end of the frame and set to false
@@ -61,9 +61,9 @@ namespace Features.Building.Scripts.Grid
         /// </summary>
         /// <param name="utilityType">The type of the utility</param>
         /// <returns>A list with all the utilities</returns>
-        public List<UtilityData> GetUtilities(UtilityType utilityType)
+        public List<Vector3Int> GetUtilities(UtilityType utilityType)
         {
-            List<UtilityData> utilities = new List<UtilityData>();
+            List<Vector3Int> utilities = new List<Vector3Int>();
             utilities.AddRange(_utilityLocations[utilityType]);
             return utilities;
         }
@@ -207,7 +207,7 @@ namespace Features.Building.Scripts.Grid
 
                     if (utilityType != UtilityType.None)
                     {
-                        _utilityLocations[utilityType].Add(new UtilityData(gridVector));
+                        _utilityLocations[utilityType].Add(gridVector);
 
                         if (utilityType == UtilityType.Security)
                         {
@@ -227,7 +227,7 @@ namespace Features.Building.Scripts.Grid
             if (Get(gridVector) == -1)
                 return true;
 
-            int index = _utilityLocations[utilityType].FindIndex(x => x.Position == gridVector);
+            /*int index = _utilityLocations[utilityType].FindIndex(x => x.Position == gridVector);
             if (index == -1)
                 return true;
 
@@ -235,7 +235,8 @@ namespace Features.Building.Scripts.Grid
             utilityData.Progression += speed * Time.deltaTime;
             _utilityLocations[utilityType][index] = utilityData;
 
-            return utilityData.Progression >= _cells[gridVector.x, gridVector.y, gridVector.z].WorkLoad;
+            return utilityData.Progression >= _cells[gridVector.x, gridVector.y, gridVector.z].WorkLoad;*/
+            return true;
         }
 
         /// <summary>
@@ -378,7 +379,7 @@ namespace Features.Building.Scripts.Grid
                     UtilityType type = _atlas.Items[cell.Tile].UtilityType;
 
                     if (type != UtilityType.None)
-                        _utilityLocations[type].RemoveAll(x => x.Position == item);
+                        _utilityLocations[type].Remove(item);
 
                     _cells[item.x, item.y, item.z].Clear();
                 }
