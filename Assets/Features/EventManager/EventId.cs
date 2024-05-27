@@ -1,7 +1,10 @@
 ﻿namespace Features.EventManager
 {
-    public enum EventId
-    {
-        DefaultEvent
-    }
+        public enum EventId
+        {
+                DefaultEvent,
+                GridUpdateEvent,
+                OnMoneyAdded,
+                OnMoneyRemoved,
+        }
 }
