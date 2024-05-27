@@ -1,9 +1,24 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class QueueManager : MonoBehaviour
 {
     private Dictionary<Vector3Int, Queue<GameObject>> UtilityQueue = new Dictionary<Vector3Int, Queue<GameObject>>();
+
+    private void Update()
+    {
+        // Debugging purposes
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            foreach (var item in UtilityQueue)
+            {
+                Debug.Log(item.Key + " " + item.Value.Count);
+                RemoveFromQueue(item.Key);
+            }
+        }
+    }
 
     /// <summary>
     /// Add a passenger to the queue
@@ -26,12 +41,14 @@ public class QueueManager : MonoBehaviour
     /// <summary>
     /// Remove a passenger from the queue
     /// </summary>
-    public void RemoveFromQueue(Vector3Int position, GameObject passenger)
+    public void RemoveFromQueue(Vector3Int position)
     {
+        if (UtilityQueue[position].Count == 0) return;
+
         if (UtilityQueue.ContainsKey(position))
         {
-            UtilityQueue[position].Dequeue();
             UpdatePositionOfQueuers(position);
+            UtilityQueue[position].Dequeue();
         }
     }
 
@@ -62,20 +79,28 @@ public class QueueManager : MonoBehaviour
                 lowestQueuePosition = position;
             }
         }
-
         return lowestQueuePosition;
     }
 
-    void UpdatePositionOfQueuers(Vector3Int dictPosition)
+    void UpdatePositionOfQueuers(Vector3Int dictKey)
     {
-        Queue<GameObject> passengersInQueue = UtilityQueue[dictPosition];
-        Vector3 previousPosition = dictPosition;
+        Queue<GameObject> passengersInQueue = UtilityQueue[dictKey];
+        Vector3 nextPosInQueue = dictKey;
         foreach (GameObject item in passengersInQueue)
         {
             // Update the position of the passengers in the queue
             Vector3 currentPosition = item.transform.position;
-            item.transform.position = previousPosition;
-            previousPosition = currentPosition;
+            //item.transform.position = nextPosInQueue;
+            StartCoroutine(WalkToPosition(item, nextPosInQueue));
+            nextPosInQueue = currentPosition;
+        }
+    }
+    IEnumerator WalkToPosition(GameObject gameObject, Vector3 targetPosition)
+    {
+        while (gameObject.transform.position != targetPosition)
+        {
+            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition, 0.01f);
+            yield return null;
         }
     }
 }
