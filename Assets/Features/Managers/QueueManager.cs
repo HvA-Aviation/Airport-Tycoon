@@ -90,7 +90,6 @@ public class QueueManager : MonoBehaviour
         {
             // Update the position of the passengers in the queue
             Vector3 currentPosition = item.transform.position;
-            //item.transform.position = nextPosInQueue;
             StartCoroutine(WalkToPosition(item, nextPosInQueue));
             nextPosInQueue = currentPosition;
         }
