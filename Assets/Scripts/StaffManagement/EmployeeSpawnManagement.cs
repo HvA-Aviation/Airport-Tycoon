@@ -9,13 +9,13 @@ public class EmployeeSpawnManagement : MonoBehaviour
     private void Start() => _parentOBJ = new GameObject("EmployeesParent");
 
    /// <summary>
-   /// This function will return a gameobject that is instantiated of the type of employee that is spawned
+   /// This function will return an employee that is instantiated of the type of employee that is spawned
    /// </summary>
    /// <param name="type">The type of employee that needs to be spawned</param>
-   /// <returns>The gameobject of the typpe of employee</returns>
-    public GameObject InstantiateEmployee(EmployeeTypes.EmployeeType type)
+   /// <returns>The Employee of the type of employee</returns>
+    public Employee InstantiateEmployee(EmployeeTypes.EmployeeType type)
     {
-        return Instantiate(_employeeOBJ, Vector3.zero, Quaternion.identity, _parentOBJ.transform);        
+        return Instantiate(_employeeOBJ, Vector3.zero, Quaternion.identity, _parentOBJ.transform).GetComponent<Employee>();        
     }
 
     /// <summary>

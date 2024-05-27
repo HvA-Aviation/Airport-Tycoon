@@ -28,7 +28,7 @@ public class StaffManager : MonoBehaviour
     /// <param name="type">The type of employee you want to hire</param>
     public void HireEmployee(EmployeeTypes.EmployeeType type)
     {
-        Employee employee = _spawnNewStaff.InstantiateEmployee(type).GetComponent<Employee>();
+        Employee employee = _spawnNewStaff.InstantiateEmployee(type);
         
         employee.SetEmployeeType(type);
 
