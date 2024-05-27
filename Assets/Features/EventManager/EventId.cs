@@ -4,6 +4,9 @@
     {
         OnDefaultEvent,
         OnChangeBrush,
-        OnUnlockBuilding
+        OnUnlockBuilding,
+        GridUpdateEvent,
+        OnMoneyAdded,
+        OnMoneyRemoved,
     }
 }

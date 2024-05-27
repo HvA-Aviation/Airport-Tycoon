@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Features.Managers;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -12,25 +13,13 @@ namespace Implementation.Pathfinding.Scripts
     {
         [Header("Dependecies")]
         [SerializeField] private Grid _grid;
-        [SerializeField] private bool _drawGizmos;
 
         [Header("Movement variables")]
         [SerializeField] private float _moveSpeed = 1f;
 
-        private Node[,,] _nodeGrid;
         private List<Node> _backtrackedPath = new List<Node>();
         private Vector3Int _endNode;
-        private int _gridWidth, _gridHeight;
-        private bool _pathCompleted = true;
         private Node[] open, closed;
-
-        public bool PathCompleted => _pathCompleted;
-
-        private void Start()
-        {
-            _gridWidth = _grid.GridSize.x;
-            _gridHeight = _grid.GridSize.y;
-        }
 
         /// <summary>
         /// Use this function to set the target of an NPC
@@ -40,14 +29,13 @@ namespace Implementation.Pathfinding.Scripts
         /// <param name="onDestinationReached">Callback to handle what to do when the destination has been reached</param>
         public void SetTarget(Vector3Int position, Action checkIfTaskIsStillNeeded, Action onDestinationReached)
         {
-            CreateGrid();
             StopAllCoroutines();
 
             _backtrackedPath.Clear();
 
             _endNode = new Vector3Int(position.x, position.y, 0);
 
-            FindPath(_endNode);
+            FindPath(_endNode, GameManager.Instance.GridManager.NodeGrid);
             StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached));
         }
 
@@ -76,35 +64,30 @@ namespace Implementation.Pathfinding.Scripts
         /// <summary>
         /// Find the path from current position to the end node
         /// </summary>
-        void FindPath(Vector3Int destination)
+        void FindPath(Vector3Int destination, NativeHashMap<Vector3Int, Node> nodeGrid)
         {
-            int arraySize = _gridHeight * _gridWidth;
+            int arraySize = _grid.GridSize.x * _grid.GridSize.y;
 
             // Declare the variables
-            NativeHashMap<Vector3Int, Node> _gridNodes = new NativeHashMap<Vector3Int, Node>(arraySize, Allocator.TempJob);
-            NativeHashMap<Vector3Int, Node> _openList =
-                new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
-            NativeHashMap<Vector3Int, Node> _closedList =
-                new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
+            Heap _openListHeap = new Heap(arraySize / 2);
+            NativeHashMap<Vector3Int, Node> _closedList = new NativeHashMap<Vector3Int, Node>(arraySize / 2, Allocator.TempJob);
             NativeArray<Vector3Int> _neighbourOffsets = new NativeArray<Vector3Int>(8, Allocator.TempJob);
             NativeArray<Node> _backtrackedPath = new NativeArray<Node>(arraySize, Allocator.TempJob);
             NativeArray<int> _backtrackedPathLength = new NativeArray<int>(1, Allocator.TempJob);
 
-            // Add all nodes in the generated grid to the NativeHashMap (Replace this with cody's grid system)
-            foreach (var item in _nodeGrid)
-            {
-                _gridNodes.Add(item.position, item);
-            }
+            // Get the start and end nodes from the node grid
+            nodeGrid.TryGetValue(new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z), out Node _startNode);
+            nodeGrid.TryGetValue(destination, out Node _endNode);
 
             // Create a new instance of the AStar job and assign its variables
             AStar aStar = new AStar
             {
-                gridNodes = _gridNodes,
-                openList = _openList,
+                gridNodes = nodeGrid,
                 closedList = _closedList,
+                openListHeap = _openListHeap,
                 neighbourOffsets = _neighbourOffsets,
-                startNode = _nodeGrid[(int)transform.position.x, (int)transform.position.y, (int)transform.position.z],
-                endNode = _nodeGrid[destination.x, destination.y, destination.z],
+                startNode = _startNode,
+                endNode = _endNode,
                 backtrackedPath = _backtrackedPath,
                 backTrackedPathLength = _backtrackedPathLength
             };
@@ -119,38 +102,15 @@ namespace Implementation.Pathfinding.Scripts
                 this._backtrackedPath.Add(_backtrackedPath[i]);
             }
 
-            open = _openList.GetValueArray(Allocator.Temp).ToArray();
+            open = _openListHeap.items.ToArray();
             closed = _closedList.GetValueArray(Allocator.Temp).ToArray();
 
             // Dispose all the NativeContainers to avoid memory leaks
-            _gridNodes.Dispose();
-            _openList.Dispose();
+            _openListHeap.DisposeOfLists();
             _closedList.Dispose();
             _neighbourOffsets.Dispose();
             _backtrackedPath.Dispose();
             _backtrackedPathLength.Dispose();
-        }
-
-        /// <summary>
-        /// Create a grid of nodes
-        /// </summary>
-        void CreateGrid()
-        {
-            _nodeGrid = new Node[_gridWidth, _gridHeight, 1];
-
-            var traversable = _grid.TraversableTiles;
-            for (int x = 0; x < _gridWidth; x++)
-            {
-                for (int y = 0; y < _gridHeight; y++)
-                {
-                    Node node = new Node()
-                    {
-                        position = new Vector3Int(x, y, 0),
-                        untraversable = !traversable[x, y]
-                    };
-                    _nodeGrid[x, y, 0] = node;
-                }
-            }
         }
 
         public float RoundToMultiple(float value, float roundTo)
