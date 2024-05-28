@@ -16,11 +16,15 @@ public class GridManager : MonoBehaviour
 
     public NativeHashMap<Vector3Int, Node> NodeGrid { get; private set; }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         NodeGrid = new NativeHashMap<Vector3Int, Node>(_grid.GridSize.x * _grid.GridSize.y, Allocator.Persistent);
         GameManager.Instance.EventManager.Subscribe(Features.EventManager.EventId.GridUpdateEvent, (args) => CreateGrid());
+    }
+
+    void Start()
+    {
+        CreateGrid();
     }
 
     /// <summary>
