@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class PoolDemo : MonoBehaviour
 {
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.H))
-            GameManager.Instance.PoolManager.GetObjectOuOfPool("Test");
+        {
+           GameManager.Instance.PoolManager.AllObjectPools[0].GetObject();
+        }
     }
 }
