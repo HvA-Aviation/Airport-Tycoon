@@ -37,8 +37,7 @@ namespace Features.Workers
                 if (!CheckTaskExists(_assignment, onDone))
                     yield break;
 
-                if (GameManager.Instance.QueueManager.QueueExists(_assignment) &&
-                    GameManager.Instance.QueueManager.IsQueued(_assignment))
+                if (GameManager.Instance.QueueManager.HasQueuers(_assignment))
                 {
                     if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed))
                     {
