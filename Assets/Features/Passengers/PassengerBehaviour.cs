@@ -4,6 +4,7 @@ using Implementation.Pathfinding.Scripts;
 using UnityEngine;
 using Utilities = Features.Building.Scripts.Datatypes.UtilityType;
 using Grid = Features.Building.Scripts.Grid;
+using System;
 
 public class PassengerBehaviour : MonoBehaviour
 {
@@ -16,11 +17,6 @@ public class PassengerBehaviour : MonoBehaviour
     {
         AssignRandomTasks();
         ExecuteTasks();
-
-        foreach (var item in tasksToDo)
-        {
-            print(item);
-        }
     }
 
     /// <summary>
@@ -56,21 +52,24 @@ public class PassengerBehaviour : MonoBehaviour
         Utilities currentTask = tasksToDo.Dequeue();
         List<Vector3Int> potentialTaskDestinations = gridManager.GetUtilities(currentTask);
 
-        Vector3Int queueWithLowestQueuers = queueManager.GetQueueWithLowestQueuers(potentialTaskDestinations);
+        queueManager.AssignToUtility(
+            potentialTaskDestinations[0],
+            this,
+            (numberInQueue) => { UpdatePath(numberInQueue, potentialTaskDestinations[0]); },
+            out int positionInQueue);
 
-        //Add to queue and get its index
-        int numberInQueue = queueManager.AddToQueue(queueWithLowestQueuers, gameObject);
+        _npcController.SetTarget(
+            potentialTaskDestinations[0] + Vector3Int.down * (positionInQueue + 1),
+            () => { },
+            () => { queueManager.ReachedQueue(potentialTaskDestinations[0], this); });
+    }
 
-        Vector3Int positionInQueue = gridManager.GetRotation(queueWithLowestQueuers) switch
-        {
-            0 => Vector3Int.down * numberInQueue,
-            1 => Vector3Int.left * numberInQueue,
-            2 => Vector3Int.up * numberInQueue,
-            3 => Vector3Int.right * numberInQueue,
-            _ => Vector3Int.zero,
-        };
-
-        //Set target to the first destination in the list
-        _npcController.SetTarget(queueWithLowestQueuers + positionInQueue, () => { }, () => { IsQueueing = true; });
+    public void UpdatePath(int numberInQueue, Vector3Int destination)
+    {
+        _npcController.StopAllCoroutines();
+        _npcController.SetTarget(
+            destination + Vector3Int.down * (numberInQueue + 1),
+            () => { },
+            () => { GameManager.Instance.QueueManager.ReachedQueue(destination, this); });
     }
 }

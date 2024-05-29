@@ -1,118 +1,55 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
+
+struct QueueInfo
+{
+    public Queue<PassengerBehaviour> inQueue;
+    public Dictionary<PassengerBehaviour, Action<int>> joiningQueue;
+    public QueueInfo(PassengerBehaviour passenger, Action<int> onPositionInQueueChanged)
+    {
+        inQueue = new Queue<PassengerBehaviour>();
+        joiningQueue = new Dictionary<PassengerBehaviour, Action<int>>
+        {
+            { passenger, onPositionInQueueChanged }
+        };
+    }
+}
 
 public class QueueManager : MonoBehaviour
 {
-    private Dictionary<Vector3Int, Queue<GameObject>> UtilityQueue = new Dictionary<Vector3Int, Queue<GameObject>>();
+    private Dictionary<Vector3Int, QueueInfo> UtilityQueue = new Dictionary<Vector3Int, QueueInfo>();
     private Dictionary<Vector3Int, float> _queueProgression = new Dictionary<Vector3Int, float>();
 
-    public bool IsQueued(Vector3Int position)
+    public bool HasQueuers(Vector3Int utilityPos)
     {
-        //TODO please remove this
-        return UtilityQueue[position].Count > 0 && UtilityQueue[position].Peek().GetComponent<PassengerBehaviour>().IsQueueing;
+        if (UtilityQueue.ContainsKey(utilityPos))
+            return UtilityQueue[utilityPos].inQueue.Count > 0;
+        else return false;
     }
 
-    public bool QueueExists(Vector3Int position)
+    public bool WorkOnQueue(Vector3Int utilityPos, float speed)
     {
-        return UtilityQueue.ContainsKey(position);
+        if (!_queueProgression.ContainsKey(utilityPos)) _queueProgression.Add(utilityPos, 0);
+
+        _queueProgression[utilityPos] += speed * Time.deltaTime;
+        Debug.Log(_queueProgression[utilityPos]);
+        return _queueProgression[utilityPos] >= 10f;
     }
 
-    private void Update()
+    public void RemoveFromQueue(Vector3Int utilityPos)
     {
-        // Debugging purposes
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            foreach (var item in UtilityQueue)
-            {
-                Debug.Log(item.Key + " " + item.Value.Count);
-                RemoveFromQueue(item.Key);
-            }
-        }
+        UpdatePositionOfQueuers(utilityPos);
+        UtilityQueue[utilityPos].inQueue.Dequeue();
+        _queueProgression[utilityPos] = 0;
     }
 
-    /// <summary>
-    /// Add a passenger to the queue
-    /// </summary>
-    public int AddToQueue(Vector3Int position, GameObject passenger)
+    void UpdatePositionOfQueuers(Vector3Int utilityPos)
     {
-        if (UtilityQueue.ContainsKey(position))
-        {
-            UtilityQueue[position].Enqueue(passenger);
-        }
-        else
-        {
-            UtilityQueue.Add(position, new Queue<GameObject>());
-            _queueProgression.Add(position, 0);
-            UtilityQueue[position].Enqueue(passenger);
-        }
-
-        return UtilityQueue[position].Count;
-    }
-
-    public bool WorkOnQueue(Vector3Int position, float speed)
-    {
-        if (!UtilityQueue.ContainsKey(position) || UtilityQueue[position].Count == 0)
-            return false;
-        
-        _queueProgression[position] += speed * Time.deltaTime;
-        Debug.Log(_queueProgression[position]);
-        return _queueProgression[position] >= 10f;
-    }
-
-    /// <summary>
-    /// Remove a passenger from the queue
-    /// </summary>
-    public void RemoveFromQueue(Vector3Int position)
-    {
-        if (UtilityQueue[position].Count == 0) return;
-
-        if (UtilityQueue.ContainsKey(position))
-        {
-            UpdatePositionOfQueuers(position);
-            _queueProgression[position] = 0;
-            UtilityQueue[position].Dequeue();
-        }
-    }
-
-    /// <summary>
-    /// Get the queue with the lowest amount of queuers
-    /// </summary>
-    /// <param name="potentialTaskDestinations">List of all the currently built destinations</param>
-    public Vector3Int GetQueueWithLowestQueuers(List<Vector3Int> potentialTaskDestinations)
-    {
-        int lowestQueue = int.MaxValue;
-        Vector3Int lowestQueuePosition = Vector3Int.zero;
-
-        foreach (Vector3Int position in potentialTaskDestinations)
-        {
-            // Check if the position exists in the dictionary
-            if (UtilityQueue.TryGetValue(position, out Queue<GameObject> queue))
-            {
-                if (queue.Count < lowestQueue)
-                {
-                    lowestQueue = queue.Count;
-                    lowestQueuePosition = position;
-                }
-            }
-            else
-            {
-                // If the position does not exist in the dictionary, add it
-                UtilityQueue.Add(position, new Queue<GameObject>());
-                _queueProgression.Add(position, 0);
-                lowestQueuePosition = position;
-            }
-        }
-        return lowestQueuePosition;
-    }
-
-    void UpdatePositionOfQueuers(Vector3Int dictKey)
-    {
-        Queue<GameObject> passengersInQueue = UtilityQueue[dictKey];
-        Vector3 nextPosInQueue = dictKey;
-        foreach (GameObject item in passengersInQueue)
+        Queue<PassengerBehaviour> passengersInQueue = UtilityQueue[utilityPos].inQueue;
+        Vector3 nextPosInQueue = utilityPos;
+        foreach (PassengerBehaviour item in passengersInQueue)
         {
             // Update the position of the passengers in the queue
             Vector3 currentPosition = item.transform.position;
@@ -120,12 +57,43 @@ public class QueueManager : MonoBehaviour
             nextPosInQueue = currentPosition;
         }
     }
-    IEnumerator WalkToPosition(GameObject gameObject, Vector3 targetPosition)
+
+    IEnumerator WalkToPosition(PassengerBehaviour gameObject, Vector3 targetPosition)
     {
         while (gameObject.transform.position != targetPosition)
         {
             gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition, 0.01f);
             yield return null;
+        }
+    }
+
+    public void AssignToUtility(Vector3Int utilityPos, PassengerBehaviour passenger, Action<int> OnQueueChanged, out int positionInQueue)
+    {
+        if (!UtilityQueue.ContainsKey(utilityPos))
+        {
+            UtilityQueue.Add(utilityPos, new QueueInfo(passenger, OnQueueChanged));
+            positionInQueue = UtilityQueue[utilityPos].inQueue.Count;
+        }
+        else
+        {
+            positionInQueue = UtilityQueue[utilityPos].inQueue.Count;
+            UtilityQueue[utilityPos].joiningQueue.Add(passenger, OnQueueChanged);
+        }
+    }
+
+    public void ReachedQueue(Vector3Int utilityPos, PassengerBehaviour passenger)
+    {
+        UtilityQueue[utilityPos].inQueue.Enqueue(passenger);
+        UtilityQueue[utilityPos].joiningQueue.Remove(passenger);
+        UpdateDestinations(utilityPos);
+        print(passenger.transform.name + " reached the queue at " + utilityPos);
+    }
+
+    public void UpdateDestinations(Vector3Int utilityPos)
+    {
+        foreach (var item in UtilityQueue[utilityPos].joiningQueue.Values)
+        {
+            item?.Invoke(UtilityQueue[utilityPos].inQueue.Count);
         }
     }
 }

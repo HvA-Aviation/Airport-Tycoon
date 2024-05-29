@@ -34,8 +34,7 @@ namespace Features.Workers
             int times = 0;
             while (times < 10)
             {
-                if (GameManager.Instance.QueueManager.QueueExists(_assignment) &&
-                    GameManager.Instance.QueueManager.IsQueued(_assignment))
+                if (GameManager.Instance.QueueManager.HasQueuers(_assignment))
                 {
                     if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed))
                     {
