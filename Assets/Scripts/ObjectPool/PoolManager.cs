@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class PoolManager : MonoBehaviour
 {
-    [SerializeField] private List<PoolableObject> _poolableObjects = new List<PoolableObject>();
+    [SerializeField] private List<SinglePoolableObject> _poolableObjects = new List<SinglePoolableObject>();
 
-    private Dictionary<string, Queue<GameObject>> _objectPool = new Dictionary<string, Queue<GameObject>>();
+    private Dictionary<string, Queue<GameObject>> _objectPools = new Dictionary<string, Queue<GameObject>>();
+    private Dictionary<string, GameObject> _singleObjectPool = new Dictionary<string, GameObject>();
     private void Awake()
     {
         for(int i = 0; i < _poolableObjects.Count; i++)
         {
             Queue<GameObject> tempQueue = new Queue<GameObject>();
             GameObject parent = new GameObject(_poolableObjects[i].Name);
+
+            _singleObjectPool.Add(_poolableObjects[i].Name, _poolableObjects[i].Obj);
+            _singleObjectPool[parent.name].transform.parent = parent.transform;
 
             for (int j = 0; j < _poolableObjects[i].AmountToSpawn; j++)
             {
@@ -22,7 +26,7 @@ public class PoolManager : MonoBehaviour
                 tempQueue.Enqueue(tempOBJ);
             }
 
-            _objectPool.Add(_poolableObjects[i].Name, tempQueue);
+            _objectPools.Add(_poolableObjects[i].Name, tempQueue);
         }    
     }
 
@@ -32,10 +36,18 @@ public class PoolManager : MonoBehaviour
     /// <param name="name">The name of the pool you want to get the object out of</param>
     public void GetObjectOuOfPool(string name)
     {
-        if (!_objectPool.ContainsKey(name))
+        if (!_objectPools.ContainsKey(name))
             return;
 
-        GameObject tempObj = _objectPool[name].Dequeue();
+        if (_objectPools[name].Count <= 0)
+            for (int i = 0; i < 20; i++)
+            {
+                GameObject temp = Instantiate(_singleObjectPool[name], _singleObjectPool[name].transform.parent);
+                temp.SetActive(false);
+                _objectPools[name].Enqueue(temp);
+            }
+
+        GameObject tempObj = _objectPools[name].Dequeue();
         tempObj.SetActive(true);
     }
 
@@ -46,16 +58,16 @@ public class PoolManager : MonoBehaviour
     /// <param name="obj">The object that needs to be returned to the queue</param>
     public void ReturnObjectToPool(string name, GameObject obj)
     {
-        if (!_objectPool.ContainsKey(name))
+        if (!_objectPools.ContainsKey(name))
             return;
 
         obj.SetActive(false);
 
-        _objectPool[name].Enqueue(obj);
+        _objectPools[name].Enqueue(obj);
     }
 
     [System.Serializable]
-    public struct PoolableObject
+    public struct SinglePoolableObject
     {
         public string Name;
         public GameObject Obj;
