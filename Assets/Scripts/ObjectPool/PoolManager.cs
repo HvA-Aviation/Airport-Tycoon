@@ -26,15 +26,32 @@ public class PoolManager : MonoBehaviour
         }    
     }
 
+    /// <summary>
+    /// Call this function when you want to have an object out of the pool
+    /// </summary>
+    /// <param name="name">The name of the pool you want to get the object out of</param>
     public void GetObjectOuOfPool(string name)
     {
+        if (!_objectPool.ContainsKey(name))
+            return;
 
+        GameObject tempObj = _objectPool[name].Dequeue();
+        tempObj.SetActive(true);
     }
 
-
-    public void ReturnObjectToPool(string name)
+    /// <summary>
+    /// Call this function when you want an object to return to the object pool
+    /// </summary>
+    /// <param name="name">The queue name that the object needs to return to</param>
+    /// <param name="obj">The object that needs to be returned to the queue</param>
+    public void ReturnObjectToPool(string name, GameObject obj)
     {
+        if (!_objectPool.ContainsKey(name))
+            return;
 
+        obj.SetActive(false);
+
+        _objectPool[name].Enqueue(obj);
     }
 
     [System.Serializable]
