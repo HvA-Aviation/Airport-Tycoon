@@ -8,5 +8,6 @@ namespace Features.Managers
     {
         public TaskSystem<BuilderWorker> BuilderTaskSystem { get; } = new();
         public TaskSystem<SecurityWorker> SecurityTaskSystem { get; } = new();
+        public TaskSystem<GeneralWorker> GeneralTaskSystem { get; } = new();
     }
 }
