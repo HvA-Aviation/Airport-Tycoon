@@ -10,17 +10,18 @@ using Grid = Features.Building.Scripts.Grid.Grid;
 
 namespace Features.Workers
 {
-    public class SecurityWorker : Worker
+    public class GeneralWorker : Worker
     {
         [SerializeField] private NPCController _npcController;
         [SerializeField] private Grid _grid;
         [SerializeField] private float _workLoadSpeed;
         private Vector3Int _assignment;
+        private UtilityData _data;
 
         private void Start()
         {
             // Register it to the task system by setting it available.
-            GameManager.Instance.TaskManager.SecurityTaskSystem.SetAvailable(this);
+            GameManager.Instance.TaskManager.GeneralTaskSystem.SetAvailable(this);
         }
 
         public void Guard(Action onDone)

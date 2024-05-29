@@ -54,4 +54,16 @@ MonoBehaviour:
     WorkLoad: 1
     UnTraversable: 0
     UtilityType: 1
-    UtilityLoad: 0
+    UtilityLoad: 2
+  - <Tile>k__BackingField: {fileID: 11400000, guid: 241963d8cfdb21c489ff7af6e2160525,
+      type: 2}
+    WorkLoad: 1
+    UnTraversable: 0
+    UtilityType: 2
+    UtilityLoad: 200
+  - <Tile>k__BackingField: {fileID: 11400000, guid: f31080f96096c074fb0adac6a5e51f4d,
+      type: 2}
+    WorkLoad: 2
+    UnTraversable: 0
+    UtilityType: 3
+    UtilityLoad: 2

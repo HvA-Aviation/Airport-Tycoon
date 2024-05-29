@@ -30,7 +30,12 @@ namespace Features.Building.Scripts.Grid
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
 
         private Dictionary<UtilityType, List<Vector3Int>> _utilityLocations =
-            new Dictionary<UtilityType, List<Vector3Int>>() { { UtilityType.Security, new List<Vector3Int>() } };
+            new Dictionary<UtilityType, List<Vector3Int>>()
+            {
+                { UtilityType.Security, new List<Vector3Int>() },
+                { UtilityType.CheckIn, new List<Vector3Int>() },
+                { UtilityType.Gate, new List<Vector3Int>() }
+            };
 
         /// <summary>
         /// If true the map will be updated at the end of the frame and set to false
@@ -212,6 +217,10 @@ namespace Features.Building.Scripts.Grid
                         if (utilityType == UtilityType.Security)
                         {
                             GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(gridVector));
+                        }
+                        else
+                        {
+                            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new GeneralOperateTask(gridVector));
                         }
                     }
                 }
