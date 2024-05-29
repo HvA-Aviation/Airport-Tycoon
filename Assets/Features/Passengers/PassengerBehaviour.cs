@@ -10,11 +10,14 @@ public class PassengerBehaviour : MonoBehaviour
 {
     [SerializeField] NPCController _npcController;
     Queue<Utilities> tasksToDo = new Queue<Utilities>();
-    public bool IsQueueing { get; private set; }
+    QueueManager queueManager;
+    GridManager gridManager;
 
     // Start is called before the first frame update
     void OnEnable()
     {
+        queueManager = GameManager.Instance.QueueManager;
+        gridManager = GameManager.Instance.GridManager;
         AssignRandomTasks();
         ExecuteTasks();
     }
@@ -46,30 +49,43 @@ public class PassengerBehaviour : MonoBehaviour
     {
         if (tasksToDo.Count == 0) return;
 
-        QueueManager queueManager = GameManager.Instance.QueueManager;
-        GridManager gridManager = GameManager.Instance.GridManager;
-
         Utilities currentTask = tasksToDo.Dequeue();
         List<Vector3Int> potentialTaskDestinations = gridManager.GetUtilities(currentTask);
 
         queueManager.AssignToUtility(
-            potentialTaskDestinations[0],
+            potentialTaskDestinations,
             this,
-            (numberInQueue) => { UpdatePath(numberInQueue, potentialTaskDestinations[0]); },
+            (numberInQueue, utilityPos) => { UpdatePath(utilityPos, numberInQueue); },
             out int positionInQueue);
-
-        _npcController.SetTarget(
-            potentialTaskDestinations[0] + Vector3Int.down * (positionInQueue + 1),
-            () => { },
-            () => { queueManager.ReachedQueue(potentialTaskDestinations[0], this); });
     }
 
-    public void UpdatePath(int numberInQueue, Vector3Int destination)
+    void UpdatePath(Vector3Int utilityPos, int numberInQueue)
     {
         _npcController.StopAllCoroutines();
+
+        int rotation = gridManager.GetRotation(utilityPos);
+        Vector3Int rotationVector = Vector3Int.down;
+
+        switch (rotation)
+        {
+            case 0:
+                rotationVector = Vector3Int.down;
+                break;
+            case 1:
+                rotationVector = Vector3Int.left;
+                break;
+            case 2:
+                rotationVector = Vector3Int.up;
+                break;
+            case 3:
+                rotationVector = Vector3Int.right;
+                break;
+        }
+
         _npcController.SetTarget(
-            destination + Vector3Int.down * (numberInQueue + 1),
-            () => { },
-            () => { GameManager.Instance.QueueManager.ReachedQueue(destination, this); });
+        utilityPos + rotationVector * (numberInQueue + 1),
+        () => { },
+        () => { GameManager.Instance.QueueManager.ReachedQueue(utilityPos, this); });
     }
+
 }

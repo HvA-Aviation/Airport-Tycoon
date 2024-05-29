@@ -49,6 +49,7 @@ namespace Implementation.Pathfinding.Scripts
 
             for (int i = path.Count - 1; i >= 0; i--)
             {
+                if (path[i].position == Vector3Int.zero) continue;
                 while (Vector3.Distance(path[i].position, transform.position) > 0.1f)
                 {
                     Vector3 direction = path[i].position - transform.position;

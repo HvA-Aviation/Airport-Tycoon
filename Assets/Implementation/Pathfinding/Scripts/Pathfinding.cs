@@ -24,7 +24,6 @@ namespace Implementation.Pathfinding.Scripts
         {
             Node _currentNode = startNode;
             _currentNode.hCost = CalculateHCost(_currentNode.position, endNode.position);
-            _currentNode.CalculateFCost();
             openListHeap.Add(_currentNode);
 
             neighbourOffsets[0] = Vector3Int.up;
@@ -45,8 +44,8 @@ namespace Implementation.Pathfinding.Scripts
                 // Check all neighbours of the current node
                 for (int i = 0; i < neighbourOffsets.Length; i++)
                 {
-                    if (closedList.ContainsKey(_currentNode.position + neighbourOffsets[i]) ||
-                        !gridNodes.ContainsKey(_currentNode.position + neighbourOffsets[i])) continue;
+                    if (!gridNodes.ContainsKey(_currentNode.position + neighbourOffsets[i])) continue;
+                    if (closedList.ContainsKey(_currentNode.position + neighbourOffsets[i])) continue;
 
                     Node neighbour = new Node
                     {
@@ -56,13 +55,18 @@ namespace Implementation.Pathfinding.Scripts
                         hCost = CalculateHCost(_currentNode.position + neighbourOffsets[i], endNode.position),
                         untraversable = gridNodes[_currentNode.position + neighbourOffsets[i]].untraversable
                     };
-                    neighbour.CalculateFCost();
 
                     if (neighbour.untraversable) continue;
 
                     if (!openListHeap.Contains(neighbour.position))
                     {
                         openListHeap.Add(neighbour);
+                    }
+
+                    if (openListHeap.GetAtPositionIndex(neighbour.position).gCost > neighbour.gCost)
+                    {
+                        // new heap function to replace a current node in the tree because we've found a better path to it
+                        openListHeap.ReplaceNode(neighbour.position, neighbour);
                     }
                 }
 
@@ -101,10 +105,7 @@ namespace Implementation.Pathfinding.Scripts
         /// </summary>
         float CalculateHCost(Vector3Int currentNodePosition, Vector3Int endNodePosition)
         {
-            float xCost = Mathf.Abs(endNodePosition.x - currentNodePosition.x);
-            float yCost = Mathf.Abs(endNodePosition.y - currentNodePosition.y);
-
-            return xCost * xCost + yCost * yCost;
+            return Vector3Int.Distance(currentNodePosition, endNodePosition);
         }
     }
 }
