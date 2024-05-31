@@ -39,6 +39,9 @@ namespace Features.Workers
             int times = 0;
             while (times < 10)
             {
+                if (CheckTaskExists(_assignment, onDone))
+                    yield break;
+                
                 if (GameManager.Instance.QueueManager.HasQueuers(_assignment))
                 {
                     if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed))
@@ -101,8 +104,10 @@ namespace Features.Workers
         /// </summary>
         private bool CheckTaskExists(Vector3Int target, Action onDone)
         {
+            Debug.Log("Check: " + _grid.Get(target));
             if (_grid.Get(target) == -1)
             {
+                Debug.Log("Stop assignment");
                 onDone.Invoke();
                 return false;
             }

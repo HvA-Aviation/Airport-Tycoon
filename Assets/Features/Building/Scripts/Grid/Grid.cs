@@ -188,15 +188,14 @@ namespace Features.Building.Scripts.Grid
             }
 
             bool isFinished = false;
+            int index = 0;
             foreach (Vector3Int tile in buildTiles)
             {
-                _cells[tile.x, tile.y, tile.z].CurrentWorkLoad = Mathf.Clamp(
-                    _cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * Time.deltaTime, 0,
-                    _cells[tile.x, tile.y, tile.z].WorkLoad);
-
+                _cells[tile.x, tile.y, tile.z].CurrentWorkLoad += speed * Time.deltaTime;
                 CellData cellData = _cells[tile.x, tile.y, tile.z];
 
-                float buildAmount = _buildingStaringOpacity + (cellData.CurrentWorkLoad / cellData.WorkLoad * (1 - _buildingStaringOpacity));
+                float buildAmount = _buildingStaringOpacity +
+                                    (cellData.CurrentWorkLoad / cellData.WorkLoad * (1 - _buildingStaringOpacity));
 
                 Color color = _tilemap.GetColor(tile);
                 color.a = buildAmount;
@@ -206,28 +205,36 @@ namespace Features.Building.Scripts.Grid
                     Color = color,
                 });
 
-                isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
-
-                if (isFinished)
+                if (index == 0)
                 {
-                    _buildingCompleted = true;
-                    
-                    UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
+                    isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad >=
+                                 _cells[tile.x, tile.y, tile.z].WorkLoad;
 
-                    if (utilityType != UtilityType.None)
+                    if (isFinished)
                     {
-                        _utilityLocations[utilityType].Add(gridVector);
+                        _buildingCompleted = true;
 
-                        if (utilityType == UtilityType.Security)
+                        UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
+
+                        if (utilityType != UtilityType.None)
                         {
-                            GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(gridVector));
-                        }
-                        else
-                        {
-                            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new GeneralOperateTask(gridVector));
+                            _utilityLocations[utilityType].Add(gridVector);
+
+                            if (utilityType == UtilityType.Security)
+                            {
+                                GameManager.Instance.TaskManager.SecurityTaskSystem
+                                    .AddTask(new OperateTask(gridVector));
+                            }
+                            else
+                            {
+                                GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(
+                                    new GeneralOperateTask(gridVector));
+                            }
                         }
                     }
                 }
+
+                index++;
             }
 
             return isFinished;
@@ -298,7 +305,7 @@ namespace Features.Building.Scripts.Grid
 
                 Color color = _atlas.Items[buildIndex].Color;
                 color.a = _buildingStaringOpacity;
-                
+
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVector,
@@ -323,7 +330,6 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if setting was a success</returns>
         public bool Set(Vector3Int gridVector, Tile tile)
         {
-           
             //get tile from atlas
             TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tile);
 
@@ -373,7 +379,7 @@ namespace Features.Building.Scripts.Grid
 
                 Color color = _atlas.Items[cellData.Tile].Color;
                 color.a = _buildingStaringOpacity;
-                
+
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVectors[i],
@@ -413,7 +419,7 @@ namespace Features.Building.Scripts.Grid
                         _utilityLocations[type].Remove(item);
 
                     _cells[item.x, item.y, item.z].Clear();
-                    
+
                     _gridChangeBuffer.Add(new TileChangeData()
                     {
                         position = item,
