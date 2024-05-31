@@ -21,3 +21,13 @@ MonoBehaviour:
     <GridPosition>k__BackingField:
       <Position>k__BackingField: {x: 0, y: 0}
       <Layer>k__BackingField: 1
+  - <Tile>k__BackingField: {fileID: 11400000, guid: 935835980b99f6d49ab2b707e255a6ea,
+      type: 2}
+    <GridPosition>k__BackingField:
+      <Position>k__BackingField: {x: 0, y: 1}
+      <Layer>k__BackingField: 1
+  - <Tile>k__BackingField: {fileID: 11400000, guid: 935835980b99f6d49ab2b707e255a6ea,
+      type: 2}
+    <GridPosition>k__BackingField:
+      <Position>k__BackingField: {x: 0, y: -1}
+      <Layer>k__BackingField: 1

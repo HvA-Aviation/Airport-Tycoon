@@ -409,13 +409,13 @@ namespace Features.Building.Scripts.Grid
                         _utilityLocations[type].Remove(item);
 
                     _cells[item.x, item.y, item.z].Clear();
+                    
+                    _gridChangeBuffer.Add(new TileChangeData()
+                    {
+                        position = item,
+                        tile = null,
+                    });
                 }
-
-                _gridChangeBuffer.Add(new TileChangeData()
-                {
-                    position = gridVector,
-                    tile = null,
-                });
 
                 //remove from group
                 _cellGroup.Remove(group);
