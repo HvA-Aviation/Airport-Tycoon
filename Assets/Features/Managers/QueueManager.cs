@@ -2,7 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using Unity.VisualScripting;
 using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 struct QueueInfo
 {
@@ -50,39 +53,29 @@ public class QueueManager : MonoBehaviour
     public void RemoveFromQueue(Vector3Int utilityPos)
     {
         PassengerBehaviour passengerBehaviour = UtilityQueue[utilityPos].inQueue.Dequeue();
+        StartCoroutine(UpdatePositionOfQueuers(utilityPos, passengerBehaviour.transform.position));
         passengerBehaviour.ExecuteTasks();
-        
-        UpdatePositionOfQueuers(utilityPos);
+
         _queueProgression[utilityPos] = 0;
+        UpdateJoiningQueuers(utilityPos);
     }
 
     /// <summary>
     /// Function that handles moving the passengers in a queue to move when someone leaves the queue
     /// </summary>
-    void UpdatePositionOfQueuers(Vector3Int utilityPos)
+    IEnumerator UpdatePositionOfQueuers(Vector3Int utilityPos, Vector3 originPos)
     {
         List<PassengerBehaviour> passengersInQueue = UtilityQueue[utilityPos].inQueue.ToList();
-        Vector3 nextPosInQueue = utilityPos;
-        Vector3 currentPos;
-
+        Vector3 posToMoveTo = originPos;
         for (int i = 0; i < passengersInQueue.Count; i++)
         {
-            currentPos = passengersInQueue[i].transform.position;
-            StartCoroutine(WalkToPosition(passengersInQueue[i], nextPosInQueue));
-            nextPosInQueue = currentPos;
-        }
-        UpdatePassengersNotInQueue(utilityPos);
-    }
-
-    /// <summary>
-    /// Simple function that moves a gameobject from one position to another
-    /// </summary>
-    IEnumerator WalkToPosition(PassengerBehaviour gameObject, Vector3 targetPosition)
-    {
-        while (gameObject.transform.position != targetPosition)
-        {
-            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, targetPosition, 0.01f);
-            yield return null;
+            Vector3 currentPos = passengersInQueue[i].transform.position;
+            while (passengersInQueue[i].transform.position != posToMoveTo)
+            {
+                passengersInQueue[i].transform.position = Vector3.MoveTowards(passengersInQueue[i].transform.position, posToMoveTo, 10f * Time.deltaTime);
+                yield return null;
+            }
+            posToMoveTo = currentPos;
         }
     }
 
@@ -121,11 +114,11 @@ public class QueueManager : MonoBehaviour
     /// Assign a passenger to a utility and invoke its onQueueChanged action
     /// </summary>
     /// <param name="OnQueueChanged">This usually represents a pathfinding funciton</param>
-    public void AssignToUtility(List<Vector3Int> utilityPos, PassengerBehaviour passenger, Action<int, Vector3Int> OnQueueChanged, out int positionInQueue)
+    public void AssignToUtility(List<Vector3Int> utilityPos, PassengerBehaviour passenger, Action<int, Vector3Int> OnQueueChanged)
     {
         Vector3Int optimalQueue = GetOptimalQueue(utilityPos);
 
-        positionInQueue = UtilityQueue[optimalQueue].inQueue.Count;
+        int positionInQueue = UtilityQueue[optimalQueue].inQueue.Count;
 
         UtilityQueue[optimalQueue].joiningQueue.Add(passenger, OnQueueChanged);
 
@@ -140,16 +133,15 @@ public class QueueManager : MonoBehaviour
         UtilityQueue.TryGetValue(utilityPos, out QueueInfo queueInfo);
         queueInfo.joiningQueue.Remove(passenger);
         queueInfo.inQueue.Enqueue(passenger);
-        UpdatePassengersNotInQueue(utilityPos);
+        UpdateJoiningQueuers(utilityPos);
     }
 
-    public void UpdatePassengersNotInQueue(Vector3Int utilityPos)
+    private void UpdateJoiningQueuers(Vector3Int utilityPos)
     {
         UtilityQueue.TryGetValue(utilityPos, out QueueInfo queueInfo);
-        //Update the targets of everyone on their way to the queue
         foreach (var item in queueInfo.joiningQueue.ToList())
         {
-            item.Value.Invoke(queueInfo.inQueue.Count, utilityPos);
+            item.Value.Invoke(queueInfo.inQueue.Count(), utilityPos);
         }
     }
 }

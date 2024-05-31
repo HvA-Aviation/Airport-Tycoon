@@ -60,12 +60,11 @@ public class PassengerBehaviour : MonoBehaviour
         List<Vector3Int> potentialTaskDestinations = gridManager.GetUtilities(currentTask);
 
         _currentUtility = currentTask;
-        
+
         queueManager.AssignToUtility(
             potentialTaskDestinations,
             this,
-            (numberInQueue, utilityPos) => { UpdatePath(utilityPos, numberInQueue); },
-            out int positionInQueue);
+            (numberInQueue, utilityPos) => { UpdatePath(utilityPos, numberInQueue); });
     }
 
     private void TasksCompleted()
@@ -79,7 +78,7 @@ public class PassengerBehaviour : MonoBehaviour
         }
     }
 
-    void UpdatePath(Vector3Int utilityPos, int numberInQueue)
+    public void UpdatePath(Vector3Int utilityPos, int numberInQueue)
     {
         _npcController.StopAllCoroutines();
 
