@@ -12,7 +12,7 @@ public class ResearchNode : MonoBehaviour
 
     public ResearchStates CurrentResearchState { get; private set; }
 
-    [HideInInspector] public UnityEvent ResearchDoneEvent;
+    public UnityEvent ResearchDoneEvent;
 
     private void Start()
     {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Brushes;
 using Features.Building.Scripts.Datatypes;
+using Features.EventManager;
+using Features.Managers;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
@@ -18,15 +20,16 @@ namespace Features.Building.Scripts.Grid
         [SerializeField] private Color _invalidColor;
 
         [SerializeField] private EventSystem _eventSystem;
-        [SerializeField] private BuildableObject _currentSelectedBuilding;
 
         private Dictionary<BrushType, Brush> _brushes = new Dictionary<BrushType, Brush>();
 
         public bool IsEnabled => _cursorTilemap.gameObject.activeSelf;
-        private Brush _currentBrush => _brushes[_currentSelectedBuilding.BrushType];
+        private Brush _currentBrush => _brushes[GameManager.Instance.BuildingManager.CurrentBuildableObject.BrushType];
 
         private void Start()
         {
+            GameManager.Instance.EventManager.Subscribe(EventId.OnChangeBrush, args => { AssignBrush(); });
+
             _brushes = new Dictionary<BrushType, Brush>()
             {
                 { BrushType.Single, new SingleBrush(_grid) },
@@ -34,7 +37,7 @@ namespace Features.Building.Scripts.Grid
                 { BrushType.Multi, new MultiBrush(_grid) },
                 { BrushType.Remove, new RemoveBrush(_grid) }
             };
-            
+
             transform.localScale = Vector3.one * _grid.CellSize;
         }
 
@@ -48,7 +51,7 @@ namespace Features.Building.Scripts.Grid
         {
             _currentBrush.Down(position);
         }
-        
+
         /// <summary>
         /// Call on button release
         /// </summary>
@@ -57,7 +60,7 @@ namespace Features.Building.Scripts.Grid
         {
             _currentBrush.Release(position);
         }
-        
+
         /// <summary>
         /// Called when not releasing or holding to show the current location
         /// </summary>
@@ -66,7 +69,7 @@ namespace Features.Building.Scripts.Grid
         {
             _currentBrush.Hover(position);
         }
-        
+
         /// <summary>
         /// Rotates the selected building
         /// </summary>
@@ -75,7 +78,7 @@ namespace Features.Building.Scripts.Grid
         {
             _currentBrush.Rotate(direction);
         }
-        
+
         /// <summary>
         /// Called when the cursor should be visualized
         /// </summary>
@@ -89,7 +92,7 @@ namespace Features.Building.Scripts.Grid
             //enable cursor when over UI
             _cursorTilemap.gameObject.SetActive(!_eventSystem.IsPointerOverGameObject());
         }
-        
+
         /// <summary>
         /// Changes a world position to a clamped grid position
         /// </summary>
@@ -104,7 +107,7 @@ namespace Features.Building.Scripts.Grid
                 RoundToMultiple(pos.y, _grid.CellSize));
 
             return _grid.ClampedWorldToGridPosition(clampedValue,
-                (int)_currentSelectedBuilding.BuildItems[0].GridPosition.Layer);
+                (int)GameManager.Instance.BuildingManager.CurrentBuildableObject.BuildItems[0].GridPosition.Layer);
         }
 
         /// <summary>
@@ -159,12 +162,12 @@ namespace Features.Building.Scripts.Grid
         }
 
         /// <summary>
-        /// Set other buildable
+        /// Set other brush
         /// </summary>
         /// <param name="buildableObject">Building that is going to be placed</param>
-        public void ChangeSelectedBuildable(BuildableObject buildableObject)
+        public void AssignBrush()
         {
-            _currentSelectedBuilding = buildableObject;
+            BuildableObject buildableObject = GameManager.Instance.BuildingManager.CurrentBuildableObject;
             _brushes[buildableObject.BrushType].Assign(buildableObject);
         }
 
@@ -175,7 +178,7 @@ namespace Features.Building.Scripts.Grid
         {
             _cursorTilemap.gameObject.SetActive(false);
         }
-        
+
         /// <summary>
         /// Enable the cursor tilemap
         /// </summary>

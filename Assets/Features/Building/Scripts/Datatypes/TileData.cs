@@ -8,7 +8,12 @@ namespace Features.Building.Scripts.Datatypes
     public class TileData
     {
         [field: SerializeField] public Tile Tile { get; private set;  }
+        public Color Color = Color.white;
+        
         public float WorkLoad;
         public bool UnTraversable = false;
+
+        [Header("Utility Settings")] public UtilityType UtilityType;
+        public float UtilityLoad;
     }
 }

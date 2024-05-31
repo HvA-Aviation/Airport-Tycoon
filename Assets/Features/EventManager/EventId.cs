@@ -2,6 +2,11 @@
 {
     public enum EventId
     {
-        DefaultEvent
+        OnDefaultEvent,
+        OnChangeBrush,
+        OnUnlockBuilding,
+        GridUpdateEvent,
+        OnMoneyAdded,
+        OnMoneyRemoved,
     }
 }

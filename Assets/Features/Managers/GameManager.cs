@@ -10,6 +10,8 @@ namespace Features.Managers
         [field: SerializeField] public AudioManagerRef AudioManager { get; private set; }
         [field: SerializeField] public EventManager EventManager { get; private set; }
         [field: SerializeField] public TaskManager TaskManager { get; private set; }
+        [field: SerializeField] public BuildingManager BuildingManager { get; private set; }
+        [field: SerializeField] public GridManager GridManager { get; private set; }
 
         private void Awake()
         {
