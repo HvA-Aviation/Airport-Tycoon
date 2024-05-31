@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f12f32be92f97b4fa60b302e69117fe, type: 3}
   m_Name: ING
   m_EditorClassIdentifier: 
-  Amount: 10000
+  Amount: 1000
   Interest: 5
   PaymentPeriod: 12
   BankTitle: ING
