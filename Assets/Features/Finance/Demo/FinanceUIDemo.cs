@@ -14,9 +14,6 @@ namespace Features.Finance.Demo
         {
             GameManager.Instance.EventManager.Subscribe(EventId.OnMoneyAdded, (args) => UpdateUI());
             GameManager.Instance.EventManager.Subscribe(EventId.OnMoneyRemoved, (args) => UpdateUI());
-
-            //Set Starting money
-            GameManager.Instance.FinanceManager.Balance.Add(100);
             
             UpdateUI();
         }

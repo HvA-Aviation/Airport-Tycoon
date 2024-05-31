@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class LoanCard : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class LoanCard : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI _status;
+
+    [SerializeField]
+    private FinanceDemo _financeDemo;
 
     public void UpdateCard(Loan<LoanSO> loan)
     {
