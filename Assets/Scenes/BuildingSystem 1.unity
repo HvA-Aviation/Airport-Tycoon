@@ -506,7 +506,6 @@ RectTransform:
   - {fileID: 411331252}
   - {fileID: 612226419}
   - {fileID: 2060617427}
-  - {fileID: 220041553}
   - {fileID: 2090423251}
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -1367,71 +1366,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 216135497}
   m_CullTransparentMesh: 1
---- !u!1 &220041550
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 220041553}
-  - component: {fileID: 220041551}
-  - component: {fileID: 220041552}
-  m_Layer: 0
-  m_Name: EmployeeManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &220041551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220041550}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e415f422023aaac4caa86f42bd196ace, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _spawnNewStaff: {fileID: 220041552}
---- !u!114 &220041552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220041550}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 404397459ac7c5a4e97996dbb015f67e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _employees:
-  - Type: 0
-    Object: {fileID: 0}
-  - Type: 1
-    Object: {fileID: 0}
-  - Type: 2
-    Object: {fileID: 0}
---- !u!4 &220041553
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220041550}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 415.80002, y: 162.2, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 86557287}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &252216064
 GameObject:
   m_ObjectHideFlags: 0
@@ -11217,6 +11151,7 @@ MonoBehaviour:
   - Type: 2
     Object: {fileID: 1783017482307770798, guid: 653e7e81e580c814fb0f8863da20b077,
       type: 3}
+  _spawnPosition: {x: 6, y: 0, z: 0}
 --- !u!114 &1705495908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33417,7 +33352,7 @@ RectTransform:
   - {fileID: 1056175793}
   - {fileID: 351488203}
   m_Father: {fileID: 86557287}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}

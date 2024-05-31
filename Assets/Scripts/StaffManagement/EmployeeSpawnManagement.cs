@@ -9,6 +9,8 @@ public class EmployeeSpawnManagement : MonoBehaviour
     private Dictionary<Employee.EmployeeTypes, GameObject> _employeeObjects = new Dictionary<Employee.EmployeeTypes, GameObject>();
 
     private GameObject _parentOBJ;
+    
+    [SerializeField] private Vector3Int _spawnPosition;
 
     private void Awake()
     {
@@ -25,7 +27,7 @@ public class EmployeeSpawnManagement : MonoBehaviour
     /// <returns>The Employee of the type of employee</returns>
     public Employee InstantiateEmployee(Employee.EmployeeTypes type)
     {
-        return Instantiate(_employeeObjects[type], Vector3.zero, Quaternion.identity, _parentOBJ.transform).GetComponent<Employee>();
+        return Instantiate(_employeeObjects[type], _spawnPosition, Quaternion.identity, _parentOBJ.transform).GetComponent<Employee>();
     }
 
     /// <summary>
