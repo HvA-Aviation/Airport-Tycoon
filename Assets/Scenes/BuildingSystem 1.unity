@@ -6272,9 +6272,9 @@ MonoBehaviour:
     serializedVersion: 2
     x: 5
     y: 2.5
-    width: 2.5
-    height: 1.25
-  _minZoom: 10
+    width: 20
+    height: 20
+  _minZoom: 15
   _maxZoom: 5
 --- !u!1 &1045249170
 GameObject:
@@ -32345,7 +32345,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 22.33, y: -5.300003}
+  m_AnchoredPosition: {x: 22.330017, y: -5.299988}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1875461140

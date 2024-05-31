@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Tile
   m_EditorClassIdentifier: 
   Name: Tile
-  Price: 10
+  Price: 1
   BrushType: 1
   BuildItems:
   - <Tile>k__BackingField: {fileID: 11400000, guid: 29fa9a4e0e09c14478da003d3f391e1c,

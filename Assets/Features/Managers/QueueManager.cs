@@ -101,9 +101,10 @@ public class QueueManager : MonoBehaviour
                 return item;
             }
 
-            if (UtilityQueue[item].inQueue.Count < currentBestCount)
+            int totalAmountOfQueuers = UtilityQueue[item].inQueue.Count + UtilityQueue[item].joiningQueue.Count;
+            if (totalAmountOfQueuers < currentBestCount)
             {
-                currentBestCount = UtilityQueue[item].inQueue.Count;
+                currentBestCount = totalAmountOfQueuers;
                 currentBestQueue = item;
             }
         }
