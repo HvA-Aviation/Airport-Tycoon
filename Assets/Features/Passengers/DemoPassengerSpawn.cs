@@ -27,9 +27,9 @@ namespace Features.Passengers
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.H))
+            if (Input.GetKeyDown(KeyCode.Z))
                 CreatePassenger();
-            if (Input.GetKeyDown(KeyCode.K))
+            if (Input.GetKeyDown(KeyCode.X))
                 StartCoroutine(SpawnPassenger());
         }
 

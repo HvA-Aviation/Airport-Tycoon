@@ -91,8 +91,6 @@ namespace Brushes
             if (GameManager.Instance.FinanceManager.Balance.Value - price < 0)
                 return;
             
-            GameManager.Instance.FinanceManager.Balance.Subtract(price);
-            
             //place the tiles in the shape of the selection
             List<Vector3Int> positions = new List<Vector3Int>();
             List<Tile> indices = new List<Tile>();
@@ -102,7 +100,8 @@ namespace Brushes
                 indices.Add(selected.Tile);
             }
 
-            _grid.SetGroup(positions, indices, Rotation);
+            if (_grid.SetGroup(positions, indices, Rotation))
+                GameManager.Instance.FinanceManager.Balance.Subtract(price);
         }
     }
 }

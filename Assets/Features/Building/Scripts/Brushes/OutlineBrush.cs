@@ -62,7 +62,8 @@ namespace Brushes
             
                 GameManager.Instance.FinanceManager.Balance.Subtract(price);
                 
-                _grid.Set(item.GridPosition, _buildableObject.BuildItems[0].Tile);
+                if (_grid.Set(item.GridPosition, _buildableObject.BuildItems[0].Tile))
+                    GameManager.Instance.FinanceManager.Balance.Subtract(price);
             }
         }
     }
