@@ -70,8 +70,6 @@ namespace Features.Workers
 
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
         {
-            if (!CheckTaskExists(_assignment, onDone))
-                return;
 
             _assignment = target;
 
