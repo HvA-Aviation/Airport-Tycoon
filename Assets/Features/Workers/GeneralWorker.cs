@@ -18,6 +18,11 @@ namespace Features.Workers
         private Vector3Int _assignment;
         private Vector3Int _targetPosition;
 
+        private void OnEnable()
+        {
+            _grid = FindObjectOfType<Grid>();
+        }
+        
         private void Start()
         {
             // Register it to the task system by setting it available.
