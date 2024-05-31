@@ -695,6 +695,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1163818655714566755, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
+      propertyPath: _title
+      value: Couch
+      objectReference: {fileID: 0}
+    - target: {fileID: 1163818655714566755, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: _description
+      value: Furniture to brighten up the place
+      objectReference: {fileID: 0}
+    - target: {fileID: 1163818655714566755, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
       propertyPath: _connectedResearchNodes.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -7707,6 +7717,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1163818655714566755, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
+      propertyPath: _title
+      value: Security training
+      objectReference: {fileID: 0}
+    - target: {fileID: 1163818655714566755, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: _description
+      value: Makes security work faster
+      objectReference: {fileID: 0}
+    - target: {fileID: 1163818655714566755, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
       propertyPath: _connectedResearchNodes.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -10534,6 +10554,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 726011878}
     m_Modifications:
+    - target: {fileID: 1163818655714566755, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: _title
+      value: Employee training
+      objectReference: {fileID: 0}
+    - target: {fileID: 1163818655714566755, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: _description
+      value: Makes general staff work faster
+      objectReference: {fileID: 0}
     - target: {fileID: 1163818655714566755, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
       propertyPath: _connectedResearchNodes.Array.size
