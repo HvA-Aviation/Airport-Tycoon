@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Features.Building.Scripts.Datatypes;
 using UnityEngine;
 
 public class RDTreeManager : MonoBehaviour
@@ -26,6 +27,11 @@ public class RDTreeManager : MonoBehaviour
         {
             node.SetResearchStatus(ResearchNode.ResearchStates.available);
         }
+    }
+
+    public void Unlock(Unlockable unlockable)
+    {
+        unlockable.Execute();
     }
 
     public void AddNodeToList(ResearchNode node) => AllNodes.Add(node);
