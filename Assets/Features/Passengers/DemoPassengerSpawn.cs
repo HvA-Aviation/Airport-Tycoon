@@ -8,6 +8,7 @@ namespace Features.Passengers
     public class DemoPassengerSpawn : MonoBehaviour
     {
         [SerializeField] private GameObject _passenger;
+        [SerializeField] private Vector3Int _spawnPoint;
         [SerializeField] private float _waitTime;
 
         private void Start()
@@ -34,7 +35,7 @@ namespace Features.Passengers
 
         private void CreatePassenger()
         {
-            Instantiate(_passenger, new Vector3(1, 0, 0), Quaternion.identity);
+            Instantiate(_passenger, _spawnPoint, Quaternion.identity);
         }
     }
 }
