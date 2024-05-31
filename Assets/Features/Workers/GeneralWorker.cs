@@ -16,7 +16,7 @@ namespace Features.Workers
         [SerializeField] private Grid _grid;
         [SerializeField] private float _workLoadSpeed;
         private Vector3Int _assignment;
-        private UtilityData _data;
+        private Vector3Int _targetPosition;
 
         private void Start()
         {
@@ -66,8 +66,30 @@ namespace Features.Workers
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
         {
             _assignment = target;
+            
+            int rotation = _grid.GetRotation(target);
+            Vector3Int rotationVector = Vector3Int.down;
+
+            switch (rotation)
+            {
+                case 0:
+                    rotationVector = Vector3Int.up;
+                    break;
+                case 1:
+                    rotationVector = Vector3Int.right;
+                    break;
+                case 2:
+                    rotationVector = Vector3Int.down;
+                    break;
+                case 3:
+                    rotationVector = Vector3Int.left;
+                    break;
+            }
+
+            _targetPosition = new Vector3Int(target.x, target.y, 0) + rotationVector;
+            
             _npcController.SetTarget(
-                new Vector3Int(target.x, target.y, 0),
+                _targetPosition,
                 () => CheckTaskExists(target, onDone),
                 onReachedPosition);
         }

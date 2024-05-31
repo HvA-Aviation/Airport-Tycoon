@@ -39,7 +39,6 @@ public class QueueManager : MonoBehaviour
     public bool WorkOnQueue(Vector3Int utilityPos, float speed)
     {
         if (!_queueProgression.ContainsKey(utilityPos)) _queueProgression.Add(utilityPos, 0);
-
         _queueProgression[utilityPos] += speed * Time.deltaTime;
         return _queueProgression[utilityPos] >= 10f;
     }
@@ -50,8 +49,10 @@ public class QueueManager : MonoBehaviour
     /// <param name="utilityPos"></param>
     public void RemoveFromQueue(Vector3Int utilityPos)
     {
+        PassengerBehaviour passengerBehaviour = UtilityQueue[utilityPos].inQueue.Dequeue();
+        passengerBehaviour.ExecuteTasks();
+        
         UpdatePositionOfQueuers(utilityPos);
-        UtilityQueue[utilityPos].inQueue.Dequeue();
         _queueProgression[utilityPos] = 0;
     }
 
