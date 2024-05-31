@@ -28,7 +28,14 @@ namespace Features.Building.Scripts.Demos
             
             foreach (BuildingStatus buildingStatus in GameManager.Instance.BuildingManager.BuildingStatuses.Where(x => x.IsUnlocked))
             {
-                _dropdown.options.Add(new TMP_Dropdown.OptionData(buildingStatus.BuildableObject.name, buildingStatus.BuildableObject.BuildItems[0].Tile.sprite));
+                string itemName = buildingStatus.BuildableObject.Name;
+
+                if (buildingStatus.BuildableObject.Price != 0)
+                {
+                    itemName += " [€" + buildingStatus.BuildableObject.Price + "]";
+                }
+
+                _dropdown.options.Add(new TMP_Dropdown.OptionData(itemName, buildingStatus.BuildableObject.BuildItems[0].Tile.sprite));
             }
         }
 

@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29d11b396c214f51a51ce3fe8885b523, type: 3}
-  m_Name: FloorTile A
+  m_Name: Check In
   m_EditorClassIdentifier: 
-  Name: FloorTile
-  BrushType: 1
+  Name: Check In
+  Price: 10
+  BrushType: 0
   BuildItems:
-  - <Tile>k__BackingField: {fileID: 11400000, guid: 29fa9a4e0e09c14478da003d3f391e1c,
+  - <Tile>k__BackingField: {fileID: 11400000, guid: 241963d8cfdb21c489ff7af6e2160525,
       type: 2}
     <GridPosition>k__BackingField:
       <Position>k__BackingField: {x: 0, y: 0}
-      <Layer>k__BackingField: 0
+      <Layer>k__BackingField: 1

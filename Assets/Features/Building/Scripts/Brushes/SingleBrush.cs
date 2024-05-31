@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Features.Building.Scripts.Datatypes;
 using Features.Building.Scripts.Grid;
+using Features.Managers;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Grid = Features.Building.Scripts.Grid.Grid;
@@ -85,6 +86,13 @@ namespace Brushes
         /// <param name="position">current position</param>
         public override void Apply(Vector3Int position)
         {
+            int price = GameManager.Instance.BuildingManager.CurrentBuildableObject.Price;
+
+            if (GameManager.Instance.FinanceManager.Balance.Value - price < 0)
+                return;
+            
+            GameManager.Instance.FinanceManager.Balance.Subtract(price);
+            
             //place the tiles in the shape of the selection
             List<Vector3Int> positions = new List<Vector3Int>();
             List<Tile> indices = new List<Tile>();

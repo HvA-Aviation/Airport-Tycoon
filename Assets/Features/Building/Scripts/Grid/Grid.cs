@@ -319,6 +319,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if setting was a success</returns>
         public bool Set(Vector3Int gridVector, Tile tile)
         {
+           
             //get tile from atlas
             TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tile);
 
