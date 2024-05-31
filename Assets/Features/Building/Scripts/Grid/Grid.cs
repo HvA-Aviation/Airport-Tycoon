@@ -31,7 +31,8 @@ namespace Features.Building.Scripts.Grid
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
         private Vector3Int _gridOffset;
-        
+
+        private bool _buildingCompleted = false;
         private List<TileChangeData> _gridChangeBuffer = new List<TileChangeData>();
         private List<TileColorData> _gridColorBuffer = new List<TileColorData>();
 
@@ -151,7 +152,7 @@ namespace Features.Building.Scripts.Grid
                 _tilemap.SetTile(tileChangeData, true);
             }
 
-            if (_gridChangeBuffer.Count > 0)
+            if (_gridChangeBuffer.Count > 0 || _buildingCompleted)
             {
                 //Update Traversable
                 UpdateTraversable();
@@ -165,6 +166,7 @@ namespace Features.Building.Scripts.Grid
 
             _gridChangeBuffer.Clear();
             _gridColorBuffer.Clear();
+            _buildingCompleted = false;
         }
 
         public bool BuildTile(Vector3Int gridVector, float speed)
@@ -208,6 +210,8 @@ namespace Features.Building.Scripts.Grid
 
                 if (isFinished)
                 {
+                    _buildingCompleted = true;
+                    
                     UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
 
                     if (utilityType != UtilityType.None)
