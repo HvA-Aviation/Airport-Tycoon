@@ -22,7 +22,7 @@ namespace Features.Workers
         {
             _grid = FindObjectOfType<Grid>();
         }
-        
+
         private void Start()
         {
             // Register it to the task system by setting it available.
@@ -39,9 +39,9 @@ namespace Features.Workers
             int times = 0;
             while (times < 10)
             {
-                if (CheckTaskExists(_assignment, onDone))
+                if (!CheckTaskExists(_assignment, onDone))
                     yield break;
-                
+
                 if (GameManager.Instance.QueueManager.HasQueuers(_assignment))
                 {
                     if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed))
@@ -57,21 +57,10 @@ namespace Features.Workers
             onDone?.Invoke();
         }
 
-        private IEnumerator Wait(float time, Action onDone)
-        {
-            while (time > 0)
-            {
-                time -= Time.deltaTime;
-                yield return null;
-            }
-
-            onDone?.Invoke();
-        }
-
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
         {
             _assignment = target;
-            
+
             int rotation = _grid.GetRotation(target);
             Vector3Int rotationVector = Vector3Int.down;
 
@@ -92,7 +81,7 @@ namespace Features.Workers
             }
 
             _targetPosition = new Vector3Int(target.x, target.y, 0) + rotationVector;
-            
+
             _npcController.SetTarget(
                 _targetPosition,
                 () => CheckTaskExists(target, onDone),
@@ -104,7 +93,6 @@ namespace Features.Workers
         /// </summary>
         private bool CheckTaskExists(Vector3Int target, Action onDone)
         {
-            Debug.Log("Check: " + _grid.Get(target));
             if (_grid.Get(target) == -1)
             {
                 Debug.Log("Stop assignment");

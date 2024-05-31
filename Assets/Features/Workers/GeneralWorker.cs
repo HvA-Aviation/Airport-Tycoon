@@ -22,7 +22,7 @@ namespace Features.Workers
         {
             _grid = FindObjectOfType<Grid>();
         }
-        
+
         private void Start()
         {
             // Register it to the task system by setting it available.
@@ -70,8 +70,11 @@ namespace Features.Workers
 
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
         {
+            if (!CheckTaskExists(_assignment, onDone))
+                return;
+
             _assignment = target;
-            
+
             int rotation = _grid.GetRotation(target);
             Vector3Int rotationVector = Vector3Int.down;
 
@@ -92,7 +95,7 @@ namespace Features.Workers
             }
 
             _targetPosition = new Vector3Int(target.x, target.y, 0) + rotationVector;
-            
+
             _npcController.SetTarget(
                 _targetPosition,
                 () => CheckTaskExists(target, onDone),
