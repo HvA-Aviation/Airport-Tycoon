@@ -22,6 +22,6 @@ public class Employee : MonoBehaviour
     {
         Builder = 0,
         Security = 1,
-        Janitor = 2,
+        General = 2,
     }
 }
