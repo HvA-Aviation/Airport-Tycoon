@@ -14,6 +14,11 @@ namespace Features.Workers
         [SerializeField] private Grid _grid;
         [SerializeField] private float _workLoadSpeed;
 
+        private void OnEnable()
+        {
+            _grid = FindObjectOfType<Grid>();
+        }
+
         private void Start()
         {
             // Register it to the task system by setting it available.

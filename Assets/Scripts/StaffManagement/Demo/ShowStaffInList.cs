@@ -1,3 +1,4 @@
+using Features.Managers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,7 +29,7 @@ public class ShowStaffInList : MonoBehaviour
 
     private void Remove()
     {
-        Demo.StaffManager.FireEmployee(ThisEmployee.EmployeeID);
+        GameManager.Instance.StaffManager.FireEmployee(ThisEmployee.EmployeeID);
         Destroy(gameObject);
     }
 
