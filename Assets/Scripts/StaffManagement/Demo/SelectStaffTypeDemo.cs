@@ -1,0 +1,53 @@
+using System;
+using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
+
+public class SelectStaffTypeDemo : MonoBehaviour
+{
+    [SerializeField] private TMP_Dropdown _hireDropDown;
+
+    [SerializeField] private Transform _parent;
+    [SerializeField] private GameObject _listObject;
+
+    private Employee.EmployeeTypes _employeeTypeToHire;
+
+    private string[] _employeeTypes;
+
+    public StaffManager StaffManager;
+    public UnityEvent Event = new UnityEvent();
+
+    private void Awake()
+    {
+        _employeeTypes = Enum.GetNames(typeof(Employee.EmployeeTypes));
+    }
+
+    private void Start()
+    {
+        _hireDropDown.ClearOptions();
+
+        _hireDropDown.AddOptions(_employeeTypes.ToList());
+    }
+
+    public void SetEmployeeToHire(int val)
+    {
+        _employeeTypeToHire = (Employee.EmployeeTypes)val;
+    }
+
+    public void Hire()
+    {
+        StaffManager.HireEmployee(_employeeTypeToHire);
+        string name = StaffManager.GetEmployeeName(StaffManager.LastEmployeeID);
+
+        GameObject temp = Instantiate(_listObject, _parent);
+        temp.GetComponent<ShowStaffInList>().ThisEmployee = StaffManager.Employees[StaffManager.LastEmployeeID];
+        temp.GetComponent<ShowStaffInList>().Demo = this;
+    }
+
+    public void Fire()
+    {
+        Event.Invoke();
+        Event.RemoveAllListeners();
+    }
+}
