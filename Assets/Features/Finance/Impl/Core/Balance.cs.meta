@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Features/Finance/Impl/Misc/Finance.cs.meta
+guid: 39d351061bb2f3a498742a1791060d95
+========
+guid: 80fcec4ba5c85cd46957b7b5b61766e0
+>>>>>>>> refs/heads/development:Assets/Features/Finance/Impl/Core/Balance.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

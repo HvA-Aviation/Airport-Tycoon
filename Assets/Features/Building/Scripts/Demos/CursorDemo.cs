@@ -1,5 +1,6 @@
 ﻿using System;
 using Features.Building.Scripts.Datatypes;
+using Features.Managers;
 using UnityEngine;
 using Cursor = Features.Building.Scripts.Grid.Cursor;
 using TileGrid = Features.Building.Scripts.Grid.Grid;
@@ -15,7 +16,7 @@ namespace Features.Building.Scripts.Demos
 
         private void Start()
         {
-            _cursor.ChangeSelectedBuildable(_defaultSelectedBuilding);
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildable(0);
         }
 
         private void Update()
