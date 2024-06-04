@@ -16,7 +16,7 @@ namespace Features.Workers
         [SerializeField] protected int _assignmentsShift;
         protected Vector3Int _assignment;
         protected Vector3Int _targetPosition;
-        
+
         /// <summary>
         /// Gets the direction of the utility so the worker will stand behind it
         /// </summary>
@@ -54,7 +54,7 @@ namespace Features.Workers
         {
             StartCoroutine(WorkOn(onDone));
         }
-        
+
         /// <summary>
         /// Works on the queue till the assigment shift has been met
         /// </summary>
@@ -62,13 +62,13 @@ namespace Features.Workers
         protected IEnumerator WorkOn(Action onDone)
         {
             float workload = _grid.GetUtilityWorkLoad(_assignment);
-            
+
             int times = 0;
             while (times < _assignmentsShift)
             {
                 if (!CheckTaskExists(_assignment, onDone))
                     yield break;
-                
+
                 if (GameManager.Instance.QueueManager.HasQueuers(_assignment))
                 {
                     if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed, workload))
@@ -92,9 +92,17 @@ namespace Features.Workers
         /// <param name="onDone">What to do when all is done</param>
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
         {
+            //Checks if utility still exitst
+            float workload = _grid.GetUtilityWorkLoad(target);
+            if (workload == 0)
+            {
+                onDone.Invoke();
+                return;
+            }
+            
             _assignment = target;
             _targetPosition = GetRotationAddition(target);
-            
+
             _npcController.SetTarget(
                 _targetPosition,
                 () => CheckTaskExists(target, onDone),

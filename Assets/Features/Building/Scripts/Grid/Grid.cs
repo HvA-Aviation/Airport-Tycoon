@@ -81,6 +81,9 @@ namespace Features.Building.Scripts.Grid
         public float GetUtilityWorkLoad(Vector3Int target)
         {
             int index = Get(target);
+            if (index == -1)
+                return 0;
+            
             return _atlas.Items[index].WorkLoad;
         }
 
