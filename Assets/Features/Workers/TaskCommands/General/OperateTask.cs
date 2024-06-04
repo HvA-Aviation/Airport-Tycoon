@@ -9,24 +9,24 @@ using UnityEngine;
 
 namespace Features.Workers.TaskCommands
 {
-    public class GeneralOperateTask : TaskCommand<GeneralWorker>
+    public class OperateTask : TaskCommand<AssignableWorker>
     {
         private Vector3Int _targetPosition;
 
         // Set task data.
-        public GeneralOperateTask(Vector3Int targetPosition)
+        public OperateTask(Vector3Int targetPosition)
         {
             _targetPosition = targetPosition;
         }
 
         // Set task instructions.
-        protected override void ExecuteInternal(GeneralWorker worker, Action onTaskDone)
+        protected override void ExecuteInternal(AssignableWorker worker, Action onTaskDone)
         {
-            GeneralOperateTask task = new GeneralOperateTask(_targetPosition);
+            OperateTask task = new OperateTask(_targetPosition);
             
-            worker.MoveTo(_targetPosition, () => {  worker.Guard(() =>
+            worker.MoveTo(_targetPosition, () => {  worker.Station(() =>
             {
-                GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(task);
+                GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(task);
                 onTaskDone?.Invoke();
             }); }, onTaskDone);
         }

@@ -6234,6 +6234,7 @@ MonoBehaviour:
   _npcController: {fileID: 1821831162}
   _grid: {fileID: 327049622}
   _workLoadSpeed: 5
+  _assignmentsShift: 10
 --- !u!114 &1821831162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6984,6 +6985,7 @@ MonoBehaviour:
   _npcController: {fileID: 2106550318}
   _grid: {fileID: 327049622}
   _workLoadSpeed: 2
+  _assignmentsShift: 10
 --- !u!114 &2106550318
 MonoBehaviour:
   m_ObjectHideFlags: 0

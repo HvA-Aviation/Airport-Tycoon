@@ -74,6 +74,20 @@ namespace Features.Building.Scripts.Grid
         }
 
         /// <summary>
+        /// Gets the utility workload by position
+        /// </summary>
+        /// <param name="target">Position of the utility</param>
+        /// <returns>Workload as a float</returns>
+        public float GetUtilityWorkLoad(Vector3Int target)
+        {
+            int index = Get(target);
+            if (index == -1)
+                return 0;
+            
+            return _atlas.Items[index].WorkLoad;
+        }
+
+        /// <summary>
         /// Creates a flattend 2d array to see if the cell position is traversable
         /// </summary>
         /// <returns>A flattend 2d bool array with false as traversable</returns>
@@ -220,7 +234,7 @@ namespace Features.Building.Scripts.Grid
                         }
                         else
                         {
-                            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new GeneralOperateTask(gridVector));
+                            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(gridVector));
                         }
                     }
                 }
