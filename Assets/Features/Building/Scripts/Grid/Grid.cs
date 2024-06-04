@@ -220,7 +220,7 @@ namespace Features.Building.Scripts.Grid
                         }
                         else
                         {
-                            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new GeneralOperateTask(gridVector));
+                            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(gridVector));
                         }
                     }
                 }
