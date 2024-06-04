@@ -12,13 +12,24 @@ namespace Features.Managers
         [field: SerializeField] public BuildableObject CurrentBuildableObject { get; private set; }
         [field: SerializeField] public List<BuildingStatus> BuildingStatuses { get; private set; }
 
+        private List<BuildingStatus> _unlocked = new List<BuildingStatus>();
+
+        private void Start()
+        {
+            foreach (var status in BuildingStatuses)
+            {
+                if (status.IsUnlocked)
+                    _unlocked.Add(status);
+            }
+        }
+
         /// <summary>
         /// Set other buildable
         /// </summary>
         /// <param name="buildableObject">Building that is going to be placed</param>
         public void ChangeSelectedBuildable(int index)
         {
-            CurrentBuildableObject = BuildingStatuses[index].BuildableObject;
+            CurrentBuildableObject = _unlocked[index].BuildableObject;
             GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeBrush);
         }
 
@@ -28,6 +39,7 @@ namespace Features.Managers
             if (index != -1)
             {
                 BuildingStatuses[index].IsUnlocked = true;
+                _unlocked.Insert(index, BuildingStatuses[index]);
                 GameManager.Instance.EventManager.TriggerEvent(EventId.OnUnlockBuilding);
             }
             else

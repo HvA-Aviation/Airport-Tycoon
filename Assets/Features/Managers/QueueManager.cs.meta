@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Features/Managers/QueueManager.cs.meta
 guid: 6e37d714561c74e4489c3014f8a4a54c
+========
+guid: 39d351061bb2f3a498742a1791060d95
+>>>>>>>> refs/remotes/origin/bug/locked-selection-possible:Assets/Features/Finance/Impl/Misc/Finance.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
