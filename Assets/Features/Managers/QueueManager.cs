@@ -36,12 +36,12 @@ public class QueueManager : MonoBehaviour
     /// <summary>
     /// Function for guard to start letting people through a queue
     /// </summary>
-    public bool WorkOnQueue(Vector3Int utilityPos, float speed)
+    public bool WorkOnQueue(Vector3Int utilityPos, float speed, float workLoad)
     {
         if (!_queueProgression.ContainsKey(utilityPos)) _queueProgression.Add(utilityPos, 0);
 
         _queueProgression[utilityPos] += speed * Time.deltaTime;
-        return _queueProgression[utilityPos] >= 10f;
+        return _queueProgression[utilityPos] >= workLoad;
     }
 
     /// <summary>

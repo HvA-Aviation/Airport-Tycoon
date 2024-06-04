@@ -13,9 +13,15 @@ namespace Features.Workers
         [SerializeField] protected NPCController _npcController;
         [SerializeField] protected Grid _grid;
         [SerializeField] protected float _workLoadSpeed;
+        [SerializeField] protected int _assignmentsShift;
         protected Vector3Int _assignment;
         protected Vector3Int _targetPosition;
         
+        /// <summary>
+        /// Gets the direction of the utility so the worker will stand behind it
+        /// </summary>
+        /// <param name="target">Position of the utility</param>
+        /// <returns>The position behind the utility</returns>
         protected Vector3Int GetRotationAddition(Vector3Int target)
         {
             int rotation = _grid.GetRotation(target);
@@ -40,19 +46,32 @@ namespace Features.Workers
             return new Vector3Int(target.x, target.y, 0) + rotationVector;
         }
 
+        /// <summary>
+        /// Starts a routine so the worker will work on the utility
+        /// </summary>
+        /// <param name="onDone">Sets the worker back in the task queue</param>
         public void Station(Action onDone)
         {
-            StartCoroutine(WorkOn(10f, onDone));
+            StartCoroutine(WorkOn(onDone));
         }
         
-        protected IEnumerator WorkOn(float time, Action onDone)
+        /// <summary>
+        /// Works on the queue till the assigment shift has been met
+        /// </summary>
+        /// <param name="onDone">Sets the worker back in the task queue</param>
+        protected IEnumerator WorkOn(Action onDone)
         {
+            float workload = _grid.GetUtilityWorkLoad(_assignment);
+            
             int times = 0;
-            while (times < 10)
+            while (times < _assignmentsShift)
             {
+                if (!CheckTaskExists(_assignment, onDone))
+                    yield break;
+                
                 if (GameManager.Instance.QueueManager.HasQueuers(_assignment))
                 {
-                    if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed))
+                    if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed, workload))
                     {
                         GameManager.Instance.QueueManager.RemoveFromQueue(_assignment);
                         times++;
@@ -65,6 +84,12 @@ namespace Features.Workers
             onDone?.Invoke();
         }
 
+        /// <summary>
+        /// Move to grid location
+        /// </summary>
+        /// <param name="target">Target location</param>
+        /// <param name="onReachedPosition">What to do on the target location</param>
+        /// <param name="onDone">What to do when all is done</param>
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
         {
             _assignment = target;

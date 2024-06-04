@@ -74,6 +74,17 @@ namespace Features.Building.Scripts.Grid
         }
 
         /// <summary>
+        /// Gets the utility workload by position
+        /// </summary>
+        /// <param name="target">Position of the utility</param>
+        /// <returns>Workload as a float</returns>
+        public float GetUtilityWorkLoad(Vector3Int target)
+        {
+            int index = Get(target);
+            return _atlas.Items[index].WorkLoad;
+        }
+
+        /// <summary>
         /// Creates a flattend 2d array to see if the cell position is traversable
         /// </summary>
         /// <returns>A flattend 2d bool array with false as traversable</returns>
