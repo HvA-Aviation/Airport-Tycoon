@@ -12,6 +12,7 @@ public class PassengerBehaviour : MonoBehaviour
     Queue<Utilities> tasksToDo = new Queue<Utilities>();
     QueueManager queueManager;
     GridManager gridManager;
+    private Utilities _currentUtility;
 
     // Start is called before the first frame update
     void OnEnable()
@@ -39,27 +40,46 @@ public class PassengerBehaviour : MonoBehaviour
         // }
 
         //Security is required
+        tasksToDo.Enqueue(Utilities.CheckIn);
         tasksToDo.Enqueue(Utilities.Security);
+        tasksToDo.Enqueue(Utilities.Gate);
     }
 
     /// <summary>
     /// Execute the tasks that are assigned to a passenger
     /// </summary>
-    void ExecuteTasks()
+    public void ExecuteTasks()
     {
-        if (tasksToDo.Count == 0) return;
+        if (tasksToDo.Count == 0)
+        {
+            TasksCompleted();
+            return;
+        }
 
         Utilities currentTask = tasksToDo.Dequeue();
         List<Vector3Int> potentialTaskDestinations = gridManager.GetUtilities(currentTask);
 
+        _currentUtility = currentTask;
+
         queueManager.AssignToUtility(
             potentialTaskDestinations,
             this,
-            (numberInQueue, utilityPos) => { UpdatePath(utilityPos, numberInQueue); },
-            out int positionInQueue);
+            (numberInQueue, utilityPos) => { UpdatePath(utilityPos, numberInQueue); });
     }
 
-    void UpdatePath(Vector3Int utilityPos, int numberInQueue)
+    private void TasksCompleted()
+    {
+        switch (_currentUtility)
+        {
+            case Utilities.Gate:
+                //TODO add finance manager here
+                //GameManager.Instance.FinanceManager.Balance.Add(5);
+                Destroy(gameObject);
+                break;
+        }
+    }
+
+    public void UpdatePath(Vector3Int utilityPos, int numberInQueue)
     {
         _npcController.StopAllCoroutines();
 
