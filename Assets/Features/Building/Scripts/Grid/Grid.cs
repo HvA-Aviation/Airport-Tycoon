@@ -402,7 +402,10 @@ namespace Features.Building.Scripts.Grid
                     UtilityType type = _atlas.Items[cell.Tile].UtilityType;
 
                     if (type != UtilityType.None)
+                    {
                         _utilityLocations[type].Remove(item);
+                        GameManager.Instance.QueueManager.RemoveQueue(item);
+                    }
 
                     _cells[item.x, item.y, item.z].Clear();
                 }

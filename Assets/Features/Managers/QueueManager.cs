@@ -36,6 +36,25 @@ public class QueueManager : MonoBehaviour
         else return false;
     }
 
+    public void RemoveQueue(Vector3Int utilityPos)
+    {
+        if (!UtilityQueue.ContainsKey(utilityPos))
+            return;
+        
+        QueueInfo queueInfo = UtilityQueue[utilityPos];
+        
+        List<PassengerBehaviour> passengerBehaviours = queueInfo.inQueue.ToList();
+        passengerBehaviours.AddRange(queueInfo.joiningQueue.Keys);
+        
+        UtilityQueue.Remove(utilityPos);
+        _queueProgression.Remove(utilityPos);
+
+        foreach (PassengerBehaviour passenger in passengerBehaviours)
+        {
+            passenger.ExecuteTasks();
+        }
+    }
+
     /// <summary>
     /// Function for guard to start letting people through a queue
     /// </summary>
@@ -119,6 +138,8 @@ public class QueueManager : MonoBehaviour
     {
         Vector3Int optimalQueue = GetOptimalQueue(utilityPos);
 
+        Debug.Log(optimalQueue); //is (0, 0, 0) for some reason
+        
         int positionInQueue = UtilityQueue[optimalQueue].inQueue.Count;
 
         UtilityQueue[optimalQueue].joiningQueue.Add(passenger, OnQueueChanged);
