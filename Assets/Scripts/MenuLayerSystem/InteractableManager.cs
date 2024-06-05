@@ -11,6 +11,10 @@ public class InteractableManager : MonoBehaviour
         Interactables = new List<IInteractable>();
     }
 
+    /// <summary>
+    /// Call this function when you want to add an interactable to a list of all the interactables
+    /// </summary>
+    /// <param name="interactable">The interactable that needs to be added to the list</param>
     public void AddInteractableToList(IInteractable interactable) => Interactables.Add(interactable);
 
     /// <summary>
