@@ -48,7 +48,7 @@ public class PassengerBehaviour : MonoBehaviour
     /// <summary>
     /// Execute the tasks that are assigned to a passenger
     /// </summary>
-    public void ExecuteTasks()
+    public void ExecuteTasks(bool dequeue = true)
     {
         if (tasksToDo.Count == 0)
         {
@@ -56,7 +56,7 @@ public class PassengerBehaviour : MonoBehaviour
             return;
         }
 
-        Utilities currentTask = tasksToDo.Dequeue();
+        Utilities currentTask = dequeue ? tasksToDo.Dequeue() : _currentUtility;
         List<Vector3Int> potentialTaskDestinations = gridManager.GetUtilities(currentTask);
 
         _currentUtility = currentTask;
