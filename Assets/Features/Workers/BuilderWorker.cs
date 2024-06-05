@@ -33,6 +33,9 @@ namespace Features.Workers
             }
 
             onBuilt.Invoke();
+
+            // Temporary solution to avoid errors when passengers dont have a utility to go to
+            GameManager.Instance.EventManager.TriggerEvent(EventManager.EventId.onMissingUtility);
         }
 
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)

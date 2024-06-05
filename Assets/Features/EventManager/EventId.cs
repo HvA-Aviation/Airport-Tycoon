@@ -8,5 +8,6 @@
         GridUpdateEvent,
         OnMoneyAdded,
         OnMoneyRemoved,
+        onMissingUtility,
     }
 }

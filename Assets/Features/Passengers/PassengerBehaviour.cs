@@ -3,8 +3,7 @@ using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using UnityEngine;
 using Utilities = Features.Building.Scripts.Datatypes.UtilityType;
-using Grid = Features.Building.Scripts.Grid;
-using System;
+using Features.EventManager;
 
 public class PassengerBehaviour : MonoBehaviour
 {
@@ -56,8 +55,16 @@ public class PassengerBehaviour : MonoBehaviour
             return;
         }
 
-        Utilities currentTask = tasksToDo.Dequeue();
+        Utilities currentTask = tasksToDo.Peek();
         List<Vector3Int> potentialTaskDestinations = gridManager.GetUtilities(currentTask);
+
+        // Check if there are any utilities of the current task, if not then subscribe to the onMissingUtility event
+        if (potentialTaskDestinations.Count == 0)
+        {
+            Debug.LogWarning($"Missing a {currentTask} to assign to subscribing to onMissingUtility event");
+            GameManager.Instance.EventManager.SubscribeFlash(EventId.onMissingUtility, (args) => { ExecuteTasks(); });
+            return;
+        }
 
         _currentUtility = currentTask;
 
@@ -65,6 +72,8 @@ public class PassengerBehaviour : MonoBehaviour
             potentialTaskDestinations,
             this,
             (numberInQueue, utilityPos) => { UpdatePath(utilityPos, numberInQueue); });
+
+        tasksToDo.Dequeue();
     }
 
     private void TasksCompleted()

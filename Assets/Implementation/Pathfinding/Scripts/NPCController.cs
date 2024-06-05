@@ -46,7 +46,11 @@ namespace Implementation.Pathfinding.Scripts
         private IEnumerator MoveToTarget(List<Node> path, Action checkIfTaskIsStillNeeded, Action onDestinationReached)
         {
             // if there is no path break out of this coroutine
-            if (path.Count <= 0) yield break;
+            if (path.Count <= 0)
+            {
+                Debug.LogWarning("No path found, breaking out of coroutine");
+                yield break;
+            };
 
             // Path starts at path.count - 2 because the we want to skip the first node, which is the current position of the NPC
             for (int i = path.Count - 2; i >= 0; i--)
