@@ -60,8 +60,6 @@ namespace Brushes
             {
                 if (GameManager.Instance.FinanceManager.Balance.Value - price < 0)
                     return;
-            
-                GameManager.Instance.FinanceManager.Balance.Subtract(price);
                 
                 if (_grid.Set(item.GridPosition, _buildableObject.BuildItems[0].Tile))
                     GameManager.Instance.FinanceManager.Balance.Subtract(price);
