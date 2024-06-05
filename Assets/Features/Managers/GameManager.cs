@@ -13,6 +13,7 @@ namespace Features.Managers
         [field: SerializeField] public BuildingManager BuildingManager { get; private set; }
         [field: SerializeField] public GridManager GridManager { get; private set; }
         [field: SerializeField] public QueueManager QueueManager { get; private set; }
+        [field: SerializeField] public FinanceManager FinanceManager { get; private set; }
 
         private void Awake()
         {

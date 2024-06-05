@@ -1,13 +1,10 @@
+using Features.Managers;
 using UnityEngine;
 
 public class FinanceDemo : MonoBehaviour
 {
     [SerializeField]
     private UIDemoManager _demoManager;
-
-    [SerializeField]
-    private FinanceManager _manager;
-
     private void Start()
     {
         UpdateUI();
@@ -35,16 +32,16 @@ public class FinanceDemo : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            _manager.AdvancePeriod();
+            GameManager.Instance.FinanceManager.AdvancePeriod();
             UpdateUI();
         }
     }
 
     private void TryAcceptLoan(int index)
     {
-        if (_manager.GetLoan(index).State == LoanState.Idle)
+        if (GameManager.Instance.FinanceManager.GetLoan(index).State == LoanState.Idle)
         {
-            _manager.AcceptLoan(index);
+            GameManager.Instance.FinanceManager.AcceptLoan(index);
             Debug.Log($"Loan {index} is accepted.");
         }
         else
@@ -55,10 +52,10 @@ public class FinanceDemo : MonoBehaviour
 
     private void UpdateUI()
     {
-        _demoManager.SetMoney(_manager.Balance.Value);
+        _demoManager.SetMoney(GameManager.Instance.FinanceManager.Balance.Value);
         for(int i = 0; i < 3; i++)
         {
-            _demoManager.UpdateLoanCard(i, _manager.GetLoan(i));
+            _demoManager.UpdateLoanCard(i, GameManager.Instance.FinanceManager.GetLoan(i));
         }
     }
 }
