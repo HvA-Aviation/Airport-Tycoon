@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Door
   m_EditorClassIdentifier: 
   Name: Door
+  Price: 10
   BrushType: 0
   BuildItems:
   - <Tile>k__BackingField: {fileID: 11400000, guid: 188e4c7d9c6ce694a8392e304280d246,

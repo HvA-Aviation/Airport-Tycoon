@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: FloorTile A
   m_EditorClassIdentifier: 
   Name: FloorTile
+  Price: 10
   BrushType: 1
   BuildItems:
   - <Tile>k__BackingField: {fileID: 11400000, guid: 29fa9a4e0e09c14478da003d3f391e1c,

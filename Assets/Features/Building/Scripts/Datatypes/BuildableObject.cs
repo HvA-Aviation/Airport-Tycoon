@@ -7,6 +7,7 @@ namespace Features.Building.Scripts.Datatypes
     public class BuildableObject : ScriptableObject
     {
         public string Name;
+        public int Price;
         public BrushType BrushType;
         public List<SubBuildItem> BuildItems;
     }
