@@ -1565,6 +1565,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ResearchNode (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 4918524161634474606, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4918524161634474607, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
       propertyPath: m_Pivot.x
@@ -3478,6 +3483,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ResearchNode (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4918524161634474606, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4918524161634474607, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
       propertyPath: m_Pivot.x
@@ -3934,6 +3944,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ResearchNode (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4918524161634474606, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4918524161634474607, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
@@ -4803,6 +4818,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ResearchNode (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4918524161634474606, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4918524161634474607, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
@@ -6643,6 +6663,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ResearchNode (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 4918524161634474606, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4918524161634474607, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
       propertyPath: m_Pivot.x
@@ -7313,6 +7338,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ResearchNode (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4918524161634474606, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4918524161634474607, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
