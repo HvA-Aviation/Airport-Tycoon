@@ -51,7 +51,7 @@ public class QueueManager : MonoBehaviour
 
         foreach (PassengerBehaviour passenger in passengerBehaviours)
         {
-            passenger.ExecuteTasks();
+            passenger.ExecuteTasks(false);
         }
     }
 

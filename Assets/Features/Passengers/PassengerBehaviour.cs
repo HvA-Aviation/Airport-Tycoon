@@ -56,7 +56,7 @@ public class PassengerBehaviour : MonoBehaviour
             return;
         }
 
-        Utilities currentTask = dequeue ? tasksToDo.Dequeue() : tasksToDo.Peek();
+        Utilities currentTask = dequeue ? tasksToDo.Dequeue() : _currentUtility;
         List<Vector3Int> potentialTaskDestinations = gridManager.GetUtilities(currentTask);
 
         _currentUtility = currentTask;
