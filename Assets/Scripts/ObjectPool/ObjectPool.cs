@@ -14,29 +14,28 @@ public class ObjectPool : MonoBehaviour
     private void Awake()
     {
         _parent = new GameObject(_object.name);
-        GenerateNewAmount();
+        FillObjectPool();
     }  
 
     /// <summary>
     /// Call this function to generate a new amount of object in a pool
     /// </summary>
-    private void GenerateNewAmount()
+    private void FillObjectPool()
     {
         for (int i = 0; i < _spawnAmount; i++)
-            ReturnObject(Instantiate(_object));        
+            Return(Instantiate(_object));        
     }
 
     /// <summary>
     /// Call this function to get an object out of the pool
     /// </summary>
     /// <returns>The first object of pool</returns>
-    public GameObject GetObject()
+    public GameObject Get()
     {
         if (_objectPool.Count <= 0)
-            GenerateNewAmount();
+            FillObjectPool();
 
         GameObject obj = _objectPool.Dequeue();
-        obj.SetActive(true);
         return obj;
     }
 
@@ -44,7 +43,7 @@ public class ObjectPool : MonoBehaviour
     /// Call this function to return an object to the pool
     /// </summary>
     /// <param name="gameObject">The object that needs to be returned</param>
-    public void ReturnObject(GameObject gameObject)
+    public void Return(GameObject gameObject)
     {
         if(gameObject.TryGetComponent<IPoolableObject>(out IPoolableObject poolableObject))
             poolableObject.ResetValues();

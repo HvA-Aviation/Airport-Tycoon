@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class PoolDemo : MonoBehaviour
 {
+    [SerializeField] private ObjectPool _pool;
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.H))
         {
-           GameManager.Instance.PoolManager.AllObjectPools[0].GetObject();
+           _pool.Get();
         }
     }
 }

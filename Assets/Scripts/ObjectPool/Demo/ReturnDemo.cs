@@ -5,14 +5,15 @@ using UnityEngine;
 
 public class ReturnDemo : MonoBehaviour, IPoolableObject
 {
+    [SerializeField] private ObjectPool _pool;   
     public void ResetValues()
     {
-        Debug.Log("Test");
+        gameObject.SetActive(false);
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.G))
-            GameManager.Instance.PoolManager.AllObjectPools[0].ReturnObject(gameObject);
+            _pool.Return(gameObject);
     }
 }

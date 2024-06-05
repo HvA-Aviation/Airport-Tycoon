@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PassengerSpawner : MonoBehaviour
 {
-    [SerializeField] private bool _canSpawnPassengerOnTime;
+    [SerializeField, Tooltip("If checked true, the passengers will spawn on a timely basis")] private bool _spawnPassengersOnTime;
+    [SerializeField] private ObjectPool _passengerPool;
     [SerializeField] private PassengerSpawnManager _spawnerManager;
     private void Start()
     {
@@ -16,7 +17,8 @@ public class PassengerSpawner : MonoBehaviour
     /// </summary>
     public void SpawnPassenger()
     {
-        GameObject temp = GameManager.Instance.PoolManager.AllObjectPools[0].GetObject();
+        GameObject temp = _passengerPool.Get();
+        temp.SetActive(true);
         temp.transform.position = transform.position;
     }
 
@@ -26,7 +28,7 @@ public class PassengerSpawner : MonoBehaviour
     /// <returns></returns>
     public IEnumerator SpawnPassengerOnTimer()
     {
-        while (_canSpawnPassengerOnTime)
+        while (_spawnPassengersOnTime)
         {
             yield return new WaitForSeconds(_spawnerManager.SpawnRate);
 
