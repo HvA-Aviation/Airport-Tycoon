@@ -16,7 +16,7 @@ namespace Features.Managers
 
         private void Start()
         {
-            foreach (var status in BuildingStatuses)
+            foreach (BuildingStatus status in BuildingStatuses)
             {
                 if (status.IsUnlocked)
                     _unlocked.Add(status);
