@@ -145,17 +145,23 @@ namespace Features.Building.Scripts.Grid
 
             float balance = GameManager.Instance.FinanceManager.Balance.Value;
             float price = GameManager.Instance.BuildingManager.CurrentBuildableObject.Price;
-            
+
             //set the tile on the tilemap
             foreach (SubBuildItem gridPosition in selectedGroup)
             {
-                balance -= price;
-                if (balance < 0)
-                {
-                    valid = false;
-                }
+                bool empty = _grid.IsEmpty(gridPosition.GridPosition);
                 
-                Color availableColor = _grid.IsEmpty(gridPosition.GridPosition) ? validColor : invalidColor;
+                if (empty)
+                {
+                    valid = true;
+                    balance -= price;
+                    if (balance < 0)
+                    {
+                        valid = false;
+                    }
+                }
+
+                Color availableColor = empty ? validColor : invalidColor;
                 TileChangeData tempTile = new TileChangeData()
                 {
                     position = gridPosition.GridPosition - offset,
