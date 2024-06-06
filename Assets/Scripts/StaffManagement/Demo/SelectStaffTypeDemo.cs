@@ -23,6 +23,14 @@ public class SelectStaffTypeDemo : MonoBehaviour
         _employeeTypes = Enum.GetNames(typeof(Employee.EmployeeTypes));
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            transform.GetChild(0).gameObject.SetActive(!transform.GetChild(0).gameObject.activeSelf);
+        }
+    }
+
     private void Start()
     {
         _hireDropDown.ClearOptions();
