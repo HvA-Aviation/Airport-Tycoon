@@ -11,7 +11,6 @@ namespace Features.Workers
     public class AssignableWorker : Worker
     {
         [SerializeField] protected NPCController _npcController;
-        [SerializeField] protected Grid _grid;
         [SerializeField] protected float _workLoadSpeed;
         [SerializeField] protected int _assignmentsShift;
         protected Vector3Int _assignment;
@@ -24,7 +23,7 @@ namespace Features.Workers
         /// <returns>The position behind the utility</returns>
         protected Vector3Int GetRotationAddition(Vector3Int target)
         {
-            int rotation = _grid.GetRotation(target);
+            int rotation = GameManager.Instance.GridManager.Grid.GetRotation(target);
             Vector3Int rotationVector = Vector3Int.down;
 
             switch (rotation)
@@ -61,7 +60,7 @@ namespace Features.Workers
         /// <param name="onDone">Sets the worker back in the task queue</param>
         protected IEnumerator WorkOn(Action onDone)
         {
-            float workload = _grid.GetUtilityWorkLoad(_assignment);
+            float workload = GameManager.Instance.GridManager.Grid.GetUtilityWorkLoad(_assignment);
 
             int times = 0;
             while (times < _assignmentsShift)
@@ -93,7 +92,7 @@ namespace Features.Workers
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
         {
             //Checks if utility still exitst
-            float workload = _grid.GetUtilityWorkLoad(target);
+            float workload = GameManager.Instance.GridManager.Grid.GetUtilityWorkLoad(target);
             if (workload == 0)
             {
                 onDone.Invoke();
@@ -114,7 +113,7 @@ namespace Features.Workers
         /// </summary>
         protected bool CheckTaskExists(Vector3Int target, Action onDone)
         {
-            if (_grid.Get(target) == -1)
+            if (GameManager.Instance.GridManager.Grid.Get(target) == -1)
             {
                 onDone.Invoke();
                 return false;

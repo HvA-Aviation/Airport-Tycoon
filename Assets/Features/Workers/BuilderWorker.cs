@@ -11,7 +11,6 @@ namespace Features.Workers
     public class BuilderWorker : Worker
     {
         [SerializeField] private NPCController _npcController;
-        [SerializeField] private Grid _grid;
         [SerializeField] private float _workLoadSpeed;
 
         private void Start()
@@ -27,7 +26,7 @@ namespace Features.Workers
 
         private IEnumerator CheckBuild(Vector3Int target, Action onBuilt)
         {
-            while (!_grid.BuildTile(target, _workLoadSpeed))
+            while (!GameManager.Instance.GridManager.Grid.BuildTile(target, _workLoadSpeed))
             {
                 yield return null;
             }
@@ -48,7 +47,7 @@ namespace Features.Workers
         /// </summary>
         private void CheckTaskExists(Vector3Int target, Action onDone)
         {
-            if (_grid.Get(target) == -1) onDone.Invoke();
+            if (GameManager.Instance.GridManager.Grid.Get(target) == -1) onDone.Invoke();
         }
     }
 }
