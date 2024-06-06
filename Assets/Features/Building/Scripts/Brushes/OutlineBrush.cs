@@ -56,7 +56,7 @@ namespace Brushes
         {
             int price = GameManager.Instance.BuildingManager.CurrentBuildableObject.Price;
             
-            foreach (SubBuildItem item in _selectedTiles.Distinct())
+            foreach (SubBuildItem item in _selectedTiles)
             {
                 if (GameManager.Instance.FinanceManager.Balance.Value - price < 0)
                     return;
