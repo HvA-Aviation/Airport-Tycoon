@@ -52,19 +52,25 @@ namespace Implementation.Pathfinding.Scripts
                 yield break;
             };
 
-            // Path starts at path.count - 2 because the we want to skip the first node, which is the current position of the NPC
-            for (int i = path.Count - 2; i >= 0; i--)
+            // Reverse the path so we can iterate over it with a foreach loop
+            List<Node> reversedPath = new List<Node>(path);
+            reversedPath.Reverse();
+
+            // skip the first entry to avoid the npc to jitter back to a badly rounded pos
+            reversedPath.RemoveAt(0);
+
+            foreach (Node node in reversedPath)
             {
                 // Backtracked gets initialized with empty nodes, sometimes they get through and end up here. Could look into this
-                if (path[i].position == Vector3Int.zero) continue;
+                if (node.position == Vector3Int.zero) continue;
 
-                while (Vector3.Distance(path[i].position, transform.position) > 0.1f)
+                while (Vector3.Distance(node.position, transform.position) > 0.1f)
                 {
-                    Vector3 direction = path[i].position - transform.position;
+                    Vector3 direction = node.position - transform.position;
                     transform.position += direction.normalized * _moveSpeed * Time.deltaTime;
                     yield return new WaitForEndOfFrame();
                 }
-                transform.position = path[i].position;
+                transform.position = node.position;
                 checkIfTaskIsStillNeeded.Invoke();
             }
             onDestinationReached.Invoke();
