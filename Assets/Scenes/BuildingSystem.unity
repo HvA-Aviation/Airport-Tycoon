@@ -158,6 +158,7 @@ MonoBehaviour:
   <BuildingManager>k__BackingField: {fileID: 1230972235}
   <GridManager>k__BackingField: {fileID: 494020287}
   <QueueManager>k__BackingField: {fileID: 325803756}
+  <GameTimeManager>k__BackingField: {fileID: 0}
 --- !u!4 &61372903
 Transform:
   m_ObjectHideFlags: 0
@@ -2930,6 +2931,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ResearchNode (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 4918524161634474606, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4918524161634474607, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
       propertyPath: m_Pivot.x
@@ -3947,6 +3953,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ResearchNode (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4918524161634474606, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4918524161634474607, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
@@ -7180,6 +7191,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ResearchNode (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4918524161634474606, guid: 293e09816859fd748a6d86fdd3b86851,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4918524161634474607, guid: 293e09816859fd748a6d86fdd3b86851,
         type: 3}
