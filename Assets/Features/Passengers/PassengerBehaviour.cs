@@ -114,7 +114,8 @@ public class PassengerBehaviour : MonoBehaviour
         _npcController.SetTarget(
         utilityPos + rotationVector * (numberInQueue + 1),
         () => { },
-        () => { GameManager.Instance.QueueManager.ReachedQueue(utilityPos, this); });
+        () => { GameManager.Instance.QueueManager.ReachedQueue(utilityPos, this); },
+        () => print("Implement function that handles case when passenger does not have path to target"));
     }
 
 }

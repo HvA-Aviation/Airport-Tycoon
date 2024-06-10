@@ -31,6 +31,7 @@ namespace Features.Building.Scripts.Grid
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
         private Vector3Int _gridOffset;
+        private Vector3Int _paxSpawnPos;
         private List<TileChangeData> _gridChangeBuffer = new List<TileChangeData>();
         private List<TileColorData> _gridColorBuffer = new List<TileColorData>();
 
@@ -44,6 +45,7 @@ namespace Features.Building.Scripts.Grid
 
         public Vector3Int GridSize => _gridSize;
         public float CellSize => _cellSize;
+        public Vector3Int PaxSpawnPosition => _paxSpawnPos;
 
         void Start()
         {
@@ -61,7 +63,7 @@ namespace Features.Building.Scripts.Grid
             //create and populate traversabletiles
             TraversableTiles = new bool[_gridSize.x, _gridSize.y];
             UpdateTraversable();
-            
+
             GameManager.Instance.EventManager.TriggerEvent(EventId.GridUpdateEvent);
         }
 
@@ -290,7 +292,7 @@ namespace Features.Building.Scripts.Grid
 
                 Color color = _atlas.Items[buildIndex].Color;
                 color.a = _buildingStaringOpacity;
-                
+
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVector,
@@ -364,7 +366,7 @@ namespace Features.Building.Scripts.Grid
 
                 Color color = _atlas.Items[cellData.Tile].Color;
                 color.a = _buildingStaringOpacity;
-                
+
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVectors[i],
@@ -372,6 +374,12 @@ namespace Features.Building.Scripts.Grid
                     tile = tileData.Tile,
                     transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });
+
+                if (cellData.Tile == 9)
+                {
+                    _paxSpawnPos = gridVectors[i];
+                    GameManager.Instance.BuildingManager.LockBuilding(cellData.Tile);
+                }
             }
 
             GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
@@ -389,6 +397,9 @@ namespace Features.Building.Scripts.Grid
         {
             if (!OutOfBounds(gridVector) && Get(gridVector) != -1)
             {
+                // 9 is the pax spawn point, this needs to be reworked after demo
+                if (Get(gridVector) == 9) return false;
+
                 //checks if given tile is part of a linked group. If not only add the given position
                 List<Vector3Int> group = _cellGroup.FirstOrDefault(x => x.Any(j => j == gridVector));
                 if (group == default)

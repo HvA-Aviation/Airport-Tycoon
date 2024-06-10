@@ -4918,6 +4918,10 @@ MonoBehaviour:
       type: 2}
     <IsUnlocked>k__BackingField: 1
     <Category>k__BackingField: 0
+  - <BuildableObject>k__BackingField: {fileID: 11400000, guid: b0bc2e4f8a6375647906ea358bb243c9,
+      type: 2}
+    <IsUnlocked>k__BackingField: 1
+    <Category>k__BackingField: 0
 --- !u!1 &1240337495
 GameObject:
   m_ObjectHideFlags: 0

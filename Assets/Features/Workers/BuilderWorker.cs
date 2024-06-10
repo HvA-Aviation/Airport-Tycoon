@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Features.Managers;
+using Features.Workers.TaskCommands;
 using Implementation.Pathfinding.Scripts;
 using Implementation.TaskSystem;
 using UnityEngine;
@@ -43,7 +44,16 @@ namespace Features.Workers
             _npcController.SetTarget(
                 new Vector3Int(target.x, target.y, 0),
                 () => CheckTaskExists(target, onDone),
-                onReachedPosition);
+                onReachedPosition,
+                () => StartCoroutine(TaskUnreachable(target)));
+        }
+
+        IEnumerator TaskUnreachable(Vector3Int target)
+        {
+            Debug.LogWarning("Worker could not find path to target, releasing task and adding it to task queue");
+            GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(target));
+            yield return new WaitForSecondsRealtime(10f);
+            GameManager.Instance.TaskManager.BuilderTaskSystem.SetAvailable(this);
         }
 
         /// <summary>

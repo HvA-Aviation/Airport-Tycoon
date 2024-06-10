@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Features.Building.Scripts.Datatypes;
 using Features.EventManager;
 using UnityEngine;
@@ -45,6 +44,21 @@ namespace Features.Managers
             else
             {
                 Debug.LogError(buildableObject.name + " not found in the Building Manager");
+            }
+        }
+
+        public void LockBuilding(int buildIndex)
+        {
+            if (buildIndex != -1)
+            {
+                BuildingStatuses[buildIndex].IsUnlocked = false;
+                _unlocked.Insert(buildIndex, BuildingStatuses[buildIndex]);
+                ChangeSelectedBuildable(0);
+                GameManager.Instance.EventManager.TriggerEvent(EventId.OnUnlockBuilding);
+            }
+            else
+            {
+                Debug.LogError(BuildingStatuses[buildIndex].BuildableObject.name + " not found in the Building Manager");
             }
         }
     }

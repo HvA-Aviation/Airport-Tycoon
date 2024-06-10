@@ -99,14 +99,15 @@ namespace Features.Workers
                 onDone.Invoke();
                 return;
             }
-            
+
             _assignment = target;
             _targetPosition = GetRotationAddition(target);
 
             _npcController.SetTarget(
                 _targetPosition,
                 () => CheckTaskExists(target, onDone),
-                onReachedPosition);
+                onReachedPosition,
+                () => { print("Implement function that handles case when Assignable worker does not have path to target"); });
         }
 
         /// <summary>

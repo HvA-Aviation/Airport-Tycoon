@@ -28,7 +28,7 @@ namespace Implementation.Pathfinding.Scripts
         /// <param name="position">destination of path</param>
         /// <param name="checkIfTaskIsStillNeeded">Callback to check if task is still needed</param>
         /// <param name="onDestinationReached">Callback to handle what to do when the destination has been reached</param>
-        public void SetTarget(Vector3Int position, Action checkIfTaskIsStillNeeded, Action onDestinationReached)
+        public void SetTarget(Vector3Int position, Action checkIfTaskIsStillNeeded, Action onDestinationReached, Action onTaskUnreachable)
         {
             StopAllCoroutines();
 
@@ -37,17 +37,18 @@ namespace Implementation.Pathfinding.Scripts
             _endNode = new Vector3Int(position.x, position.y, 0);
 
             FindPath(_endNode, GameManager.Instance.GridManager.NodeGrid);
-            StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached));
+            StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached, onTaskUnreachable));
         }
 
         /// <summary>
         /// Move the NPC to the target
         /// </summary>
-        private IEnumerator MoveToTarget(List<Node> path, Action checkIfTaskIsStillNeeded, Action onDestinationReached)
+        private IEnumerator MoveToTarget(List<Node> path, Action checkIfTaskIsStillNeeded, Action onDestinationReached, Action onTaskUnreachable)
         {
             // if there is no path break out of this coroutine
             if (path.Count <= 0)
             {
+                onTaskUnreachable?.Invoke();
                 Debug.LogWarning("No path found, breaking out of coroutine");
                 yield break;
             };
