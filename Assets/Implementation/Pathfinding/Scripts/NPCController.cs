@@ -68,10 +68,10 @@ namespace Implementation.Pathfinding.Scripts
                 {
                     Vector3 direction = node.position - transform.position;
                     transform.position += direction.normalized * _moveSpeed * Time.deltaTime;
+                    checkIfTaskIsStillNeeded.Invoke();
                     yield return new WaitForEndOfFrame();
                 }
                 transform.position = node.position;
-                checkIfTaskIsStillNeeded.Invoke();
             }
             onDestinationReached.Invoke();
         }
