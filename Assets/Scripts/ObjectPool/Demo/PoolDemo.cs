@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PoolDemo : MonoBehaviour
+/*public class PoolDemo : MonoBehaviour
 {
     [SerializeField] private ObjectPool _pool;
     void Update()
@@ -13,4 +13,4 @@ public class PoolDemo : MonoBehaviour
            _pool.Get();
         }
     }
-}
+}*/
