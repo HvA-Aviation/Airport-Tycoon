@@ -12,10 +12,9 @@ namespace Features.Workers
 {
     public class SecurityWorker : AssignableWorker
     {
-        private void Start()
+        public override TaskSystem<AssignableWorker> TaskManager()
         {
-            // Register it to the task system by setting it available.
-            GameManager.Instance.TaskManager.SecurityTaskSystem.SetAvailable(this);
+            return GameManager.Instance.TaskManager.SecurityTaskSystem;
         }
     }
 }
