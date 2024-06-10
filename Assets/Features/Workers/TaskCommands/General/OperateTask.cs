@@ -26,7 +26,7 @@ namespace Features.Workers.TaskCommands
             
             worker.MoveTo(_targetPosition, () => {  worker.Station(() =>
             {
-                GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(task);
+                worker.TaskManager().AddTask(task);
                 onTaskDone?.Invoke();
             }); }, onTaskDone);
         }

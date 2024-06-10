@@ -8,7 +8,7 @@ using Grid = Features.Building.Scripts.Grid.Grid;
 
 namespace Features.Workers
 {
-    public class AssignableWorker : Worker
+    public abstract class AssignableWorker : Worker
     {
         [SerializeField] protected NPCController _npcController;
         [SerializeField] protected Grid _grid;
@@ -17,6 +17,13 @@ namespace Features.Workers
         protected Vector3Int _assignment;
         protected Vector3Int _targetPosition;
 
+        
+        protected virtual void Start()
+        {
+            // Register it to the task system by setting it available.
+            TaskManager().SetAvailable(this);
+        }
+        
         /// <summary>
         /// Gets the direction of the utility so the worker will stand behind it
         /// </summary>
@@ -45,6 +52,8 @@ namespace Features.Workers
 
             return new Vector3Int(target.x, target.y, 0) + rotationVector;
         }
+
+        public abstract TaskSystem<AssignableWorker> TaskManager();
 
         /// <summary>
         /// Starts a routine so the worker will work on the utility
