@@ -15,6 +15,7 @@ namespace Features.Workers
         [SerializeField] protected int _assignmentsShift;
         protected Vector3Int _assignment;
         protected Vector3Int _targetPosition;
+        protected TaskCommand<AssignableWorker> _task;
 
         
         protected virtual void Start()
@@ -54,6 +55,11 @@ namespace Features.Workers
 
         public abstract TaskSystem<AssignableWorker> TaskManager();
 
+        public void SetTask(TaskCommand<AssignableWorker> taskCommand)
+        {
+            _task = taskCommand;
+        }
+
         /// <summary>
         /// Starts a routine so the worker will work on the utility
         /// </summary>
@@ -89,6 +95,7 @@ namespace Features.Workers
                 yield return null;
             }
 
+            _task = null;
             onDone?.Invoke();
         }
 
@@ -104,6 +111,7 @@ namespace Features.Workers
             float workload = GameManager.Instance.GridManager.Grid.GetUtilityWorkLoad(target);
             if (workload == 0)
             {
+                _task = null;
                 onDone.Invoke();
                 return;
             }
@@ -124,11 +132,23 @@ namespace Features.Workers
         {
             if (GameManager.Instance.GridManager.Grid.Get(target) == -1)
             {
+                _task = null;
                 onDone.Invoke();
                 return false;
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Stop all current routines and add the current task back to the task list
+        /// </summary>
+        public void Fire()
+        {
+            StopAllCoroutines();
+            _npcController.StopAllCoroutines();
+            if (_task != null)
+                TaskManager().AddTask(_task);
         }
     }
 }

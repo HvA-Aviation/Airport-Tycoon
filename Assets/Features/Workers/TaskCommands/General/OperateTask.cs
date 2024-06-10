@@ -23,6 +23,7 @@ namespace Features.Workers.TaskCommands
         protected override void ExecuteInternal(AssignableWorker worker, Action onTaskDone)
         {
             OperateTask task = new OperateTask(_targetPosition);
+            worker.SetTask(task);
             
             worker.MoveTo(_targetPosition, () => {  worker.Station(() =>
             {
