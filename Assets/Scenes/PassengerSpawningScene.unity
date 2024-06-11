@@ -482,7 +482,9 @@ MonoBehaviour:
   <TaskManager>k__BackingField: {fileID: 0}
   <BuildingManager>k__BackingField: {fileID: 0}
   <GridManager>k__BackingField: {fileID: 0}
-  <PaxManager>k__BackingField: {fileID: 1215901781}
+  <FinanceManager>k__BackingField: {fileID: 0}
+  <GameTimeManager>k__BackingField: {fileID: 0}
+  <PaxManager>k__BackingField: {fileID: 0}
 --- !u!4 &2109538893
 Transform:
   m_ObjectHideFlags: 0
