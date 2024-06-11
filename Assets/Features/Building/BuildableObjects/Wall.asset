@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Wall
   m_EditorClassIdentifier: 
   Name: Wall
+  Price: 10
   BrushType: 3
   BuildItems:
   - <Tile>k__BackingField: {fileID: 11400000, guid: fbfe88272625d5c47979b613d9233838,

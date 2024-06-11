@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Zone
   m_EditorClassIdentifier: 
   Name: Zone
+  Price: 0
   BrushType: 1
   BuildItems:
   - <Tile>k__BackingField: {fileID: 11400000, guid: 14d9b7aad09203345989c9b0010e8ea0,

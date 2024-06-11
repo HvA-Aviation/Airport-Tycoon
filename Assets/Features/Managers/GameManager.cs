@@ -12,6 +12,8 @@ namespace Features.Managers
         [field: SerializeField] public TaskManager TaskManager { get; private set; }
         [field: SerializeField] public BuildingManager BuildingManager { get; private set; }
         [field: SerializeField] public GridManager GridManager { get; private set; }
+        [field: SerializeField] public FinanceManager FinanceManager { get; private set; }
+        [field: SerializeField] public GameTimeManager GameTimeManager { get; private set; }
         [field: SerializeField] public PaxManager PaxManager { get; private set; }
 
         private void Awake()
