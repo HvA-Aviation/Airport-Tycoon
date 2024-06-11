@@ -697,6 +697,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b4b8aaba3f9a9b48b222327fd5d2fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Title: {fileID: 4918524161188986038}
+  Description: {fileID: 4918524161070769772}
   ActivateButton: {fileID: 7249884333295130336}
   QueueButton: {fileID: 1882372212417117199}
   slider: {fileID: 4918524161388179895}
