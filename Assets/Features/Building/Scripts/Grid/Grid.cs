@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Features.Building.Scripts.Datatypes;
 using Features.EventManager;
 using Features.Managers;
 using Features.Workers.TaskCommands;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TileData = Features.Building.Scripts.Datatypes.TileData;
@@ -102,7 +102,7 @@ namespace Features.Building.Scripts.Grid
                     TraversableTiles[x, y] = !unTraversable[x, y];
                 }
             }
-            
+
             GameManager.Instance.EventManager.TriggerEvent(EventId.GridUpdateEvent);
         }
 
@@ -183,7 +183,7 @@ namespace Features.Building.Scripts.Grid
             foreach (Vector3Int tile in buildTiles)
             {
                 _cells[tile.x, tile.y, tile.z].CurrentWorkLoad = Mathf.Clamp(
-                    _cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * Time.deltaTime, 0,
+                    _cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * GameManager.Instance.GameTimeManager.DeltaTime, 0,
                     _cells[tile.x, tile.y, tile.z].WorkLoad);
 
                 CellData cellData = _cells[tile.x, tile.y, tile.z];
@@ -246,7 +246,7 @@ namespace Features.Building.Scripts.Grid
 
                 Color color = _atlas.Items[buildIndex].Color;
                 color.a = _buildingStaringOpacity;
-                
+
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVector,
@@ -320,7 +320,7 @@ namespace Features.Building.Scripts.Grid
 
                 Color color = _atlas.Items[cellData.Tile].Color;
                 color.a = _buildingStaringOpacity;
-                
+
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVectors[i],

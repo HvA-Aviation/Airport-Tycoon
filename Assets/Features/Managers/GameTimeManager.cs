@@ -16,5 +16,11 @@ namespace Features.Managers
         {
             get { return Time.deltaTime * _timeScale; }
         }
+
+        public void PauseGame() => TimeScale = 0;
+
+        public void SpeedUpGame(int speedMultiplier) => TimeScale *= speedMultiplier;
+
+        public void NormalTime() => TimeScale = 1;
     }
 }

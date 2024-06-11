@@ -1,3 +1,4 @@
+using Features.Managers;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -50,12 +51,12 @@ namespace Implementation.FunctionTimer
 
             public MonoBehaviourHookFunctionTimer()
             {
-                activeTimerList = new List<FunctionTimer>();  
+                activeTimerList = new List<FunctionTimer>();
             }
 
             private void Update()
             {
-                for (var i = activeTimerList.Count - 1; i >= 0; i--) 
+                for (var i = activeTimerList.Count - 1; i >= 0; i--)
                     activeTimerList[i].Update();
             }
 
@@ -63,14 +64,14 @@ namespace Implementation.FunctionTimer
             ///     Adds a timer to the 'active' list
             /// </summary>
             /// <param name="timer"> Timer to add </param>
-            public void AddTimer(FunctionTimer timer) 
+            public void AddTimer(FunctionTimer timer)
                 => activeTimerList.Add(timer);
 
             /// <summary>
             ///     Removes a timer from the 'active' list
             /// </summary>
             /// <param name="timer"> timer to remove </param>
-            public void RemoveTimer(FunctionTimer timer) 
+            public void RemoveTimer(FunctionTimer timer)
                 => activeTimerList.Remove(timer);
         }
 
@@ -107,7 +108,7 @@ namespace Implementation.FunctionTimer
         public void Update()
         {
             if (isPaused) return;
-            timer -= Time.deltaTime;
+            timer -= GameManager.Instance.GameTimeManager.DeltaTime;
             if (timer < 0)
             {
                 action();
