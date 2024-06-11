@@ -1,76 +1,60 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
-public class ObjectPool<T> : MonoBehaviour
+public class ObjectPool<T>
 {
-    [SerializeField] private int _spawnAmount;
-    [SerializeField] private GameObject _object;
+    private readonly Queue<T> _objectPool;
+    private readonly Func<T> _createFunction;
+    private readonly Action<T> _actionOnGet;
+    private readonly Action<T> _actionOnReturn;
 
-    private GameObject _parent;
-
-    private Queue<T> _objectPool;
-
-    private Func<T> _createFunction;
-    private Action<T> _getAction;
-    private Action<T> _returnAction;
-
-    public ObjectPool(Func<T> createFunction, Action<T> getAction, Action<T> returnAction, int spawnAmount)
+    private readonly int _spawnAmount;
+    public ObjectPool(Func<T> createFunction, Action<T> actionOnGet = null, Action<T> actionOnReturn = null, int amount = 10)
     {
-        _objectPool = new Queue<T> (spawnAmount);
-        this._createFunction = createFunction;
-        _getAction = getAction;
-        _returnAction = returnAction;
+        _objectPool = new Queue<T>(amount);
+        _createFunction = createFunction;
+        _actionOnGet = actionOnGet;
+        _actionOnReturn = actionOnReturn;
+        _spawnAmount = amount;
     }
 
-    /*private void Awake()
-    {
-        _parent = new GameObject(_object.name);
-        FillObjectPool();
-    }  */
-
     /// <summary>
-    /// Call this function to generate a new amount of object in a pool
+    /// Call this function when you want to get an object out of the pool
     /// </summary>
-    /*private void FillObjectPool()
-    {
-        for (int i = 0; i < _spawnAmount; i++)
-            Return(Instantiate(_object));        
-    }*/
-
-    /// <summary>
-    /// Call this function to get an object out of the pool
-    /// </summary>
-    /// <returns>The first object of pool</returns>
+    /// <returns>Returns a single object out of the pool</returns>
     public T Get()
     {
         T obj;
-
         if (_objectPool.Count <= 0)
-            obj = _createFunction();
-        else
-            obj = _objectPool.Dequeue();
+        {
+            for (int i = 0; i < _spawnAmount; i++)
+                _objectPool.Enqueue(_createFunction());
+        }
 
-        Action<T> getAction = this._getAction;
-        if (getAction != null)
-            getAction(obj);
+        obj = _objectPool.Dequeue();
+
+        Action<T> actionOnGet = _actionOnGet;
+
+        if (actionOnGet != null)
+            actionOnGet.Invoke(obj);
 
         return obj;
     }
 
     /// <summary>
-    /// Call this function to return an object to the pool
+    /// Call this function when you want to return an object to the pool
     /// </summary>
-    /// <param name="gameObject">The object that needs to be returned</param>
+    /// <param name="element">The object that needs to be returned to the pool</param>
     public void Return(T element)
     {
-        if(gameObject.TryGetComponent<IPoolableObject>(out IPoolableObject poolableObject))
-            poolableObject.ResetValues();
+        if (_objectPool.Contains(element))
+            Debug.LogError("Trying to return an element that is already in the pool");
 
-        gameObject.transform.parent = _parent.transform;
-        gameObject.SetActive(false);
+        Action<T> actionOnReturn = _actionOnReturn;
+        if (actionOnReturn != null)
+            actionOnReturn.Invoke(element);
+
         _objectPool.Enqueue(element);
     }
 }
