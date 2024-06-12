@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Features.Building.Scripts.Datatypes;
 using Features.EventManager;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace Features.Managers
 {
@@ -29,6 +30,12 @@ namespace Features.Managers
         public void ChangeSelectedBuildable(int index)
         {
             CurrentBuildableObject = _unlocked[index].BuildableObject;
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeBrush);
+        }
+
+        public void ChangeSelectedBuildableLocked(int index)
+        {
+            CurrentBuildableObject = BuildingStatuses[index].BuildableObject;
             GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeBrush);
         }
 

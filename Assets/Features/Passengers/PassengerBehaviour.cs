@@ -4,6 +4,7 @@ using Implementation.Pathfinding.Scripts;
 using UnityEngine;
 using Utilities = Features.Building.Scripts.Datatypes.UtilityType;
 using Features.EventManager;
+using System.Linq;
 
 public class PassengerBehaviour : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class PassengerBehaviour : MonoBehaviour
     QueueManager queueManager;
     GridManager gridManager;
     private Utilities _currentUtility;
+
+    public List<Utilities> testing = new List<Utilities>();
 
     // Start is called before the first frame update
     void OnEnable()
@@ -44,6 +47,11 @@ public class PassengerBehaviour : MonoBehaviour
         tasksToDo.Enqueue(Utilities.Gate);
     }
 
+    void Update()
+    {
+        testing = tasksToDo.ToList();
+    }
+
     /// <summary>
     /// Execute the tasks that are assigned to a passenger
     /// </summary>
@@ -56,7 +64,12 @@ public class PassengerBehaviour : MonoBehaviour
         }
 
         Utilities currentTask = dequeue ? tasksToDo.Dequeue() : _currentUtility;
-        List<Vector3Int> potentialTaskDestinations = gridManager.GetUtilities(currentTask);
+        Dictionary<Vector3Int, List<Vector3Int>> potentialTaskDestinations = gridManager.GetUtilities(currentTask);
+
+        foreach (var item in potentialTaskDestinations)
+        {
+            print(item.Key + " " + item.Value.Count);
+        }
 
         // Check if there are any utilities of the current task, if not then subscribe to the onMissingUtility event
         if (potentialTaskDestinations.Count == 0)
@@ -72,8 +85,6 @@ public class PassengerBehaviour : MonoBehaviour
             potentialTaskDestinations,
             this,
             (numberInQueue, utilityPos) => { UpdatePath(utilityPos, numberInQueue); });
-
-        tasksToDo.Dequeue();
     }
 
     private void TasksCompleted()

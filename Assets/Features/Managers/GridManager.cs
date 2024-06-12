@@ -47,7 +47,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public List<Vector3Int> GetUtilities(Utilities utilityType) => _grid.GetUtilities(utilityType);
+    public Dictionary<Vector3Int, List<Vector3Int>> GetUtilities(Utilities utilityType) => _grid.GetUtilities(utilityType);
     public int GetRotation(Vector3Int position) => _grid.GetRotation(position);
 
     private void OnApplicationQuit()

@@ -76,10 +76,17 @@ MonoBehaviour:
     UnTraversable: 0
     UtilityType: 3
     UtilityLoad: 2
+  - <Tile>k__BackingField: {fileID: 11400000, guid: a6aead7df04db46488cb4855ffc732ba,
+      type: 2}
+    Color: {r: 1, g: 1, b: 1, a: 1}
+    WorkLoad: 2
+    UnTraversable: 0
+    UtilityType: 5
+    UtilityLoad: 2
   - <Tile>k__BackingField: {fileID: 11400000, guid: 96db11b5d523f664b9a8f379dde15f0f,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
     WorkLoad: 2
     UnTraversable: 0
-    UtilityType: 0
+    UtilityType: 4
     UtilityLoad: 2

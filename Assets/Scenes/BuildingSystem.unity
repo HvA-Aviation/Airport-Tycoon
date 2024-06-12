@@ -4918,6 +4918,10 @@ MonoBehaviour:
       type: 2}
     <IsUnlocked>k__BackingField: 1
     <Category>k__BackingField: 0
+  - <BuildableObject>k__BackingField: {fileID: 11400000, guid: 1f4de6f4cd617ce46ad395f215ae926f,
+      type: 2}
+    <IsUnlocked>k__BackingField: 1
+    <Category>k__BackingField: 0
   - <BuildableObject>k__BackingField: {fileID: 11400000, guid: b0bc2e4f8a6375647906ea358bb243c9,
       type: 2}
     <IsUnlocked>k__BackingField: 1

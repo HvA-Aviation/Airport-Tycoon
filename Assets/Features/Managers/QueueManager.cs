@@ -11,6 +11,7 @@ struct QueueInfo
 {
     public Queue<PassengerBehaviour> inQueue;
     public Dictionary<PassengerBehaviour, Action<int, Vector3Int>> joiningQueue;
+    public List<Vector3Int> queuePositions;
     public QueueInfo(PassengerBehaviour passenger, Action<int, Vector3Int> onPositionInQueueChanged)
     {
         inQueue = new Queue<PassengerBehaviour>();
@@ -18,6 +19,7 @@ struct QueueInfo
         {
             { passenger, onPositionInQueueChanged }
         };
+        queuePositions = new List<Vector3Int>();
     }
 }
 
@@ -40,12 +42,12 @@ public class QueueManager : MonoBehaviour
     {
         if (!UtilityQueue.ContainsKey(utilityPos))
             return;
-        
+
         QueueInfo queueInfo = UtilityQueue[utilityPos];
-        
+
         List<PassengerBehaviour> passengerBehaviours = queueInfo.inQueue.ToList();
         passengerBehaviours.AddRange(queueInfo.joiningQueue.Keys);
-        
+
         UtilityQueue.Remove(utilityPos);
         _queueProgression.Remove(utilityPos);
 
@@ -102,19 +104,20 @@ public class QueueManager : MonoBehaviour
     /// Function to get the utility that has the lowest amount of queuers
     /// </summary>
     /// <returns>A vector3Int that references to the position of the utility</returns>
-    public Vector3Int GetOptimalQueue(List<Vector3Int> utilityList)
+    public Vector3Int GetOptimalQueue(Dictionary<Vector3Int, List<Vector3Int>> utilityList)
     {
         Vector3Int currentBestQueue = Vector3Int.zero;
         int currentBestCount = int.MaxValue;
 
-        foreach (var item in utilityList)
+        foreach (var item in utilityList.Keys)
         {
             if (!UtilityQueue.ContainsKey(item))
             {
                 QueueInfo queueInfo = new QueueInfo
                 {
                     inQueue = new Queue<PassengerBehaviour>(),
-                    joiningQueue = new Dictionary<PassengerBehaviour, Action<int, Vector3Int>>()
+                    joiningQueue = new Dictionary<PassengerBehaviour, Action<int, Vector3Int>>(),
+                    queuePositions = utilityList[item]
                 };
                 UtilityQueue.TryAdd(item, queueInfo);
                 return item;
@@ -134,12 +137,10 @@ public class QueueManager : MonoBehaviour
     /// Assign a passenger to a utility and invoke its onQueueChanged action
     /// </summary>
     /// <param name="OnQueueChanged">This usually represents a pathfinding funciton</param>
-    public void AssignToUtility(List<Vector3Int> utilityPos, PassengerBehaviour passenger, Action<int, Vector3Int> OnQueueChanged)
+    public void AssignToUtility(Dictionary<Vector3Int, List<Vector3Int>> utilityPos, PassengerBehaviour passenger, Action<int, Vector3Int> OnQueueChanged)
     {
         Vector3Int optimalQueue = GetOptimalQueue(utilityPos);
 
-        Debug.Log(optimalQueue); //is (0, 0, 0) for some reason
-        
         int positionInQueue = UtilityQueue[optimalQueue].inQueue.Count;
 
         UtilityQueue[optimalQueue].joiningQueue.Add(passenger, OnQueueChanged);

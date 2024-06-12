@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Features.Building.Scripts.Datatypes;
 using Features.EventManager;
 using Features.Managers;
@@ -34,13 +36,14 @@ namespace Features.Building.Scripts.Grid
         private Vector3Int _paxSpawnPos;
         private List<TileChangeData> _gridChangeBuffer = new List<TileChangeData>();
         private List<TileColorData> _gridColorBuffer = new List<TileColorData>();
+        private Dictionary<Vector3Int, List<Vector3Int>> _tempQueuePositions = new Dictionary<Vector3Int, List<Vector3Int>>();
 
-        private Dictionary<UtilityType, List<Vector3Int>> _utilityLocations =
-            new Dictionary<UtilityType, List<Vector3Int>>()
+        private Dictionary<UtilityType, Dictionary<Vector3Int, List<Vector3Int>>> _utilityLocations =
+            new Dictionary<UtilityType, Dictionary<Vector3Int, List<Vector3Int>>>()
             {
-                { UtilityType.Security, new List<Vector3Int>() },
-                { UtilityType.CheckIn, new List<Vector3Int>() },
-                { UtilityType.Gate, new List<Vector3Int>() }
+                { UtilityType.Security, new Dictionary<Vector3Int, List<Vector3Int>>() },
+                { UtilityType.CheckIn, new Dictionary<Vector3Int, List<Vector3Int>>() },
+                { UtilityType.Gate, new Dictionary<Vector3Int, List<Vector3Int>>() },
             };
 
         public Vector3Int GridSize => _gridSize;
@@ -72,11 +75,9 @@ namespace Features.Building.Scripts.Grid
         /// </summary>
         /// <param name="utilityType">The type of the utility</param>
         /// <returns>A list with all the utilities</returns>
-        public List<Vector3Int> GetUtilities(UtilityType utilityType)
+        public Dictionary<Vector3Int, List<Vector3Int>> GetUtilities(UtilityType utilityType)
         {
-            List<Vector3Int> utilities = new List<Vector3Int>();
-            utilities.AddRange(_utilityLocations[utilityType]);
-            return utilities;
+            return _utilityLocations[utilityType];
         }
 
         /// <summary>
@@ -227,16 +228,16 @@ namespace Features.Building.Scripts.Grid
 
                     if (utilityType != UtilityType.None)
                     {
-                        _utilityLocations[utilityType].Add(gridVector);
+                        // _utilityLocations[utilityType].Add(gridVector);
 
-                        if (utilityType == UtilityType.Security)
-                        {
-                            GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(gridVector));
-                        }
-                        else
-                        {
-                            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(gridVector));
-                        }
+                        // if (utilityType == UtilityType.Security)
+                        // {
+                        //     GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(gridVector));
+                        // }
+                        // else
+                        // {
+                        //     GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(gridVector));
+                        // }
                     }
                 }
             }
@@ -375,17 +376,55 @@ namespace Features.Building.Scripts.Grid
                     transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });
 
-                if (cellData.Tile == 9)
+                // If pax spawn point is placed lock it, this needs to be reworked after demo
+                if (_atlas.Items[cellData.Tile].BehaviorType == BehaviourType.PaxSpawn)
                 {
                     _paxSpawnPos = gridVectors[i];
                     GameManager.Instance.BuildingManager.LockBuilding(cellData.Tile);
                 }
+
+                HandleQueues(cellData, gridVectors);
             }
 
             GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
             _cellGroup.Add(gridVectors);
 
             return true;
+        }
+
+        private void HandleQueues(CellData cellData, List<Vector3Int> gridVectors)
+        {
+            TileData currentTileData = _atlas.Items[cellData.Tile];
+            // When a utility is placed, start building the queue, this needs to be reworked after demo
+            if (currentTileData.UtilityType != UtilityType.None)
+            {
+                if (_tempQueuePositions.Count > 0)
+                {
+                    Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
+                    UtilityType utilityType = _atlas.Items[Get(utilityLocation)].UtilityType;
+                    _utilityLocations[utilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
+
+                    print($"Adding to {utilityType}");
+
+                    if (utilityType == UtilityType.Security)
+                        GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
+                    else
+                        GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(utilityLocation));
+                }
+
+                _tempQueuePositions.Clear();
+
+                if (!_tempQueuePositions.ContainsKey(gridVectors[0]))
+                    _tempQueuePositions.Add(gridVectors[0], new List<Vector3Int>());
+
+                GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
+            }
+
+            if (currentTileData.BehaviorType == BehaviourType.Queue)
+            {
+                Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
+                _tempQueuePositions[utilityLocation].Add(gridVectors[0]);
+            }
         }
 
         /// <summary>
