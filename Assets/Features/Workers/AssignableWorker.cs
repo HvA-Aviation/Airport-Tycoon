@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Features.Building.Scripts.Datatypes;
 using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using Implementation.TaskSystem;
@@ -11,11 +12,11 @@ namespace Features.Workers
     public abstract class AssignableWorker : Worker
     {
         [SerializeField] protected NPCController _npcController;
-        [SerializeField] protected Grid _grid;
         [SerializeField] protected float _workLoadSpeed;
         [SerializeField] protected int _assignmentsShift;
         protected Vector3Int _assignment;
         protected Vector3Int _targetPosition;
+        protected TaskCommand<AssignableWorker> _task;
 
         
         protected virtual void Start()
@@ -31,7 +32,7 @@ namespace Features.Workers
         /// <returns>The position behind the utility</returns>
         protected Vector3Int GetRotationAddition(Vector3Int target)
         {
-            int rotation = _grid.GetRotation(target);
+            int rotation = GameManager.Instance.GridManager.Grid.GetRotation(target);
             Vector3Int rotationVector = Vector3Int.down;
 
             switch (rotation)
@@ -55,6 +56,11 @@ namespace Features.Workers
 
         public abstract TaskSystem<AssignableWorker> TaskManager();
 
+        public void SetTask(TaskCommand<AssignableWorker> taskCommand)
+        {
+            _task = taskCommand;
+        }
+
         /// <summary>
         /// Starts a routine so the worker will work on the utility
         /// </summary>
@@ -70,7 +76,7 @@ namespace Features.Workers
         /// <param name="onDone">Sets the worker back in the task queue</param>
         protected IEnumerator WorkOn(Action onDone)
         {
-            float workload = _grid.GetUtilityWorkLoad(_assignment);
+            float workload = GameManager.Instance.GridManager.Grid.GetUtilityWorkLoad(_assignment);
 
             int times = 0;
             while (times < _assignmentsShift)
@@ -90,6 +96,7 @@ namespace Features.Workers
                 yield return null;
             }
 
+            _task = null;
             onDone?.Invoke();
         }
 
@@ -102,9 +109,10 @@ namespace Features.Workers
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
         {
             //Checks if utility still exitst
-            float workload = _grid.GetUtilityWorkLoad(target);
+            float workload = GameManager.Instance.GridManager.Grid.GetUtilityWorkLoad(target);
             if (workload == 0)
             {
+                _task = null;
                 onDone.Invoke();
                 return;
             }
@@ -123,13 +131,25 @@ namespace Features.Workers
         /// </summary>
         protected bool CheckTaskExists(Vector3Int target, Action onDone)
         {
-            if (_grid.Get(target) == -1)
+            if (GameManager.Instance.GridManager.Grid.IsEmpty(target))
             {
+                _task = null;
                 onDone.Invoke();
                 return false;
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Stop all current routines and add the current task back to the task list
+        /// </summary>
+        public void Fire()
+        {
+            StopAllCoroutines();
+            _npcController.StopAllCoroutines();
+            if (_task != null)
+                TaskManager().AddTask(_task);
         }
     }
 }

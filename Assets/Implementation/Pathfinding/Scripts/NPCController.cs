@@ -22,6 +22,11 @@ namespace Implementation.Pathfinding.Scripts
         private Vector3Int _endNode;
         private Node[] open, closed;
 
+        private void OnEnable()
+        {
+            _grid = GameManager.Instance.GridManager.Grid;
+        }
+
         /// <summary>
         /// Use this function to set the target of an NPC
         /// </summary>
