@@ -1,7 +1,7 @@
+using Features.Managers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Features.Managers;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.VisualScripting;
@@ -40,7 +40,6 @@ namespace Implementation.Pathfinding.Scripts
             _backtrackedPath.Clear();
 
             _endNode = new Vector3Int(position.x, position.y, 0);
-
             FindPath(_endNode, GameManager.Instance.GridManager.NodeGrid);
             StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached));
         }
@@ -62,7 +61,7 @@ namespace Implementation.Pathfinding.Scripts
                 while (Vector3.Distance(path[i].position, transform.position) > 0.1f)
                 {
                     Vector3 direction = path[i].position - transform.position;
-                    transform.position += direction.normalized * _moveSpeed * Time.deltaTime;
+                    transform.position += direction.normalized * _moveSpeed * GameManager.Instance.GameTimeManager.DeltaTime;
                     yield return new WaitForEndOfFrame();
                 }
                 transform.position = path[i].position;
