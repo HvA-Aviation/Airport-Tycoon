@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using Features.Managers;
 using Features.Workers;
 using UnityEngine;
 
 public class StaffManager : MonoBehaviour
 {
+    [SerializeField, Tooltip("The cost to hire new staff")]
+    private int _recruitmentCost;
+
     [SerializeField] private EmployeeSpawnManagement _spawnNewStaff;
 
     private int _nextEmployeeID = 0;
@@ -29,6 +33,14 @@ public class StaffManager : MonoBehaviour
     /// <param name="type">The type of employee you want to hire</param>
     public void HireEmployee(Employee.EmployeeTypes type)
     {
+        if(GameManager.Instance.FinanceManager.Balance.Value < _recruitmentCost)
+        {
+            Debug.Log("Not enough money to hire");
+            return;
+        }
+
+        GameManager.Instance.FinanceManager.Balance.Subtract(_recruitmentCost);
+
         Employee employee = _spawnNewStaff.InstantiateEmployee(type);
         
         employee.SetEmployeeType(type);
