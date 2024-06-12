@@ -109,8 +109,7 @@ namespace Features.Workers
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
         {
             //Checks if utility still exitst
-            float workload = GameManager.Instance.GridManager.Grid.GetUtilityWorkLoad(target);
-            if (workload == 0)
+            if (GameManager.Instance.GridManager.Grid.IsWorkDone(target))
             {
                 _task = null;
                 onDone.Invoke();

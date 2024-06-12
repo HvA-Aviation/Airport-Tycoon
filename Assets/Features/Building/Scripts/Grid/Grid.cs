@@ -92,6 +92,20 @@ namespace Features.Building.Scripts.Grid
         }
 
         /// <summary>
+        /// Checks if work needs to be done 
+        /// </summary>
+        /// <param name="target">Position of the utility</param>
+        /// <returns>Workload as a float</returns>
+        public bool IsWorkDone(Vector3Int target)
+        {
+            int index = Get(target);
+            if (index == -1)
+                return true;
+
+            return _atlas.Items[index].WorkLoad == 0;
+        }
+
+        /// <summary>
         /// Creates a flattend 2d array to see if the cell position is traversable
         /// </summary>
         /// <returns>A flattend 2d bool array with false as traversable</returns>
