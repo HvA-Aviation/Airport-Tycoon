@@ -3,23 +3,26 @@ using Features.Managers;
 using Implementation.TaskSystem;
 using UnityEngine;
 
-// Command containing task to print an log.
-
-// Create a class deriving from TaskCommand and the worker it's aimed at.
-
 namespace Features.Workers.TaskCommands
 {
     public class OperateTask : TaskCommand<AssignableWorker>
     {
         private Vector3Int _targetPosition;
 
-        // Set task data.
+        /// <summary>
+        /// Sets the target position of the task
+        /// </summary>
+        /// <param name="targetPosition">The position of the task</param>
         public OperateTask(Vector3Int targetPosition)
         {
             _targetPosition = targetPosition;
         }
 
-        // Set task instructions.
+        /// <summary>
+        /// Create a task that makes a assignable worker move to the target and let it work on it
+        /// </summary>
+        /// <param name="worker">Assignable worker like guard</param>
+        /// <param name="onTaskDone">What will happen if the task is unavailable or finished</param>
         protected override void ExecuteInternal(AssignableWorker worker, Action onTaskDone)
         {
             OperateTask task = new OperateTask(_targetPosition);
