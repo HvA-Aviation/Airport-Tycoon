@@ -35,7 +35,6 @@ public class StaffManager : MonoBehaviour
     {
         if(GameManager.Instance.FinanceManager.Balance.Value < _recruitmentCost)
         {
-            Debug.Log("Not enough money to hire");
             return;
         }
 
