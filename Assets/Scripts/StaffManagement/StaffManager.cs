@@ -48,7 +48,7 @@ public class StaffManager : MonoBehaviour
         {
             _spawnNewStaff.DespawnEmployeeOBJ(employee.gameObject);
             Employees.Remove(employeeID);
-            employee.GetComponent<AssignableWorker>().Fire();
+            //employee.GetComponent<AssignableWorker>().Fire();
         }
     }
 

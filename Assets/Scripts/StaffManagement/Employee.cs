@@ -1,3 +1,5 @@
+using Features.Managers;
+using System.Diagnostics;
 using UnityEngine;
 
 public class Employee : MonoBehaviour
@@ -13,6 +15,12 @@ public class Employee : MonoBehaviour
         Name = StaffNames.GetRandomFirstName() + " " + StaffNames.GetRandomLastName();
         SalaryAmount = Random.Range(_minimumSalary, _maximumSalary);
     }
+
+    private void OnEnable() => MonthlyTime.PaySalaray.AddListener(RemoveSalaryFromBalance);
+
+    private void OnDisable() => MonthlyTime.PaySalaray.RemoveListener(RemoveSalaryFromBalance);
+
+    private void RemoveSalaryFromBalance() => GameManager.Instance.FinanceManager.Balance.Subtract(SalaryAmount);
 
     public void SetEmployeeType(EmployeeTypes type) => EmployeeType = type;
 
