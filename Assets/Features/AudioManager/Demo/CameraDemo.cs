@@ -18,9 +18,9 @@ namespace Features.AudioManager.Demo
             if (Input.GetKey(KeyCode.W)) yMovement++;
             if (Input.GetKey(KeyCode.S)) yMovement--;
 
-            _controller.Move(new Vector2(xMovement, yMovement) * GameManager.Instance.GameTimeManager.DeltaTime);
+            _controller.Move(new Vector2(xMovement, yMovement) * Time.deltaTime);
 
-            _controller.Zoom(-Input.mouseScrollDelta.y * GameManager.Instance.GameTimeManager.DeltaTime);
+            _controller.Zoom(-Input.mouseScrollDelta.y * Time.deltaTime);
         }
     }
 }
