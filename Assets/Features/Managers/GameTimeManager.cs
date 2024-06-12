@@ -13,10 +13,22 @@ namespace Features.Managers
             get { return Time.deltaTime * TimeScale; }
         }
 
+        private void Start() => NormalTime();
+
+        /// <summary>
+        /// Call this function when you want to pause the game
+        /// </summary>
         public void PauseGame() => TimeScale = 0;
 
+        /// <summary>
+        /// Call this function when you want to speed up the game
+        /// </summary>
+        /// <param name="speedMultiplier">The multiplier that decides how fast the game is going to go</param>
         public void SpeedUpGame(int speedMultiplier) => TimeScale = _defaultTimeScale * speedMultiplier;
 
-        public void NormalTime() => TimeScale = 1;
+        /// <summary>
+        /// Call this function when you want the game to be played on the default time
+        /// </summary>
+        public void NormalTime() => TimeScale = _defaultTimeScale;
     }
 }
