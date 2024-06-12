@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Features.Building.Scripts.Datatypes;
 using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using Implementation.TaskSystem;
@@ -47,7 +48,8 @@ namespace Features.Workers
         /// </summary>
         private void CheckTaskExists(Vector3Int target, Action onDone)
         {
-            if (GameManager.Instance.GridManager.Grid.Get(target) == -1) onDone.Invoke();
+            if (GameManager.Instance.GridManager.Grid.IsEmpty(target)) 
+                onDone.Invoke();
         }
     }
 }

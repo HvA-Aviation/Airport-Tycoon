@@ -36,7 +36,7 @@ namespace Features.Managers
         public void UnlockBuilding(BuildableObject buildableObject)
         {
             int index = BuildingStatuses.FindIndex(x => x.BuildableObject == buildableObject);
-            if (index != -1)
+            if (index != BuildableAtlas.Empty)
             {
                 BuildingStatuses[index].IsUnlocked = true;
                 _unlocked.Insert(index, BuildingStatuses[index]);

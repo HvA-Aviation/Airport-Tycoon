@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Features.Building.Scripts.Datatypes;
 using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using Implementation.TaskSystem;
@@ -130,7 +131,7 @@ namespace Features.Workers
         /// </summary>
         protected bool CheckTaskExists(Vector3Int target, Action onDone)
         {
-            if (GameManager.Instance.GridManager.Grid.Get(target) == -1)
+            if (GameManager.Instance.GridManager.Grid.IsEmpty(target))
             {
                 _task = null;
                 onDone.Invoke();

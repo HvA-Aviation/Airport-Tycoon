@@ -85,7 +85,7 @@ namespace Features.Building.Scripts.Grid
         public float GetUtilityWorkLoad(Vector3Int target)
         {
             int index = Get(target);
-            if (index == -1)
+            if (index == BuildableAtlas.Empty)
                 return 0;
 
             return _atlas.Items[index].WorkLoad;
@@ -182,7 +182,7 @@ namespace Features.Building.Scripts.Grid
 
         public bool BuildTile(Vector3Int gridVector, float speed)
         {
-            if (Get(gridVector) == -1)
+            if (IsEmpty(gridVector))
                 return true;
 
             List<Vector3Int> buildTiles = new List<Vector3Int>() { gridVector };
@@ -278,7 +278,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if setting was a success</returns>
         public bool Set(Vector3Int gridVector, int buildIndex)
         {
-            if (Get(gridVector) == -1)
+            if (IsEmpty(gridVector))
             {
                 CellData cellData = _cells[gridVector.x, gridVector.y, gridVector.z];
 
@@ -339,7 +339,7 @@ namespace Features.Building.Scripts.Grid
             //check if all the positions are available
             foreach (Vector3Int position in gridVectors)
             {
-                if (Get(position) != -1)
+                if (IsEmpty(position))
                     return false;
             }
 
@@ -387,7 +387,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if remove was successful</returns>
         public bool Remove(Vector3Int gridVector)
         {
-            if (!OutOfBounds(gridVector) && Get(gridVector) != -1)
+            if (!OutOfBounds(gridVector) && IsEmpty(gridVector))
             {
                 //checks if given tile is part of a linked group. If not only add the given position
                 List<Vector3Int> group = _cellGroup.FirstOrDefault(x => x.Any(j => j == gridVector));
@@ -445,7 +445,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if empty</returns>
         public bool IsEmpty(Vector3Int gridVector)
         {
-            return Get(gridVector) == -1;
+            return Get(gridVector) == BuildableAtlas.Empty;
         }
 
         /// <summary>
