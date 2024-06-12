@@ -1,7 +1,5 @@
 using UnityEngine;
 using Unity.Collections;
-using Unity.VisualScripting;
-using System;
 namespace Implementation.Pathfinding.Scripts
 {
     public struct Heap
@@ -26,6 +24,10 @@ namespace Implementation.Pathfinding.Scripts
 
         public Node GetAtPositionIndex(Vector3Int position) => itemsMap[position];
 
+        /// <summary>
+        /// Function that removed the item with the lowest value in the Heap and also removes it
+        /// </summary>
+        /// <returns>Node with the lowest F cost</returns>
         public Node Pop()
         {
             itemsMap.Remove(items[0].position);
@@ -42,6 +44,9 @@ namespace Implementation.Pathfinding.Scripts
             return firstItem;
         }
 
+        /// <summary>
+        /// This handles moving A node down in the tree by comparing its f cost the its children
+        /// </summary>
         private void MoveDown(int index)
         {
             int leftChildIndex = 2 * index + 1;
@@ -62,6 +67,9 @@ namespace Implementation.Pathfinding.Scripts
             }
         }
 
+        /// <summary>
+        /// Add a Node to the Heap, it gets added at the bottom of the tree and recursively moves itself up
+        /// </summary>
         public void Add(Node item)
         {
             itemsMap.TryAdd(item.position, item);
@@ -91,7 +99,10 @@ namespace Implementation.Pathfinding.Scripts
             MoveUp(indexOfItem);
         }
 
-        public void MoveUp(int index)
+        /// <summary>
+        /// Move a node up in the tree by comparing its own fcost with its parent
+        /// </summary>
+        private void MoveUp(int index)
         {
             // Get parents index
             int parentIndex = index / 2;
@@ -101,6 +112,25 @@ namespace Implementation.Pathfinding.Scripts
                 items[parentIndex] = items[index];
                 items[index] = temp;
                 MoveUp(parentIndex);
+            }
+        }
+
+        /// <summary>
+        /// Replace a node in the tree, then move it up and down so it is in the correct spot in the heap
+        /// This function is used when we find a better path to a node that is already in the heap
+        /// </summary>
+        public void ReplaceNode(Vector3Int positionToReplace, Node newNode)
+        {
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (positionToReplace == items[i].position)
+                {
+                    items[i] = newNode;
+
+                    // Move it up and down
+                    MoveUp(i);
+                    MoveDown(i);
+                }
             }
         }
     }

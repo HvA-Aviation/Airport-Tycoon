@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using Unity.Collections;
 using UnityEngine;
 using Grid = Features.Building.Scripts.Grid.Grid;
+using Utilities = Features.Building.Scripts.Datatypes.UtilityType;
 
 public class GridManager : MonoBehaviour
 {
@@ -12,13 +14,19 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private Grid _grid;
 
+    public Grid Grid => _grid;
+
     public NativeHashMap<Vector3Int, Node> NodeGrid { get; private set; }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         NodeGrid = new NativeHashMap<Vector3Int, Node>(_grid.GridSize.x * _grid.GridSize.y, Allocator.Persistent);
         GameManager.Instance.EventManager.Subscribe(Features.EventManager.EventId.GridUpdateEvent, (args) => CreateGrid());
+    }
+
+    void Start()
+    {
+        CreateGrid();
     }
 
     /// <summary>
@@ -40,6 +48,9 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+
+    public List<Vector3Int> GetUtilities(Utilities utilityType) => _grid.GetUtilities(utilityType);
+    public int GetRotation(Vector3Int position) => _grid.GetRotation(position);
 
     private void OnApplicationQuit()
     {

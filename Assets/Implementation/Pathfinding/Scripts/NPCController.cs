@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Features.Managers;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.VisualScripting;
 using UnityEngine;
 using Grid = Features.Building.Scripts.Grid.Grid;
 
@@ -20,6 +21,11 @@ namespace Implementation.Pathfinding.Scripts
         private List<Node> _backtrackedPath = new List<Node>();
         private Vector3Int _endNode;
         private Node[] open, closed;
+
+        private void OnEnable()
+        {
+            _grid = GameManager.Instance.GridManager.Grid;
+        }
 
         /// <summary>
         /// Use this function to set the target of an NPC
@@ -47,8 +53,12 @@ namespace Implementation.Pathfinding.Scripts
             // if there is no path break out of this coroutine
             if (path.Count <= 0) yield break;
 
-            for (int i = path.Count - 1; i >= 0; i--)
+            // Path starts at path.count - 2 because the we want to skip the first node, which is the current position of the NPC
+            for (int i = path.Count - 2; i >= 0; i--)
             {
+                // Backtracked gets initialized with empty nodes, sometimes they get through and end up here. Could look into this
+                if (path[i].position == Vector3Int.zero) continue;
+
                 while (Vector3.Distance(path[i].position, transform.position) > 0.1f)
                 {
                     Vector3 direction = path[i].position - transform.position;

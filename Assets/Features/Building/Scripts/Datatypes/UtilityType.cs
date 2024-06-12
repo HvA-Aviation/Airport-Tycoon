@@ -3,6 +3,8 @@
     public enum UtilityType
     {
         None,
-        Security
+        Security,
+        CheckIn,
+        Gate,
     }
 }

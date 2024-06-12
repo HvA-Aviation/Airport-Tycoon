@@ -35,7 +35,12 @@ namespace Features.Building.Scripts.Grid
         private List<TileColorData> _gridColorBuffer = new List<TileColorData>();
 
         private Dictionary<UtilityType, List<Vector3Int>> _utilityLocations =
-            new Dictionary<UtilityType, List<Vector3Int>>() { { UtilityType.Security, new List<Vector3Int>() } };
+            new Dictionary<UtilityType, List<Vector3Int>>()
+            {
+                { UtilityType.Security, new List<Vector3Int>() },
+                { UtilityType.CheckIn, new List<Vector3Int>() },
+                { UtilityType.Gate, new List<Vector3Int>() }
+            };
 
         public Vector3Int GridSize => _gridSize;
         public float CellSize => _cellSize;
@@ -56,6 +61,7 @@ namespace Features.Building.Scripts.Grid
             //create and populate traversabletiles
             TraversableTiles = new bool[_gridSize.x, _gridSize.y];
             UpdateTraversable();
+            
             GameManager.Instance.EventManager.TriggerEvent(EventId.GridUpdateEvent);
         }
 
@@ -66,10 +72,23 @@ namespace Features.Building.Scripts.Grid
         /// <returns>A list with all the utilities</returns>
         public List<Vector3Int> GetUtilities(UtilityType utilityType)
         {
-            List<Vector3Int> positions = new List<Vector3Int>();
-            positions.AddRange(_utilityLocations[utilityType]);
+            List<Vector3Int> utilities = new List<Vector3Int>();
+            utilities.AddRange(_utilityLocations[utilityType]);
+            return utilities;
+        }
 
-            return positions;
+        /// <summary>
+        /// Gets the utility workload by position
+        /// </summary>
+        /// <param name="target">Position of the utility</param>
+        /// <returns>Workload as a float</returns>
+        public float GetUtilityWorkLoad(Vector3Int target)
+        {
+            int index = Get(target);
+            if (index == BuildableAtlas.Empty)
+                return 0;
+
+            return _atlas.Items[index].WorkLoad;
         }
 
         /// <summary>
@@ -102,7 +121,7 @@ namespace Features.Building.Scripts.Grid
                     TraversableTiles[x, y] = !unTraversable[x, y];
                 }
             }
-            
+
             GameManager.Instance.EventManager.TriggerEvent(EventId.GridUpdateEvent);
         }
 
@@ -163,7 +182,7 @@ namespace Features.Building.Scripts.Grid
 
         public bool BuildTile(Vector3Int gridVector, float speed)
         {
-            if (Get(gridVector) == -1)
+            if (IsEmpty(gridVector))
                 return true;
 
             List<Vector3Int> buildTiles = new List<Vector3Int>() { gridVector };
@@ -205,7 +224,18 @@ namespace Features.Building.Scripts.Grid
                     UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
 
                     if (utilityType != UtilityType.None)
+                    {
                         _utilityLocations[utilityType].Add(gridVector);
+
+                        if (utilityType == UtilityType.Security)
+                        {
+                            GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(gridVector));
+                        }
+                        else
+                        {
+                            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(gridVector));
+                        }
+                    }
                 }
             }
 
@@ -227,6 +257,20 @@ namespace Features.Building.Scripts.Grid
         }
 
         /// <summary>
+        /// Get the rotation of the given position
+        /// </summary>
+        /// <param name="gridVector">Position in grid</param>
+        /// <returns>0 or the cell rotation</returns>
+        public int GetRotation(Vector3Int gridVector)
+        {
+            //when out of bounds returns 0 rotation
+            if (OutOfBounds(gridVector))
+                return 0;
+
+            return _cells[gridVector.x, gridVector.y, gridVector.z].Rotation;
+        }
+
+        /// <summary>
         /// Sets the cell if it is empty
         /// </summary>
         /// <param name="gridVector">Position on grid</param>
@@ -234,7 +278,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if setting was a success</returns>
         public bool Set(Vector3Int gridVector, int buildIndex)
         {
-            if (Get(gridVector) == -1)
+            if (IsEmpty(gridVector))
             {
                 CellData cellData = _cells[gridVector.x, gridVector.y, gridVector.z];
 
@@ -295,7 +339,7 @@ namespace Features.Building.Scripts.Grid
             //check if all the positions are available
             foreach (Vector3Int position in gridVectors)
             {
-                if (Get(position) != -1)
+                if (IsEmpty(position))
                     return false;
             }
 
@@ -343,7 +387,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if remove was successful</returns>
         public bool Remove(Vector3Int gridVector)
         {
-            if (!OutOfBounds(gridVector) && Get(gridVector) != -1)
+            if (!OutOfBounds(gridVector) && IsEmpty(gridVector))
             {
                 //checks if given tile is part of a linked group. If not only add the given position
                 List<Vector3Int> group = _cellGroup.FirstOrDefault(x => x.Any(j => j == gridVector));
@@ -357,7 +401,10 @@ namespace Features.Building.Scripts.Grid
                     UtilityType type = _atlas.Items[cell.Tile].UtilityType;
 
                     if (type != UtilityType.None)
+                    {
                         _utilityLocations[type].Remove(item);
+                        GameManager.Instance.QueueManager.RemoveQueue(item);
+                    }
 
                     _cells[item.x, item.y, item.z].Clear();
                 }
@@ -398,7 +445,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if empty</returns>
         public bool IsEmpty(Vector3Int gridVector)
         {
-            return Get(gridVector) == -1;
+            return Get(gridVector) == BuildableAtlas.Empty;
         }
 
         /// <summary>
