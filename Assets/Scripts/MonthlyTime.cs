@@ -14,7 +14,6 @@ public class MonthlyTime : MonoBehaviour
     private int _daysPassed;
     private int _monthsPassed;
 
-    public static UnityEvent PaySalaray = new UnityEvent();
     private void FixedUpdate()
     {
         _secondsPassed += (1 * GameManager.Instance.GameTimeManager.DeltaTime);
@@ -28,7 +27,7 @@ public class MonthlyTime : MonoBehaviour
         if(_daysPassed >= _daysInAMonth)
         {
             _monthsPassed++;
-            PaySalaray.Invoke();            
+            GameManager.Instance.FinanceManager.Balance.Subtract(GameManager.Instance.StaffManager.GetSalaryOwed());           
             _daysPassed = 0;
         }
     }

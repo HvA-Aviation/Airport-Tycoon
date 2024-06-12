@@ -8,19 +8,13 @@ public class Employee : MonoBehaviour
     public string Name { get; private set; }
     public int SalaryAmount { get; private set; }
     public int EmployeeID { get; private set; }
-    public EmployeeTypes EmployeeType { get; private set; }
+    public EmployeeTypes EmployeeType { get; private set; }    
 
-    private void Awake()
+    private void OnEnable()
     {
         Name = StaffNames.GetRandomFirstName() + " " + StaffNames.GetRandomLastName();
         SalaryAmount = Random.Range(_minimumSalary, _maximumSalary);
-    }
-
-    private void OnEnable() => MonthlyTime.PaySalaray.AddListener(RemoveSalaryFromBalance);
-
-    private void OnDisable() => MonthlyTime.PaySalaray.RemoveListener(RemoveSalaryFromBalance);
-
-    private void RemoveSalaryFromBalance() => GameManager.Instance.FinanceManager.Balance.Subtract(SalaryAmount);
+    }       
 
     public void SetEmployeeType(EmployeeTypes type) => EmployeeType = type;
 

@@ -63,6 +63,19 @@ public class StaffManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Get all the total owed salary from all the employees
+    /// </summary>
+    /// <returns>The total owed salary</returns>
+    public int GetSalaryOwed()
+    {
+        int totalSalary = 0;
+        for(int i = 0; i < Employees.Count; i++)
+            totalSalary += Employees[i].SalaryAmount;
+
+        return totalSalary;
+    }
+
     public GameObject GetEmployeeGameObject(int employeeID) => Employees[employeeID].gameObject;
 
     public int GetEmployeeSalary(int employeeID) => Employees[employeeID].SalaryAmount;
