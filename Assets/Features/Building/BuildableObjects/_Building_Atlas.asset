@@ -20,6 +20,7 @@ MonoBehaviour:
     UnTraversable: 0
     UtilityType: 0
     UtilityLoad: 0
+    BehaviorType: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: 6c780cbf86e291d499131d526e833735,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
@@ -27,6 +28,7 @@ MonoBehaviour:
     UnTraversable: 0
     UtilityType: 0
     UtilityLoad: 0
+    BehaviorType: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: 9ec80e97310e10147a0331cc257d09ed,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
@@ -34,6 +36,7 @@ MonoBehaviour:
     UnTraversable: 0
     UtilityType: 0
     UtilityLoad: 0
+    BehaviorType: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: fbfe88272625d5c47979b613d9233838,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
@@ -41,6 +44,7 @@ MonoBehaviour:
     UnTraversable: 1
     UtilityType: 0
     UtilityLoad: 0
+    BehaviorType: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: 188e4c7d9c6ce694a8392e304280d246,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
@@ -48,6 +52,7 @@ MonoBehaviour:
     UnTraversable: 0
     UtilityType: 0
     UtilityLoad: 0
+    BehaviorType: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: 14d9b7aad09203345989c9b0010e8ea0,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
@@ -55,6 +60,7 @@ MonoBehaviour:
     UnTraversable: 0
     UtilityType: 0
     UtilityLoad: 0
+    BehaviorType: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: a34c6e45faeba8a4c9340342d4aa948a,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
@@ -62,6 +68,7 @@ MonoBehaviour:
     UnTraversable: 0
     UtilityType: 1
     UtilityLoad: 2
+    BehaviorType: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: 241963d8cfdb21c489ff7af6e2160525,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
@@ -69,6 +76,7 @@ MonoBehaviour:
     UnTraversable: 0
     UtilityType: 2
     UtilityLoad: 200
+    BehaviorType: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: f31080f96096c074fb0adac6a5e51f4d,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
@@ -76,17 +84,20 @@ MonoBehaviour:
     UnTraversable: 0
     UtilityType: 3
     UtilityLoad: 2
+    BehaviorType: 0
   - <Tile>k__BackingField: {fileID: 11400000, guid: a6aead7df04db46488cb4855ffc732ba,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
     WorkLoad: 2
     UnTraversable: 0
-    UtilityType: 5
+    UtilityType: 0
     UtilityLoad: 2
+    BehaviorType: 1
   - <Tile>k__BackingField: {fileID: 11400000, guid: 96db11b5d523f664b9a8f379dde15f0f,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
     WorkLoad: 2
     UnTraversable: 0
-    UtilityType: 4
+    UtilityType: 0
     UtilityLoad: 2
+    BehaviorType: 2
