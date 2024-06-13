@@ -5,6 +5,7 @@ using UnityEngine;
 using Utilities = Features.Building.Scripts.Datatypes.UtilityType;
 using Features.EventManager;
 using System.Linq;
+using UnityEngine.Tilemaps;
 
 public class PassengerBehaviour : MonoBehaviour
 {
@@ -84,7 +85,7 @@ public class PassengerBehaviour : MonoBehaviour
         queueManager.AssignToUtility(
             potentialTaskDestinations,
             this,
-            (numberInQueue, utilityPos) => { UpdatePath(utilityPos, numberInQueue); });
+            (target, utilityPos) => { UpdatePath(target, utilityPos); });
     }
 
     private void TasksCompleted()
@@ -99,34 +100,35 @@ public class PassengerBehaviour : MonoBehaviour
         }
     }
 
-    public void UpdatePath(Vector3Int utilityPos, int numberInQueue)
+    public void UpdatePath(Vector3Int target, Vector3Int UtilityPos)
     {
         _npcController.StopAllCoroutines();
 
-        int rotation = gridManager.GetRotation(utilityPos);
-        Vector3Int rotationVector = Vector3Int.down;
+        // Rotation doesn't function properly on queues
+        int rotation = gridManager.GetRotation(target);
+
+        Vector3Int rotationOffset = Vector3Int.zero;
 
         switch (rotation)
         {
             case 0:
-                rotationVector = Vector3Int.down;
+                rotationOffset = Vector3Int.down;
                 break;
             case 1:
-                rotationVector = Vector3Int.left;
+                rotationOffset = Vector3Int.left;
                 break;
             case 2:
-                rotationVector = Vector3Int.up;
+                rotationOffset = Vector3Int.up;
                 break;
             case 3:
-                rotationVector = Vector3Int.right;
+                rotationOffset = Vector3Int.right;
                 break;
         }
 
         _npcController.SetTarget(
-        utilityPos + rotationVector * (numberInQueue + 1),
+        target + rotationOffset,
         () => { },
-        () => { GameManager.Instance.QueueManager.ReachedQueue(utilityPos, this); },
+        () => { GameManager.Instance.QueueManager.ReachedQueue(UtilityPos, this); },
         () => print("Implement function that handles case when passenger does not have path to target"));
     }
-
 }

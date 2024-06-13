@@ -2,20 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using Unity.VisualScripting;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
 struct QueueInfo
 {
     public Queue<PassengerBehaviour> inQueue;
-    public Dictionary<PassengerBehaviour, Action<int, Vector3Int>> joiningQueue;
+    public Dictionary<PassengerBehaviour, Action<Vector3Int, Vector3Int>> joiningQueue;
     public List<Vector3Int> queuePositions;
-    public QueueInfo(PassengerBehaviour passenger, Action<int, Vector3Int> onPositionInQueueChanged)
+    public QueueInfo(PassengerBehaviour passenger, Action<Vector3Int, Vector3Int> onPositionInQueueChanged)
     {
         inQueue = new Queue<PassengerBehaviour>();
-        joiningQueue = new Dictionary<PassengerBehaviour, Action<int, Vector3Int>>
+        joiningQueue = new Dictionary<PassengerBehaviour, Action<Vector3Int, Vector3Int>>
         {
             { passenger, onPositionInQueueChanged }
         };
@@ -116,7 +114,7 @@ public class QueueManager : MonoBehaviour
                 QueueInfo queueInfo = new QueueInfo
                 {
                     inQueue = new Queue<PassengerBehaviour>(),
-                    joiningQueue = new Dictionary<PassengerBehaviour, Action<int, Vector3Int>>(),
+                    joiningQueue = new Dictionary<PassengerBehaviour, Action<Vector3Int, Vector3Int>>(),
                     queuePositions = utilityList[item]
                 };
                 UtilityQueue.TryAdd(item, queueInfo);
@@ -137,15 +135,16 @@ public class QueueManager : MonoBehaviour
     /// Assign a passenger to a utility and invoke its onQueueChanged action
     /// </summary>
     /// <param name="OnQueueChanged">This usually represents a pathfinding funciton</param>
-    public void AssignToUtility(Dictionary<Vector3Int, List<Vector3Int>> utilityPos, PassengerBehaviour passenger, Action<int, Vector3Int> OnQueueChanged)
+    public void AssignToUtility(Dictionary<Vector3Int, List<Vector3Int>> utilityPos, PassengerBehaviour passenger, Action<Vector3Int, Vector3Int> OnQueueChanged)
     {
         Vector3Int optimalQueue = GetOptimalQueue(utilityPos);
 
-        int positionInQueue = UtilityQueue[optimalQueue].inQueue.Count;
+        Vector3Int beginOfQueue = UtilityQueue[optimalQueue].queuePositions.LastOrDefault();
+        beginOfQueue.z = 0;
 
         UtilityQueue[optimalQueue].joiningQueue.Add(passenger, OnQueueChanged);
 
-        OnQueueChanged.Invoke(positionInQueue, optimalQueue);
+        OnQueueChanged.Invoke(beginOfQueue, optimalQueue);
     }
 
     /// <summary>
@@ -164,7 +163,7 @@ public class QueueManager : MonoBehaviour
         UtilityQueue.TryGetValue(utilityPos, out QueueInfo queueInfo);
         foreach (var item in queueInfo.joiningQueue.ToList())
         {
-            item.Value.Invoke(queueInfo.inQueue.Count(), utilityPos);
+            //item.Value.Invoke(queueInfo.inQueue.Count(), utilityPos);
         }
     }
 }
