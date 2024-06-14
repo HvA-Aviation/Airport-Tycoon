@@ -153,6 +153,7 @@ namespace Features.Building.Scripts.Grid
             if (IsEmpty(gridVector))
                 return true;
 
+            //get all the build tiles of a group
             List<Vector3Int> buildTiles = new List<Vector3Int>() { gridVector };
             for (int i = 0; i < _cellGroup.Count; i++)
             {
@@ -183,6 +184,7 @@ namespace Features.Building.Scripts.Grid
 
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
 
+                //if finished and a utility type add a task
                 if (isFinished)
                 {
                     UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
