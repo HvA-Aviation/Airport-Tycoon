@@ -77,6 +77,7 @@ namespace Brushes
                 }
 
                 Rotation %= 4;
+                Debug.Log(Rotation);
             }
         }
 
@@ -86,15 +87,11 @@ namespace Brushes
         /// <param name="position">current position</param>
         public override void Apply(Vector3Int position)
         {
-            Debug.Log("Apply 1");
-            
             int price = GameManager.Instance.BuildingManager.CurrentBuildableObject.Price;
 
             if (GameManager.Instance.FinanceManager.Balance.Value - price < 0)
                 return;
             
-            Debug.Log("Apply 2");
-
             //place the tiles in the shape of the selection
             List<Vector3Int> positions = new List<Vector3Int>();
             List<Tile> indices = new List<Tile>();
@@ -103,12 +100,9 @@ namespace Brushes
                 positions.Add(selected.GridPosition);
                 indices.Add(selected.Tile);
             }
-            Debug.Log("Apply 3");
-
 
             if (_grid.SetGroup(positions, indices, Rotation))
             {
-                Debug.Log("Apply 4");
                 GameManager.Instance.FinanceManager.Balance.Subtract(price);
             }
         }

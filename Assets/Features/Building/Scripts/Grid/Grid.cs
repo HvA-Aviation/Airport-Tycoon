@@ -240,14 +240,14 @@ namespace Features.Building.Scripts.Grid
         /// <param name="gridVector">Position on grid</param>
         /// <param name="buildIndex">Build index of the tile found in BuildableAtlas</param>
         /// <returns>True if setting was a success</returns>
-        public bool Set(Vector3Int gridVector, int buildIndex)
+        public bool Set(Vector3Int gridVector, int buildIndex, int rotation = 0, bool addTask = true)
         {
             if (IsEmpty(gridVector))
             {
                 CellData cellData = _cells[gridVector.x, gridVector.y, gridVector.z];
 
                 cellData.Tile = buildIndex;
-                cellData.Rotation = 0;
+                cellData.Rotation = rotation;
                 cellData.WorkLoad = _atlas.Items[buildIndex].WorkLoad;
 
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
@@ -260,7 +260,8 @@ namespace Features.Building.Scripts.Grid
                     Transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });
 
-                GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVector));
+                if (addTask)
+                    GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVector));
 
                 return true;
             }
@@ -315,25 +316,12 @@ namespace Features.Building.Scripts.Grid
                     return false;
                 }
 
-                CellData cellData = _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z];
-
-                cellData.Tile = Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile);
-                cellData.Rotation = rotation;
-                cellData.WorkLoad = tileData.WorkLoad;
-
-                _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
-                
-                GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
-                {
-                    Position = gridVectors[i],
-                    Color = _atlas.Items[cellData.Tile].Color,
-                    Tile = _atlas.Items[cellData.Tile].Tile,
-                    Transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
-                });
+                Set(gridVectors[i], Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile), rotation, false);
             }
 
             GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
-            _cellGroup.Add(gridVectors);
+            if (gridVectors.Count > 1)
+                _cellGroup.Add(gridVectors);
 
             return true;
         }
@@ -365,13 +353,13 @@ namespace Features.Building.Scripts.Grid
                     }
 
                     _cells[item.x, item.y, item.z].Clear();
+                    
+                    GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
+                    {
+                        Position = item,
+                        Tile = null,
+                    });
                 }
-
-                GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
-                {
-                    Position = gridVector,
-                    Tile = null,
-                });
 
                 //remove from group
                 _cellGroup.Remove(group);
