@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Implementation.Pathfinding.Scripts
 {
-    [BurstCompile(CompileSynchronously = true, FloatMode = FloatMode.Fast, FloatPrecision = FloatPrecision.Low)]
+    [BurstCompile()]
     public struct AStar : IJob
     {
         public NativeHashMap<Vector3Int, Node> gridNodes;

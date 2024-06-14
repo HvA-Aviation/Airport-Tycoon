@@ -15,7 +15,7 @@ public class PassengerBehaviour : MonoBehaviour
     GridManager gridManager;
     private Utilities _currentUtility;
 
-    public List<Utilities> testing = new List<Utilities>();
+    public bool atCorrectPositionInQueue = false;
 
     // Start is called before the first frame update
     void OnEnable()
@@ -31,26 +31,10 @@ public class PassengerBehaviour : MonoBehaviour
     /// </summary>
     void AssignRandomTasks()
     {
-        // Uncomment this when there are more utilities than just security
-        // tasksToDo.Clear();
-        // int AmountOfUniqueTasks = System.Enum.GetValues(typeof(Utilities)).Length;
-
-        // for (int i = 0; i < AmountOfUniqueTasks - 1; i++)
-        // {
-        //     Utilities taskType = (Utilities)i;
-        //     int random = Random.Range(0, 2);
-        //     if (random == 1) tasksToDo.Enqueue(taskType);
-        // }
-
         //Security is required
         tasksToDo.Enqueue(Utilities.CheckIn);
         tasksToDo.Enqueue(Utilities.Security);
         tasksToDo.Enqueue(Utilities.Gate);
-    }
-
-    void Update()
-    {
-        testing = tasksToDo.ToList();
     }
 
     /// <summary>
@@ -107,6 +91,8 @@ public class PassengerBehaviour : MonoBehaviour
         // Rotation doesn't function properly on queues
         int rotation = gridManager.GetRotation(target);
 
+        print($"{rotation} at position {target}");
+
         Vector3Int rotationOffset = Vector3Int.zero;
 
         switch (rotation)
@@ -124,6 +110,8 @@ public class PassengerBehaviour : MonoBehaviour
                 rotationOffset = Vector3Int.right;
                 break;
         }
+
+        target.z = 0;
 
         _npcController.SetTarget(
         target + rotationOffset,

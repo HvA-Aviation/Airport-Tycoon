@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 75043405}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &75043405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -655,7 +655,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 280713051}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &280713051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1105,6 +1105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e37d714561c74e4489c3014f8a4a54c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  queueProgressionSpeed: 2.76
 --- !u!1 &327049621
 GameObject:
   m_ObjectHideFlags: 0
@@ -1796,7 +1797,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 463320781}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &463320781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2078,7 +2079,7 @@ GameObject:
   - component: {fileID: 502007439}
   - component: {fileID: 502007438}
   m_Layer: 0
-  m_Name: NPC (4)
+  m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2097,7 +2098,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 850315144}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &502007438
 MonoBehaviour:
@@ -2227,7 +2228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 510897266}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &510897266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2307,7 +2308,7 @@ GameObject:
   - component: {fileID: 567516773}
   - component: {fileID: 567516772}
   m_Layer: 0
-  m_Name: NPC (1)
+  m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2326,7 +2327,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 850315144}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &567516772
 MonoBehaviour:
@@ -2550,7 +2551,7 @@ GameObject:
   - component: {fileID: 606151902}
   - component: {fileID: 606151901}
   m_Layer: 0
-  m_Name: NPC (7)
+  m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2569,7 +2570,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 850315144}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &606151901
 MonoBehaviour:
@@ -3231,7 +3232,7 @@ GameObject:
   - component: {fileID: 809954841}
   - component: {fileID: 809954840}
   m_Layer: 0
-  m_Name: NPC (3)
+  m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3250,7 +3251,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 850315144}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &809954840
 MonoBehaviour:
@@ -3415,7 +3416,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 848353786}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &848353786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3513,6 +3514,7 @@ Transform:
   - {fileID: 1240337498}
   - {fileID: 1821831160}
   - {fileID: 2106550316}
+  - {fileID: 2127715878}
   - {fileID: 567516771}
   - {fileID: 1202523131}
   - {fileID: 809954839}
@@ -3522,7 +3524,6 @@ Transform:
   - {fileID: 606151900}
   - {fileID: 908784257}
   - {fileID: 873939287}
-  - {fileID: 2127715878}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3651,7 +3652,7 @@ GameObject:
   - component: {fileID: 873939289}
   - component: {fileID: 873939288}
   m_Layer: 0
-  m_Name: NPC (9)
+  m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3670,7 +3671,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 850315144}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &873939288
 MonoBehaviour:
@@ -4180,7 +4181,7 @@ GameObject:
   - component: {fileID: 908784259}
   - component: {fileID: 908784258}
   m_Layer: 0
-  m_Name: NPC (8)
+  m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4199,7 +4200,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 850315144}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &908784258
 MonoBehaviour:
@@ -4661,7 +4662,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1200977353}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &1200977353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4741,7 +4742,7 @@ GameObject:
   - component: {fileID: 1202523133}
   - component: {fileID: 1202523132}
   m_Layer: 0
-  m_Name: NPC (2)
+  m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4760,7 +4761,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 850315144}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1202523132
 MonoBehaviour:
@@ -5095,7 +5096,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1324411852}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &1324411852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6203,7 +6204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1433358521}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &1433358521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6398,7 +6399,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1507612712}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &1507612712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6512,7 +6513,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1588819026}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &1588819026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7511,7 +7512,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1741942025}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &1741942025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8692,7 +8693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1747872841}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &1747872841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8974,7 +8975,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1821831162}
   _grid: {fileID: 327049622}
-  _workLoadSpeed: 5
+  _workLoadSpeed: 1
   _assignmentsShift: 10
 --- !u!114 &1821831162
 MonoBehaviour:
@@ -9253,7 +9254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1896413952}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &1896413952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9424,7 +9425,7 @@ GameObject:
   - component: {fileID: 1923131294}
   - component: {fileID: 1923131293}
   m_Layer: 0
-  m_Name: NPC (6)
+  m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9443,7 +9444,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 850315144}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1923131293
 MonoBehaviour:
@@ -10007,7 +10008,7 @@ GameObject:
   - component: {fileID: 2092123499}
   - component: {fileID: 2092123498}
   m_Layer: 0
-  m_Name: NPC (5)
+  m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10026,7 +10027,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 850315144}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2092123498
 MonoBehaviour:
@@ -10157,7 +10158,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _npcController: {fileID: 2106550318}
   _grid: {fileID: 327049622}
-  _workLoadSpeed: 2
+  _workLoadSpeed: 1
   _assignmentsShift: 10
 --- !u!114 &2106550318
 MonoBehaviour:
@@ -10272,7 +10273,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 2119232247}
-  testing: 
+  atCorrectPositionInQueue: 0
 --- !u!114 &2119232247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10352,7 +10353,7 @@ GameObject:
   - component: {fileID: 2127715880}
   - component: {fileID: 2127715879}
   m_Layer: 0
-  m_Name: General Staff (1)
+  m_Name: General Staff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10371,7 +10372,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 850315144}
-  m_RootOrder: 12
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2127715879
 MonoBehaviour:
@@ -10387,7 +10388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _npcController: {fileID: 2127715880}
   _grid: {fileID: 327049622}
-  _workLoadSpeed: 2
+  _workLoadSpeed: 1
   _assignmentsShift: 10
 --- !u!114 &2127715880
 MonoBehaviour:

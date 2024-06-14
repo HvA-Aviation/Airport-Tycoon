@@ -92,8 +92,14 @@ namespace Implementation.Pathfinding.Scripts
             NativeArray<int> _backtrackedPathLength = new NativeArray<int>(1, Allocator.TempJob);
 
             // Get the start and end nodes from the node grid
-            nodeGrid.TryGetValue(new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z), out Node _startNode);
+            nodeGrid.TryGetValue(new Vector3Int(Mathf.RoundToInt(transform.position.x),
+                                                Mathf.RoundToInt(transform.position.y),
+                                                Mathf.RoundToInt(transform.position.z)),
+                                                out Node _startNode);
+
             nodeGrid.TryGetValue(destination, out Node _endNode);
+
+            print(_startNode.position);
 
             // Create a new instance of the AStar job and assign its variables
             AStar aStar = new AStar
