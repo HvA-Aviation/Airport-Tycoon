@@ -89,7 +89,7 @@ MonoBehaviour:
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
     WorkLoad: 2
-    UnTraversable: 0
+    UnTraversable: 1
     UtilityType: 0
     UtilityLoad: 2
     BehaviorType: 1
