@@ -59,7 +59,6 @@ namespace Features.Managers
             if (buildIndex != -1)
             {
                 BuildingStatuses[buildIndex].IsUnlocked = false;
-                _unlocked.Insert(buildIndex, BuildingStatuses[buildIndex]);
                 ChangeSelectedBuildable(0);
                 GameManager.Instance.EventManager.TriggerEvent(EventId.OnUnlockBuilding);
             }

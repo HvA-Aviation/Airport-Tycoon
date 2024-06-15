@@ -33,7 +33,7 @@ namespace Features.Building.Scripts.Demos
                     ? " [" + buildingStatus.BuildableObject.Price + "]"
                     : "";
 
-                _dropdown.options.Add(new TMP_Dropdown.OptionData(buildingStatus.BuildableObject.name + addition,
+                _dropdown.options.Add(new TMP_Dropdown.OptionData(buildingStatus.BuildableObject.Name + addition,
                     buildingStatus.BuildableObject.BuildItems[0].Tile.sprite));
                 _dropdown.value = 0;
                 _dropdown.RefreshShownValue();

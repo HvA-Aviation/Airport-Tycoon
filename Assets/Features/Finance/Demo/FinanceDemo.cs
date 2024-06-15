@@ -17,12 +17,12 @@ public class FinanceDemo : MonoBehaviour
         {
             GameManager.Instance.FinanceManager.Balance.Add(100);
         }
-        
+
         if (Input.GetKey(KeyCode.Alpha1) && Input.GetKeyDown(KeyCode.Alpha3))
         {
             GameManager.Instance.FinanceManager.Balance.Subtract(100);
         }
-        
+
         if (Input.GetKeyDown(KeyCode.J))
         {
             TryAcceptLoan(0);
@@ -53,7 +53,6 @@ public class FinanceDemo : MonoBehaviour
         if (GameManager.Instance.FinanceManager.GetLoan(index).State == LoanState.Idle)
         {
             GameManager.Instance.FinanceManager.AcceptLoan(index);
-            Debug.Log($"Loan {index} is accepted.");
         }
         else
         {
@@ -64,7 +63,7 @@ public class FinanceDemo : MonoBehaviour
     private void UpdateUI()
     {
         _demoManager.SetMoney(GameManager.Instance.FinanceManager.Balance.Value);
-        for(int i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
             _demoManager.UpdateLoanCard(i, GameManager.Instance.FinanceManager.GetLoan(i));
         }

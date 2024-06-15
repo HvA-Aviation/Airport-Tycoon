@@ -13,9 +13,11 @@ namespace Features.Building.Scripts.Datatypes
         public float WorkLoad;
         public bool UnTraversable = false;
 
-        [Header("Utility Settings")] public UtilityType UtilityType;
+        [Header("Utility Settings")]
+        public UtilityType UtilityType;
         public float UtilityLoad;
 
-        [Header("Behavior Settings")] public BehaviourType BehaviorType;
+        [Header("Behavior Settings")]
+        public BehaviourType BehaviorType;
     }
 }

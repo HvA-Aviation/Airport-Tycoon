@@ -5,6 +5,7 @@ using Features.Workers.TaskCommands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TileData = Features.Building.Scripts.Datatypes.TileData;
@@ -354,8 +355,11 @@ namespace Features.Building.Scripts.Grid
             //check if all the positions are available
             foreach (Vector3Int position in gridVectors)
             {
-                if (IsEmpty(position))
+                if (!IsEmpty(position))
+                {
+                    print("Position is not empty | " + position);
                     return false;
+                }
             }
 
             for (int i = 0; i < gridVectors.Count; i++)
@@ -388,7 +392,7 @@ namespace Features.Building.Scripts.Grid
                     transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });
 
-                // If pax spawn point is placed lock it, this needs to be reworked after demo
+                // If pax spawn point is placed lock it
                 if (_atlas.Items[cellData.Tile].BehaviorType == BehaviourType.PaxSpawn)
                 {
                     _paxSpawnPos = gridVectors[i];
@@ -404,19 +408,27 @@ namespace Features.Building.Scripts.Grid
             return true;
         }
 
+        /// <summary>
+        /// When a utility is placed, start building the queue
+        /// </summary>
+        /// <param name="cellData">The celldata of the current utility placed</param>
+        /// <param name="gridVectors">Positions on grid</param>
         private void HandleQueues(CellData cellData, List<Vector3Int> gridVectors)
         {
             TileData currentTileData = _atlas.Items[cellData.Tile];
             // When a utility is placed, start building the queue, this needs to be reworked after demo
             if (currentTileData.UtilityType != UtilityType.None)
             {
+                // If a previous made queue exists push it to the utility locations
+                // This needs to we reworked to a button or callback
+                // so that you dont have to place another utility to finish the queue
                 if (_tempQueuePositions.Count > 0)
                 {
                     Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
-                    UtilityType utilityType = _atlas.Items[Get(utilityLocation)].UtilityType;
+                    int index = Get(utilityLocation);
+                    if (index == 1) return;
+                    UtilityType utilityType = _atlas.Items[index].UtilityType;
                     _utilityLocations[utilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
-
-                    print($"Adding to {utilityType}");
 
                     if (utilityType == UtilityType.Security)
                         GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
@@ -429,13 +441,16 @@ namespace Features.Building.Scripts.Grid
                 if (!_tempQueuePositions.ContainsKey(gridVectors[0]))
                     _tempQueuePositions.Add(gridVectors[0], new List<Vector3Int>());
 
+                //TODO: rework to not use hard coded number
                 GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
             }
 
             if (currentTileData.BehaviorType == BehaviourType.Queue)
             {
                 Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
-                _tempQueuePositions[utilityLocation].Add(gridVectors[0]);
+                Vector3Int queuePosition = gridVectors[0];
+                queuePosition.z = 0;
+                _tempQueuePositions[utilityLocation].Add(queuePosition);
             }
         }
 
@@ -446,11 +461,8 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if remove was successful</returns>
         public bool Remove(Vector3Int gridVector)
         {
-            if (!OutOfBounds(gridVector) && IsEmpty(gridVector))
+            if (!OutOfBounds(gridVector) && !IsEmpty(gridVector))
             {
-                // 9 is the pax spawn point, this needs to be reworked after demo
-                if (Get(gridVector) == 9) return false;
-
                 //checks if given tile is part of a linked group. If not only add the given position
                 List<Vector3Int> group = _cellGroup.FirstOrDefault(x => x.Any(j => j == gridVector));
                 if (group == default)
@@ -461,6 +473,14 @@ namespace Features.Building.Scripts.Grid
                 {
                     CellData cell = _cells[item.x, item.y, item.z];
                     UtilityType type = _atlas.Items[cell.Tile].UtilityType;
+                    BehaviourType behaviorType = _atlas.Items[cell.Tile].BehaviorType;
+
+                    // if the tile is a pax spawn dont remove it, perhaps add more functionality to this later
+                    if (behaviorType == BehaviourType.PaxSpawn)
+                    {
+                        print("Can't remove pax spawn point");
+                        break;
+                    }
 
                     if (type != UtilityType.None)
                     {

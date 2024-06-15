@@ -4,8 +4,7 @@ using Implementation.Pathfinding.Scripts;
 using UnityEngine;
 using Utilities = Features.Building.Scripts.Datatypes.UtilityType;
 using Features.EventManager;
-using System.Linq;
-using UnityEngine.Tilemaps;
+using System.Collections;
 
 public class PassengerBehaviour : MonoBehaviour
 {
@@ -15,7 +14,10 @@ public class PassengerBehaviour : MonoBehaviour
     GridManager gridManager;
     private Utilities _currentUtility;
 
+    [Header("Queue variables")]
     public bool atCorrectPositionInQueue = false;
+    public float distanceToNextPosComplete = 0.1f;
+    public int currentPathIndex;
 
     void OnEnable()
     {
@@ -39,6 +41,53 @@ public class PassengerBehaviour : MonoBehaviour
         tasksToDo.Enqueue(Utilities.Gate);
     }
 
+    public void MoveToTarget(List<Vector3Int> queuePositions, int positionInQueue, bool alreadyInQueue = false)
+    {
+        StopAllCoroutines();
+        StartCoroutine(MoveToPositionInQueue(queuePositions, positionInQueue, alreadyInQueue));
+    }
+
+    public IEnumerator MoveToPositionInQueue(List<Vector3Int> queuePositions, int positionInQueue, bool alreadyInQueue = false)
+    {
+        atCorrectPositionInQueue = false;
+
+        int totalQueueLength = queuePositions.Count - 1;
+
+        int start = alreadyInQueue ? currentPathIndex : totalQueueLength;
+        int end = positionInQueue;
+
+        int pathIndex = start;
+
+        currentPathIndex = pathIndex;
+
+        while (pathIndex != end && !atCorrectPositionInQueue)
+        {
+
+            if (pathIndex < 0 || pathIndex > totalQueueLength)
+            {
+                print("Path index out of bounds" + pathIndex + " " + totalQueueLength);
+                yield break;
+            }
+
+            if (Vector3.Distance(queuePositions[pathIndex], transform.position) < distanceToNextPosComplete)
+            {
+                pathIndex--;
+                currentPathIndex = pathIndex;
+            }
+
+            Vector3 direction = queuePositions[pathIndex] - transform.position;
+            Vector3 queueSpeed = GameManager.Instance.QueueManager.queueProgressionSpeed *
+                                 GameManager.Instance.GameTimeManager.DeltaTime *
+                                 direction.normalized;
+
+            transform.position += queueSpeed;
+
+            yield return null;
+        }
+
+        atCorrectPositionInQueue = true;
+    }
+
     /// <summary>
     /// Executes the tasks assigned to the passenger.
     /// </summary>
@@ -53,11 +102,6 @@ public class PassengerBehaviour : MonoBehaviour
 
         Utilities currentTask = dequeue ? tasksToDo.Dequeue() : _currentUtility;
         Dictionary<Vector3Int, List<Vector3Int>> potentialTaskDestinations = gridManager.GetUtilities(currentTask);
-
-        foreach (var item in potentialTaskDestinations)
-        {
-            print(item.Key + " " + item.Value.Count);
-        }
 
         // Check if there are any utilities of the current task, if not then subscribe to the onMissingUtility event
         if (potentialTaskDestinations.Count == 0)
@@ -96,8 +140,6 @@ public class PassengerBehaviour : MonoBehaviour
 
         // Rotation doesn't function properly on queues
         int rotation = gridManager.GetRotation(target);
-
-        print($"{rotation} at position {target}");
 
         Vector3Int rotationOffset = Vector3Int.zero;
 

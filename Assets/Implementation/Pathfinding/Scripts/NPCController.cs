@@ -12,20 +12,12 @@ namespace Implementation.Pathfinding.Scripts
 {
     public class NPCController : MonoBehaviour
     {
-        [Header("Dependecies")]
-        [SerializeField] private Grid _grid;
-
         [Header("Movement variables")]
         [SerializeField] private float _moveSpeed = 1f;
 
         private List<Node> _backtrackedPath = new List<Node>();
         private Vector3Int _endNode;
         private Node[] open, closed;
-
-        private void OnEnable()
-        {
-            _grid = GameManager.Instance.GridManager.Grid;
-        }
 
         /// <summary>
         /// Use this function to set the target of an NPC
@@ -72,9 +64,9 @@ namespace Implementation.Pathfinding.Scripts
                 while (Vector3.Distance(node.position, transform.position) > 0.1f)
                 {
                     Vector3 direction = node.position - transform.position;
-                    transform.position += direction.normalized * _moveSpeed * Time.deltaTime;
+                    transform.position += _moveSpeed * GameManager.Instance.GameTimeManager.DeltaTime * direction.normalized;
                     checkIfTaskIsStillNeeded.Invoke();
-                    yield return new WaitForEndOfFrame();
+                    yield return null;
                 }
                 transform.position = node.position;
             }
@@ -86,6 +78,7 @@ namespace Implementation.Pathfinding.Scripts
         /// </summary>
         void FindPath(Vector3Int destination, NativeHashMap<Vector3Int, Node> nodeGrid)
         {
+            Grid _grid = GameManager.Instance.GridManager.Grid;
             int arraySize = _grid.GridSize.x * _grid.GridSize.y;
 
             // Declare the variables
@@ -102,8 +95,6 @@ namespace Implementation.Pathfinding.Scripts
                                                 out Node _startNode);
 
             nodeGrid.TryGetValue(destination, out Node _endNode);
-
-            print(_startNode.position);
 
             // Create a new instance of the AStar job and assign its variables
             AStar aStar = new AStar

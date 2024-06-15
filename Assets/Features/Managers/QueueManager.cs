@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Features.Managers;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
@@ -23,9 +24,6 @@ struct QueueInfo
 
 public class QueueManager : MonoBehaviour
 {
-    [Header("Settings"), Range(1, 10), Tooltip("How fast the queuers move to their next position")]
-    public int SpeedOfQueuers;
-
     private Dictionary<Vector3Int, QueueInfo> _utilityQueue = new Dictionary<Vector3Int, QueueInfo>();
     private Dictionary<Vector3Int, float> _queueProgression = new Dictionary<Vector3Int, float>();
 
@@ -41,8 +39,8 @@ public class QueueManager : MonoBehaviour
     /// <returns>True if there are queuers at the specified utility position, false otherwise.</returns>
     public bool HasQueuers(Vector3Int utilityPos)
     {
-        if (UtilityQueue.ContainsKey(utilityPos))
-            return UtilityQueue[utilityPos].inQueue.Count > 0;
+        if (_utilityQueue.ContainsKey(utilityPos))
+            return _utilityQueue[utilityPos].inQueue.Count > 0;
         else return false;
     }
 
@@ -55,12 +53,12 @@ public class QueueManager : MonoBehaviour
         if (!_utilityQueue.ContainsKey(utilityPos))
             return;
 
-        QueueInfo queueInfo = UtilityQueue[utilityPos];
+        QueueInfo queueInfo = _utilityQueue[utilityPos];
 
         List<PassengerBehaviour> passengerBehaviours = queueInfo.inQueue.ToList();
         passengerBehaviours.AddRange(queueInfo.joiningQueue.Keys);
 
-        UtilityQueue.Remove(utilityPos);
+        _utilityQueue.Remove(utilityPos);
         _queueProgression.Remove(utilityPos);
 
         foreach (PassengerBehaviour passenger in passengerBehaviours)
@@ -82,7 +80,7 @@ public class QueueManager : MonoBehaviour
         if (!_queueProgression.ContainsKey(utilityPos))
             _queueProgression.Add(utilityPos, 0);
 
-        if (UtilityQueue[utilityPos].inQueue.First().atCorrectPositionInQueue)
+        if (_utilityQueue[utilityPos].inQueue.First().atCorrectPositionInQueue)
         {
             _queueProgression[utilityPos] += speed * Time.deltaTime;
         }
@@ -96,38 +94,18 @@ public class QueueManager : MonoBehaviour
     /// <param name="utilityPos">The position of the utility in the queue.</param>
     public void RemoveFromQueue(Vector3Int utilityPos)
     {
-        PassengerBehaviour passengerBehaviour = UtilityQueue[utilityPos].inQueue.Dequeue();
-        StartCoroutine(UpdatePositionOfQueuers(utilityPos, passengerBehaviour.transform.position));
-        passengerBehaviour.ExecuteTasks();
+        PassengerBehaviour passengerRemovedFromQueue = _utilityQueue[utilityPos].inQueue.Dequeue();
+
+        int index = 0;
+        foreach (PassengerBehaviour passenger in _utilityQueue[utilityPos].inQueue)
+        {
+            MoveToPositionInQueue(utilityPos, index, passenger, true);
+            index++;
+        }
+
+        passengerRemovedFromQueue.ExecuteTasks();
 
         _queueProgression[utilityPos] = 0;
-    }
-
-    /// <summary>
-    /// Updates the position of the queuers in the queue.
-    /// </summary>
-    /// <param name="utilityPos">The position of the utility in the queue.</param>
-    /// <param name="originPos">The position of the utility.</param>
-    IEnumerator UpdatePositionOfQueuers(Vector3Int utilityPos, Vector3 originPos)
-    {
-        List<PassengerBehaviour> passengersInQueue = _utilityQueue[utilityPos].InQueue.ToList();
-        Vector3 posToMoveTo = originPos;
-        for (int i = 0; i < passengersInQueue.Count; i++)
-        {
-            Vector3 currentPos = passengersInQueue[i].transform.position;
-            while (passengersInQueue[i].transform.position != posToMoveTo)
-            {
-                PassengerBehaviour passenger = passengersInQueue[i];
-                Vector3 currentPosition = passenger.transform.position;
-                Vector3 targetPosition = posToMoveTo;
-                float step = SpeedOfQueuers * Time.deltaTime;
-
-                passenger.transform.position = Vector3.MoveTowards(currentPosition, targetPosition, step);
-
-                yield return null;
-            }
-            posToMoveTo = currentPos;
-        }
     }
 
     /// <summary>
@@ -153,7 +131,13 @@ public class QueueManager : MonoBehaviour
                 return item;
             }
 
-            int totalAmountOfQueuers = UtilityQueue[item].inQueue.Count + UtilityQueue[item].joiningQueue.Count;
+            int totalAmountOfQueuers = _utilityQueue[item].inQueue.Count + _utilityQueue[item].joiningQueue.Count;
+            if (_utilityQueue[item].inQueue.Count == _utilityQueue[item].queuePositions.Count)
+            {
+                print("Queue is full, skipping...");
+                continue;
+            }
+
             if (totalAmountOfQueuers < currentBestCount)
             {
                 currentBestCount = totalAmountOfQueuers;
@@ -171,9 +155,15 @@ public class QueueManager : MonoBehaviour
     {
         Vector3Int optimalQueue = GetOptimalQueue(utilityPos);
 
-        Vector3Int beginOfQueue = UtilityQueue[optimalQueue].queuePositions.LastOrDefault();
+        if (optimalQueue == Vector3Int.zero)
+        {
+            print("No optimal queue found");
+            return;
+        }
 
-        UtilityQueue[optimalQueue].joiningQueue.Add(passenger, OnQueueChanged);
+        Vector3Int beginOfQueue = _utilityQueue[optimalQueue].queuePositions.Last();
+
+        _utilityQueue[optimalQueue].joiningQueue.Add(passenger, OnQueueChanged);
 
         OnQueueChanged.Invoke(beginOfQueue, optimalQueue);
     }
@@ -185,31 +175,21 @@ public class QueueManager : MonoBehaviour
     /// <param name="passenger">The passenger that has reached the queue.</param>
     public void ReachedQueue(Vector3Int utilityPos, PassengerBehaviour passenger)
     {
-        UtilityQueue.TryGetValue(utilityPos, out QueueInfo queueInfo);
+        _utilityQueue.TryGetValue(utilityPos, out QueueInfo queueInfo);
         queueInfo.joiningQueue.Remove(passenger);
         queueInfo.inQueue.Enqueue(passenger);
-        StartCoroutine(MoveToPositionInQueue(utilityPos, UtilityQueue[utilityPos].inQueue.Count - 1, passenger));
+        MoveToPositionInQueue(utilityPos, _utilityQueue[utilityPos].inQueue.Count - 1, passenger);
     }
 
-    IEnumerator MoveToPositionInQueue(Vector3Int utilityPosition, int positionInQueue, PassengerBehaviour passenger)
+    /// <summary>
+    /// Moves the passenger to the specified position in the queue.
+    /// </summary>
+    /// <param name="utilityPosition">The position of the utility in the queue.</param>
+    /// <param name="positionInQueue">The position of the passenger in the queue.</param>
+    /// <param name="passenger">The passenger to move.</param>
+    public void MoveToPositionInQueue(Vector3Int utilityPosition, int positionInQueue, PassengerBehaviour passenger, bool alreadyInQueue = false)
     {
-        passenger.atCorrectPositionInQueue = false;
-
-        int totalQueueLength = UtilityQueue[utilityPosition].queuePositions.Count - 1;
-        List<Vector3Int> Path = UtilityQueue[utilityPosition].queuePositions.GetRange(positionInQueue, totalQueueLength - positionInQueue);
-        Path.Reverse();
-        foreach (var item in Path)
-        {
-            print(item);
-            while (Vector3.Distance(item, passenger.transform.position) > 0.1f)
-            {
-                Vector3 direction = item - passenger.transform.position;
-                passenger.transform.position += queueProgressionSpeed * Time.deltaTime * direction.normalized;
-                yield return new WaitForEndOfFrame();
-            }
-            passenger.transform.position = item;
-        }
-
-        passenger.atCorrectPositionInQueue = true;
+        List<Vector3Int> queuePositions = _utilityQueue[utilityPosition].queuePositions;
+        passenger.MoveToTarget(queuePositions, positionInQueue, alreadyInQueue);
     }
 }

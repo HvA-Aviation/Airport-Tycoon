@@ -10,7 +10,13 @@ public class PaxSpawner : MonoBehaviour
 
     private void Awake() => _spawnRate = _defaultSpawnRate;
 
-    private void Start() => StartCoroutine(SpawnPassengers());
+    // private void Start() => StartCoroutine(SpawnPassengers());
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.H))
+            StartCoroutine(SpawnPassengers());
+    }
 
     public void SetSpawnTime(float rateMultiplier, bool resetSpawnRate)
     {
