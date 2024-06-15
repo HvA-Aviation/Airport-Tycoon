@@ -22,6 +22,7 @@ public class PassengerBehaviour : MonoBehaviour
     {
         queueManager = GameManager.Instance.QueueManager;
         gridManager = GameManager.Instance.GridManager;
+        transform.position = gridManager.GetPaxSpawnPoint();
         AssignRandomTasks();
         ExecuteTasks();
     }
@@ -110,8 +111,6 @@ public class PassengerBehaviour : MonoBehaviour
                 rotationOffset = Vector3Int.right;
                 break;
         }
-
-        target.z = 0;
 
         _npcController.SetTarget(
         target + rotationOffset,

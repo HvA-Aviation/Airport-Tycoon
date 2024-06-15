@@ -49,6 +49,7 @@ public class GridManager : MonoBehaviour
 
     public Dictionary<Vector3Int, List<Vector3Int>> GetUtilities(Utilities utilityType) => _grid.GetUtilities(utilityType);
     public int GetRotation(Vector3Int position) => _grid.GetRotation(position);
+    public Vector3Int GetPaxSpawnPoint() => _grid.PaxSpawnPosition;
 
     private void OnApplicationQuit()
     {

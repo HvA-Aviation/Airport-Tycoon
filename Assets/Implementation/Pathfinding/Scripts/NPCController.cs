@@ -94,7 +94,7 @@ namespace Implementation.Pathfinding.Scripts
             // Get the start and end nodes from the node grid
             nodeGrid.TryGetValue(new Vector3Int(Mathf.RoundToInt(transform.position.x),
                                                 Mathf.RoundToInt(transform.position.y),
-                                                Mathf.RoundToInt(transform.position.z)),
+                                                0),
                                                 out Node _startNode);
 
             nodeGrid.TryGetValue(destination, out Node _endNode);
