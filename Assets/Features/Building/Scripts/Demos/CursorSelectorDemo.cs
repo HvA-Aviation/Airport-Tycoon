@@ -26,9 +26,15 @@ namespace Features.Building.Scripts.Demos
         {
             _dropdown.options.Clear();
 
-            foreach (BuildingStatus buildingStatus in GameManager.Instance.BuildingManager.BuildingStatuses.Where(x => x.IsUnlocked))
+            foreach (BuildingStatus buildingStatus in GameManager.Instance.BuildingManager.BuildingStatuses.Where(x =>
+                         x.IsUnlocked))
             {
-                _dropdown.options.Add(new TMP_Dropdown.OptionData(buildingStatus.BuildableObject.name, buildingStatus.BuildableObject.BuildItems[0].Tile.sprite));
+                string addition = buildingStatus.BuildableObject.Price > 0
+                    ? " [" + buildingStatus.BuildableObject.Price + "]"
+                    : "";
+
+                _dropdown.options.Add(new TMP_Dropdown.OptionData(buildingStatus.BuildableObject.name + addition,
+                    buildingStatus.BuildableObject.BuildItems[0].Tile.sprite));
                 _dropdown.value = 0;
                 _dropdown.RefreshShownValue();
             }

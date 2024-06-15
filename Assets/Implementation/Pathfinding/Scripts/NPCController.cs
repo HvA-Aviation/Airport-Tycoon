@@ -1,7 +1,7 @@
+using Features.Managers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Features.Managers;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.VisualScripting;
@@ -22,6 +22,11 @@ namespace Implementation.Pathfinding.Scripts
         private Vector3Int _endNode;
         private Node[] open, closed;
 
+        private void OnEnable()
+        {
+            _grid = GameManager.Instance.GridManager.Grid;
+        }
+
         /// <summary>
         /// Use this function to set the target of an NPC
         /// </summary>
@@ -35,7 +40,6 @@ namespace Implementation.Pathfinding.Scripts
             _backtrackedPath.Clear();
 
             _endNode = new Vector3Int(position.x, position.y, 0);
-
             FindPath(_endNode, GameManager.Instance.GridManager.NodeGrid);
             StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached, onTaskUnreachable));
         }

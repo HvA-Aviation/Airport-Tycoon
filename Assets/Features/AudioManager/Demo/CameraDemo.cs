@@ -1,3 +1,4 @@
+using Features.Managers;
 using UnityEngine;
 
 namespace Features.AudioManager.Demo
@@ -14,8 +15,8 @@ namespace Features.AudioManager.Demo
             if (Input.GetKey(KeyCode.A)) xMovement--;
 
             int yMovement = 0;
-            if(Input.GetKey(KeyCode.W)) yMovement++;
-            if(Input.GetKey(KeyCode.S)) yMovement--;
+            if (Input.GetKey(KeyCode.W)) yMovement++;
+            if (Input.GetKey(KeyCode.S)) yMovement--;
 
             _controller.Move(new Vector2(xMovement, yMovement) * Time.deltaTime);
 

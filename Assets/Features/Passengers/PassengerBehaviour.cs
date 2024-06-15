@@ -17,7 +17,6 @@ public class PassengerBehaviour : MonoBehaviour
 
     public bool atCorrectPositionInQueue = false;
 
-    // Start is called before the first frame update
     void OnEnable()
     {
         queueManager = GameManager.Instance.QueueManager;
@@ -32,6 +31,8 @@ public class PassengerBehaviour : MonoBehaviour
     /// </summary>
     void AssignRandomTasks()
     {
+        //TODO: Make a system that randomly assigns tasks when more utilities are added
+
         //Security is required
         tasksToDo.Enqueue(Utilities.CheckIn);
         tasksToDo.Enqueue(Utilities.Security);
@@ -39,8 +40,9 @@ public class PassengerBehaviour : MonoBehaviour
     }
 
     /// <summary>
-    /// Execute the tasks that are assigned to a passenger
+    /// Executes the tasks assigned to the passenger.
     /// </summary>
+    /// <param name="dequeue">Indicates whether to dequeue the next task from the task queue.</param>
     public void ExecuteTasks(bool dequeue = true)
     {
         if (tasksToDo.Count == 0)
@@ -73,6 +75,9 @@ public class PassengerBehaviour : MonoBehaviour
             (target, utilityPos) => { UpdatePath(target, utilityPos); });
     }
 
+    /// <summary>
+    /// Handles the completion of tasks for the passenger.
+    /// </summary>
     private void TasksCompleted()
     {
         switch (_currentUtility)

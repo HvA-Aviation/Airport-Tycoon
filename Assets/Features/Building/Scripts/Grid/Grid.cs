@@ -1,12 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 using Features.Building.Scripts.Datatypes;
 using Features.EventManager;
 using Features.Managers;
 using Features.Workers.TaskCommands;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TileData = Features.Building.Scripts.Datatypes.TileData;
@@ -88,10 +86,24 @@ namespace Features.Building.Scripts.Grid
         public float GetUtilityWorkLoad(Vector3Int target)
         {
             int index = Get(target);
-            if (index == -1)
+            if (index == BuildableAtlas.Empty)
                 return 0;
 
             return _atlas.Items[index].WorkLoad;
+        }
+
+        /// <summary>
+        /// Checks if work needs to be done 
+        /// </summary>
+        /// <param name="target">Position of the utility</param>
+        /// <returns>Workload as a float</returns>
+        public bool IsWorkDone(Vector3Int target)
+        {
+            int index = Get(target);
+            if (index == -1)
+                return true;
+
+            return _atlas.Items[index].WorkLoad == 0;
         }
 
         /// <summary>
@@ -185,7 +197,7 @@ namespace Features.Building.Scripts.Grid
 
         public bool BuildTile(Vector3Int gridVector, float speed)
         {
-            if (Get(gridVector) == -1)
+            if (IsEmpty(gridVector))
                 return true;
 
             List<Vector3Int> buildTiles = new List<Vector3Int>() { gridVector };
@@ -205,7 +217,7 @@ namespace Features.Building.Scripts.Grid
             foreach (Vector3Int tile in buildTiles)
             {
                 _cells[tile.x, tile.y, tile.z].CurrentWorkLoad = Mathf.Clamp(
-                    _cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * Time.deltaTime, 0,
+                    _cells[tile.x, tile.y, tile.z].CurrentWorkLoad + speed * GameManager.Instance.GameTimeManager.DeltaTime, 0,
                     _cells[tile.x, tile.y, tile.z].WorkLoad);
 
                 CellData cellData = _cells[tile.x, tile.y, tile.z];
@@ -281,7 +293,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if setting was a success</returns>
         public bool Set(Vector3Int gridVector, int buildIndex)
         {
-            if (Get(gridVector) == -1)
+            if (IsEmpty(gridVector))
             {
                 CellData cellData = _cells[gridVector.x, gridVector.y, gridVector.z];
 
@@ -342,7 +354,7 @@ namespace Features.Building.Scripts.Grid
             //check if all the positions are available
             foreach (Vector3Int position in gridVectors)
             {
-                if (Get(position) != -1)
+                if (IsEmpty(position))
                     return false;
             }
 
@@ -434,7 +446,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if remove was successful</returns>
         public bool Remove(Vector3Int gridVector)
         {
-            if (!OutOfBounds(gridVector) && Get(gridVector) != -1)
+            if (!OutOfBounds(gridVector) && IsEmpty(gridVector))
             {
                 // 9 is the pax spawn point, this needs to be reworked after demo
                 if (Get(gridVector) == 9) return false;
@@ -495,7 +507,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if empty</returns>
         public bool IsEmpty(Vector3Int gridVector)
         {
-            return Get(gridVector) == -1;
+            return Get(gridVector) == BuildableAtlas.Empty;
         }
 
         /// <summary>

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Couch
   m_EditorClassIdentifier: 
   Name: Couch
+  Price: 10
   BrushType: 0
   BuildItems:
   - <Tile>k__BackingField: {fileID: 11400000, guid: 6c780cbf86e291d499131d526e833735,

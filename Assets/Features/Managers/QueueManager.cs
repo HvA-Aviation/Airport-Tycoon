@@ -23,7 +23,10 @@ struct QueueInfo
 
 public class QueueManager : MonoBehaviour
 {
-    private Dictionary<Vector3Int, QueueInfo> UtilityQueue = new Dictionary<Vector3Int, QueueInfo>();
+    [Header("Settings"), Range(1, 10), Tooltip("How fast the queuers move to their next position")]
+    public int SpeedOfQueuers;
+
+    private Dictionary<Vector3Int, QueueInfo> _utilityQueue = new Dictionary<Vector3Int, QueueInfo>();
     private Dictionary<Vector3Int, float> _queueProgression = new Dictionary<Vector3Int, float>();
 
     [Header("Settings")]
@@ -32,8 +35,10 @@ public class QueueManager : MonoBehaviour
     public float queueProgressionSpeed = 1;
 
     /// <summary>
-    /// Function that returns true or false wether the queue exists and has passengers queueing
+    /// Checks if there are any queuers at the specified utility position.
     /// </summary>
+    /// <param name="utilityPos">The position of the utility to check.</param>
+    /// <returns>True if there are queuers at the specified utility position, false otherwise.</returns>
     public bool HasQueuers(Vector3Int utilityPos)
     {
         if (UtilityQueue.ContainsKey(utilityPos))
@@ -41,9 +46,13 @@ public class QueueManager : MonoBehaviour
         else return false;
     }
 
+    /// <summary>
+    /// Removes a queue at the specified utility position.
+    /// </summary>
+    /// <param name="utilityPos">The position of the utility.</param>
     public void RemoveQueue(Vector3Int utilityPos)
     {
-        if (!UtilityQueue.ContainsKey(utilityPos))
+        if (!_utilityQueue.ContainsKey(utilityPos))
             return;
 
         QueueInfo queueInfo = UtilityQueue[utilityPos];
@@ -60,9 +69,14 @@ public class QueueManager : MonoBehaviour
         }
     }
 
+
     /// <summary>
-    /// Function for guard to start letting people through a queue
+    /// Works on the queue at the specified utility position.
     /// </summary>
+    /// <param name="utilityPos">The position of the utility.</param>
+    /// <param name="speed">The speed at which the work is being done.</param>
+    /// <param name="workLoad">The amount of work required to complete the queue.</param>
+    /// <returns>True if the queue is completed, false otherwise.</returns>
     public bool WorkOnQueue(Vector3Int utilityPos, float speed, float workLoad)
     {
         if (!_queueProgression.ContainsKey(utilityPos))
@@ -77,9 +91,9 @@ public class QueueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Function to remove a passenger from the queue, also moves the queue along
+    /// Removes a passenger from the queue at the specified utility position.
     /// </summary>
-    /// <param name="utilityPos"></param>
+    /// <param name="utilityPos">The position of the utility in the queue.</param>
     public void RemoveFromQueue(Vector3Int utilityPos)
     {
         PassengerBehaviour passengerBehaviour = UtilityQueue[utilityPos].inQueue.Dequeue();
@@ -90,18 +104,26 @@ public class QueueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Function that handles moving the passengers in a queue to move when someone leaves the queue
+    /// Updates the position of the queuers in the queue.
     /// </summary>
+    /// <param name="utilityPos">The position of the utility in the queue.</param>
+    /// <param name="originPos">The position of the utility.</param>
     IEnumerator UpdatePositionOfQueuers(Vector3Int utilityPos, Vector3 originPos)
     {
-        List<PassengerBehaviour> passengersInQueue = UtilityQueue[utilityPos].inQueue.ToList();
+        List<PassengerBehaviour> passengersInQueue = _utilityQueue[utilityPos].InQueue.ToList();
         Vector3 posToMoveTo = originPos;
         for (int i = 0; i < passengersInQueue.Count; i++)
         {
             Vector3 currentPos = passengersInQueue[i].transform.position;
             while (passengersInQueue[i].transform.position != posToMoveTo)
             {
-                passengersInQueue[i].transform.position = Vector3.MoveTowards(passengersInQueue[i].transform.position, posToMoveTo, 10f * Time.deltaTime);
+                PassengerBehaviour passenger = passengersInQueue[i];
+                Vector3 currentPosition = passenger.transform.position;
+                Vector3 targetPosition = posToMoveTo;
+                float step = SpeedOfQueuers * Time.deltaTime;
+
+                passenger.transform.position = Vector3.MoveTowards(currentPosition, targetPosition, step);
+
                 yield return null;
             }
             posToMoveTo = currentPos;
@@ -109,7 +131,7 @@ public class QueueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Function to get the utility that has the lowest amount of queuers
+    /// Returns the optimal queue to join based on the amount of queuers in the queue.
     /// </summary>
     /// <returns>A vector3Int that references to the position of the utility</returns>
     public Vector3Int GetOptimalQueue(Dictionary<Vector3Int, List<Vector3Int>> utilityList)
@@ -119,7 +141,7 @@ public class QueueManager : MonoBehaviour
 
         foreach (var item in utilityList.Keys)
         {
-            if (!UtilityQueue.ContainsKey(item))
+            if (!_utilityQueue.ContainsKey(item))
             {
                 QueueInfo queueInfo = new QueueInfo
                 {
@@ -127,7 +149,7 @@ public class QueueManager : MonoBehaviour
                     joiningQueue = new Dictionary<PassengerBehaviour, Action<Vector3Int, Vector3Int>>(),
                     queuePositions = utilityList[item]
                 };
-                UtilityQueue.TryAdd(item, queueInfo);
+                _utilityQueue.TryAdd(item, queueInfo);
                 return item;
             }
 
@@ -142,7 +164,7 @@ public class QueueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Assign a passenger to a utility and invoke its onQueueChanged action
+    /// Assigns a passenger to the optimal queue.
     /// </summary>
     /// <param name="OnQueueChanged">This usually represents a pathfinding funciton</param>
     public void AssignToUtility(Dictionary<Vector3Int, List<Vector3Int>> utilityPos, PassengerBehaviour passenger, Action<Vector3Int, Vector3Int> OnQueueChanged)
@@ -157,8 +179,10 @@ public class QueueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Function that notifies that the passenger has succesfully arrived at the queue.
+    /// Called when a passenger has reached the queue.
     /// </summary>
+    /// <param name="utilityPos">The position of the utility.</param>
+    /// <param name="passenger">The passenger that has reached the queue.</param>
     public void ReachedQueue(Vector3Int utilityPos, PassengerBehaviour passenger)
     {
         UtilityQueue.TryGetValue(utilityPos, out QueueInfo queueInfo);
