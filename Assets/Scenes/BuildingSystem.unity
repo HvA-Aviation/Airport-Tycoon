@@ -2016,6 +2016,11 @@ MonoBehaviour:
   _gridSize: {x: 50, y: 40, z: 3}
   _cellSize: 1
   _buildingStaringOpacity: 0.4
+  neighboursToCheckForQueue:
+  - {x: 1, y: 0, z: 0}
+  - {x: 0, y: 1, z: 0}
+  - {x: -1, y: 0, z: 0}
+  - {x: 0, y: -1, z: 0}
 --- !u!4 &327049623
 Transform:
   m_ObjectHideFlags: 0
