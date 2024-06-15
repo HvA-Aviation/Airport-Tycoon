@@ -31,6 +31,7 @@ namespace Features.Building.Scripts.Grid
 
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
+        [SerializeField] List<Vector3Int> neighboursToCheckForQueue;
         private Vector3Int _gridOffset;
         private Vector3Int _paxSpawnPos;
         private List<TileChangeData> _gridChangeBuffer = new List<TileChangeData>();
@@ -374,10 +375,29 @@ namespace Features.Building.Scripts.Grid
                 }
 
                 CellData cellData = _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z];
-
                 cellData.Tile = Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile);
                 cellData.Rotation = rotation;
                 cellData.WorkLoad = tileData.WorkLoad;
+
+                // Check when trying to placing queue next to something thats not a queue
+                if (_atlas.Items[cellData.Tile].BehaviorType == BehaviourType.Queue)
+                {
+                    for (int j = 0; j < neighboursToCheckForQueue.Count; j++)
+                    {
+                        Vector3Int posToCheck = gridVectors[i] + neighboursToCheckForQueue[j];
+
+                        if (Get(posToCheck) != BuildableAtlas.Empty)
+                        {
+                            BehaviourType behaviorType = _atlas.Items[Get(posToCheck)].BehaviorType;
+                            UtilityType utilityType = _atlas.Items[Get(posToCheck)].UtilityType;
+                            if (behaviorType == BehaviourType.Queue || utilityType != UtilityType.None)
+                                break;
+                        }
+
+                        if (j == neighboursToCheckForQueue.Count - 1)
+                            return false;
+                    }
+                }
 
                 _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
 
@@ -426,7 +446,6 @@ namespace Features.Building.Scripts.Grid
                 {
                     Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
                     int index = Get(utilityLocation);
-                    if (index == 1) return;
                     UtilityType utilityType = _atlas.Items[index].UtilityType;
                     _utilityLocations[utilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
 
