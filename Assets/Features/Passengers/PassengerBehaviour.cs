@@ -56,36 +56,36 @@ public class PassengerBehaviour : MonoBehaviour
         int start = alreadyInQueue ? currentPathIndex : totalQueueLength;
         int end = positionInQueue;
 
+        print("end = " + end);
+
         int pathIndex = start;
 
         currentPathIndex = pathIndex;
 
-        while (pathIndex != end && !atCorrectPositionInQueue)
+        while (true)
         {
+            if (pathIndex < end) break;
 
-            if (pathIndex < 0 || pathIndex > totalQueueLength)
+            if (Vector3.Distance(queuePositions[pathIndex], transform.position) > distanceToNextPosComplete)
             {
-                print("Path index out of bounds" + pathIndex + " " + totalQueueLength);
-                yield break;
-            }
+                Vector3 direction = queuePositions[pathIndex] - transform.position;
+                Vector3 queueSpeed = GameManager.Instance.QueueManager.queueProgressionSpeed *
+                                     GameManager.Instance.GameTimeManager.DeltaTime *
+                                     direction.normalized;
 
-            if (Vector3.Distance(queuePositions[pathIndex], transform.position) < distanceToNextPosComplete)
+                transform.position += queueSpeed;
+            }
+            else
             {
                 pathIndex--;
                 currentPathIndex = pathIndex;
             }
 
-            Vector3 direction = queuePositions[pathIndex] - transform.position;
-            Vector3 queueSpeed = GameManager.Instance.QueueManager.queueProgressionSpeed *
-                                 GameManager.Instance.GameTimeManager.DeltaTime *
-                                 direction.normalized;
-
-            transform.position += queueSpeed;
-
             yield return null;
         }
 
         atCorrectPositionInQueue = true;
+        yield return null;
     }
 
     /// <summary>

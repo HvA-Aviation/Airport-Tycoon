@@ -428,6 +428,24 @@ namespace Features.Building.Scripts.Grid
             return true;
         }
 
+        public void FinishQueue()
+        {
+            //TODO: rework to not use hard coded number
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(0, true);
+
+            Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
+            int index = Get(utilityLocation);
+            UtilityType utilityType = _atlas.Items[index].UtilityType;
+            _utilityLocations[utilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
+
+            if (utilityType == UtilityType.Security)
+                GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
+            else
+                GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(utilityLocation));
+
+            _tempQueuePositions.Clear();
+        }
+
         /// <summary>
         /// When a utility is placed, start building the queue
         /// </summary>
@@ -436,26 +454,12 @@ namespace Features.Building.Scripts.Grid
         private void HandleQueues(CellData cellData, List<Vector3Int> gridVectors)
         {
             TileData currentTileData = _atlas.Items[cellData.Tile];
-            // When a utility is placed, start building the queue, this needs to be reworked after demo
+
+            // When a utility is placed, start building the queue
             if (currentTileData.UtilityType != UtilityType.None)
             {
-                // If a previous made queue exists push it to the utility locations
-                // This needs to we reworked to a button or callback
-                // so that you dont have to place another utility to finish the queue
                 if (_tempQueuePositions.Count > 0)
-                {
-                    Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
-                    int index = Get(utilityLocation);
-                    UtilityType utilityType = _atlas.Items[index].UtilityType;
-                    _utilityLocations[utilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
-
-                    if (utilityType == UtilityType.Security)
-                        GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
-                    else
-                        GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(utilityLocation));
-                }
-
-                _tempQueuePositions.Clear();
+                    FinishQueue();
 
                 if (!_tempQueuePositions.ContainsKey(gridVectors[0]))
                     _tempQueuePositions.Add(gridVectors[0], new List<Vector3Int>());

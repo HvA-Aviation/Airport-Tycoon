@@ -33,10 +33,13 @@ namespace Features.Managers
             GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeBrush);
         }
 
-        public void ChangeSelectedBuildableLocked(int index)
+        public void ChangeSelectedBuildableLocked(int index, bool switchToDefaultTile = false)
         {
             CurrentBuildableObject = BuildingStatuses[index].BuildableObject;
             GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeBrush);
+
+            if (switchToDefaultTile)
+                GameManager.Instance.EventManager.TriggerEvent(EventId.OnUnlockBuilding);
         }
 
         public void UnlockBuilding(BuildableObject buildableObject)
