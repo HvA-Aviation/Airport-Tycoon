@@ -77,7 +77,9 @@ namespace Features.Building.Scripts.Grid
         /// <returns>A list with all the utilities</returns>
         public Dictionary<Vector3Int, List<Vector3Int>> GetUtilities(UtilityType utilityType)
         {
-            return _utilityLocations[utilityType];
+            Dictionary<Vector3Int, List<Vector3Int>> value;
+            _utilityLocations.TryGetValue(utilityType, out value);
+            return value;
         }
 
         /// <summary>
@@ -175,7 +177,6 @@ namespace Features.Building.Scripts.Grid
         /// </summary>
         private void UpdateMap()
         {
-            bool traversableChanged = false;
             foreach (TileChangeData tileChangeData in _gridChangeBuffer)
             {
                 _tilemap.SetTile(tileChangeData, true);
@@ -475,6 +476,12 @@ namespace Features.Building.Scripts.Grid
                 queuePosition.z = 0;
                 _tempQueuePositions[utilityLocation].Add(queuePosition);
             }
+        }
+
+        public void SwitchToQueueEditorExternal(Vector3Int selectedUtility)
+        {
+            CellData cellData = _cells[selectedUtility.x, selectedUtility.y, selectedUtility.z];
+            HandleQueues(cellData, new List<Vector3Int> { selectedUtility });
         }
 
         /// <summary>

@@ -6,7 +6,7 @@ using Features.Managers;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
-struct QueueInfo
+public struct QueueInfo
 {
     public Queue<PassengerBehaviour> inQueue;
     public Dictionary<PassengerBehaviour, Action<Vector3Int, Vector3Int>> joiningQueue;
@@ -31,6 +31,21 @@ public class QueueManager : MonoBehaviour
     [Tooltip("Speed at which the queuers move to their next position in queue")]
     [Range(1, 10)]
     public float queueProgressionSpeed = 1;
+
+    public QueueInfo TryGetQueue(Vector3Int utilityPosition)
+    {
+        QueueInfo queueInfo = new QueueInfo();
+        try
+        {
+            _utilityQueue.TryGetValue(utilityPosition, out queueInfo);
+        }
+        catch (KeyNotFoundException)
+        {
+            Console.WriteLine($"Key {utilityPosition} not found");
+        }
+
+        return queueInfo;
+    }
 
     /// <summary>
     /// Checks if there are any queuers at the specified utility position.
