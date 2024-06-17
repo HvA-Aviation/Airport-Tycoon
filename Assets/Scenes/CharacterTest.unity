@@ -716,8 +716,6 @@ MonoBehaviour:
   - {fileID: 1806595822, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
   - {fileID: 2039641586, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
   - {fileID: 495715923, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
-  - {fileID: 1981901389, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
-  - {fileID: -356782805, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
   _body:
   - {fileID: -14443666, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
   - {fileID: 1670359494, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
