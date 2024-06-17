@@ -32,11 +32,19 @@ namespace Features.Building.Scripts.Grid
             GameManager.Instance.EventManager.Subscribe(EventId.OnChangeColorTile, AddTileColorData);
         }
 
+        /// <summary>
+        /// Add the update information in a buffer to be changed later
+        /// </summary>
+        /// <param name="eventArgs">Data about the update</param>
         private void AddTileUpdateData(EventArgs eventArgs)
         {
             GridChangeBuffer.Add(eventArgs as TileUpdateData);
         }
 
+        /// <summary>
+        /// Add the color update information in a buffer to be changed later
+        /// </summary>
+        /// <param name="eventArgs">Data about the color update</param>
         private void AddTileColorData(EventArgs eventArgs)
         {
             GridColorBuffer.Add(eventArgs as TileColorData);

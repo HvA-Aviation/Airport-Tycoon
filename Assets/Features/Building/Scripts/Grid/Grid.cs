@@ -148,6 +148,12 @@ namespace Features.Building.Scripts.Grid
             }
         }
 
+        /// <summary>
+        /// Used by a worker when they are at a build position. This updates the data and enables the utilities when done
+        /// </summary>
+        /// <param name="gridVector">Build position</param>
+        /// <param name="speed">Build speed / work load</param>
+        /// <returns></returns>
         public bool BuildTile(Vector3Int gridVector, float speed)
         {
             if (IsEmpty(gridVector))
@@ -343,22 +349,22 @@ namespace Features.Building.Scripts.Grid
                     group = new List<Vector3Int>() { gridVector };
 
                 //Remove from array
-                foreach (Vector3Int item in group)
+                foreach (Vector3Int position in group)
                 {
-                    CellData cell = _cells[item.x, item.y, item.z];
+                    CellData cell = _cells[position.x, position.y, position.z];
                     UtilityType type = _atlas.Items[cell.Tile].UtilityType;
 
                     if (type != UtilityType.None)
                     {
-                        _utilityLocations[type].Remove(item);
-                        GameManager.Instance.QueueManager.RemoveQueue(item);
+                        _utilityLocations[type].Remove(position);
+                        GameManager.Instance.QueueManager.RemoveQueue(position);
                     }
 
-                    _cells[item.x, item.y, item.z].Clear();
+                    _cells[position.x, position.y, position.z].Clear();
                     
                     GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
                     {
-                        Position = item,
+                        Position = position,
                         Tile = null,
                     });
                 }

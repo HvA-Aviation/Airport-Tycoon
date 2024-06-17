@@ -77,7 +77,6 @@ namespace Brushes
                 }
 
                 Rotation %= 4;
-                Debug.Log(Rotation);
             }
         }
 
