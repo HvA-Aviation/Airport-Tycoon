@@ -3056,7 +3056,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &431466472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5362,8 +5362,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7ed88ef06cb434fbfc495e285b7d87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _daysInAMonth: 5
+  _daysInAPeriod: 5
   _secondsInADay: 5
+  _periodsInAYear: 5
+  _periodNames:
+  - Winter
+  - Autumn
+  - Summer
+  - Something
 --- !u!1 &836799825
 GameObject:
   m_ObjectHideFlags: 0
@@ -11071,7 +11077,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}

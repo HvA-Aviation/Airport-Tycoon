@@ -10,11 +10,11 @@ public class Employee : MonoBehaviour
     public int EmployeeID { get; private set; }
     public EmployeeTypes EmployeeType { get; private set; }    
 
-    private void OnEnable()
+    public void SetEmployeeSettings()
     {
         Name = StaffNames.GetRandomFirstName() + " " + StaffNames.GetRandomLastName();
         SalaryAmount = Random.Range(_minimumSalary, _maximumSalary);
-    }       
+    }
 
     public void SetEmployeeType(EmployeeTypes type) => EmployeeType = type;
 

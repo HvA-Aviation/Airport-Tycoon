@@ -47,9 +47,7 @@ public class SelectStaffTypeDemo : MonoBehaviour
     public void Hire()
     {
         GameManager.Instance.StaffManager.HireEmployee(_employeeTypeToHire);
-        if(_nHiredEmployees == GameManager.Instance.StaffManager.Employees.Count) return;
 
-        _nHiredEmployees++;
         string name = GameManager.Instance.StaffManager.GetEmployeeName(GameManager.Instance.StaffManager.LastEmployeeID);
 
         GameObject temp = Instantiate(_listObject, _parent);
@@ -59,7 +57,6 @@ public class SelectStaffTypeDemo : MonoBehaviour
 
     public void Fire()
     {
-        _nHiredEmployees--;
         Event.Invoke();
         Event.RemoveAllListeners();
     }
