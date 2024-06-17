@@ -2,13 +2,10 @@ using Features.Building.Scripts.Datatypes;
 using Features.EventManager;
 using Features.Managers;
 using Features.Workers.TaskCommands;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using TileUpdateData = Features.Building.Scripts.Datatypes.TileUpdateData;
-using TileData = Features.Building.Scripts.Datatypes.TileData;
 
 namespace Features.Building.Scripts.Grid
 {
@@ -310,7 +307,7 @@ namespace Features.Building.Scripts.Grid
                 BaseTile tileData = _atlas.GetTileData(tiles[i]);
                 int index = _atlas.GetTileDataIndex(tiles[i]);
 
-                Set(gridVectors[i], Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile), rotation, false);
+                Set(gridVectors[i], index, rotation, false);
             }
 
             GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));

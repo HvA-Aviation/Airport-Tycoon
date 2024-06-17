@@ -293,7 +293,7 @@ MonoBehaviour:
   <TaskManager>k__BackingField: {fileID: 1179201915}
   <BuildingManager>k__BackingField: {fileID: 940424793}
   <GridManager>k__BackingField: {fileID: 494020287}
-  <QueueManager>k__BackingField: {fileID: 0}
+  <QueueManager>k__BackingField: {fileID: 9991256}
   <StaffManager>k__BackingField: {fileID: 0}
   <FinanceManager>k__BackingField: {fileID: 1390492149}
   <GameTimeManager>k__BackingField: {fileID: 1446644599}
