@@ -12,7 +12,6 @@ public class SelectStaffTypeDemo : MonoBehaviour
     [SerializeField] private Transform _parent;
     [SerializeField] private GameObject _listObject;
 
-    private int _nHiredEmployees = 0;
     private Employee.EmployeeTypes _employeeTypeToHire;
 
     private string[] _employeeTypes;
