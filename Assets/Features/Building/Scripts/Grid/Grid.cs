@@ -88,7 +88,7 @@ namespace Features.Building.Scripts.Grid
             if (index == BuildableAtlas.Empty)
                 return 0;
 
-            return _atlas.Items[index].WorkLoad;
+            return _atlas.GetTileData(index).BuildLoad;
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Features.Building.Scripts.Grid
             if (index == -1)
                 return true;
 
-            return _atlas.Items[index].WorkLoad == 0;
+            return _atlas.GetTileData(index).BuildLoad == 0;
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Features.Building.Scripts.Grid
                             continue;
 
                         if (_cells[x, y, z].CurrentWorkLoad >= _cells[x, y, z].WorkLoad)
-                            unTraversable[x, y] = _atlas.Items[_cells[x, y, z].Tile].UnTraversable;
+                            unTraversable[x, y] = _atlas.GetTileData(_cells[x, y, z].Tile).UnTraversable;
                     }
                 }
             }
@@ -233,9 +233,9 @@ namespace Features.Building.Scripts.Grid
 
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
 
-                if (isFinished)
+                if (isFinished && _atlas.TileIsType<UtilityTile>(cellData.Tile))
                 {
-                    UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
+                    UtilityType utilityType = _atlas.GetTileData<UtilityTile>(cellData.Tile).UtilityType;
 
                     if (utilityType != UtilityType.None)
                     {
@@ -298,18 +298,18 @@ namespace Features.Building.Scripts.Grid
 
                 cellData.Tile = buildIndex;
                 cellData.Rotation = 0;
-                cellData.WorkLoad = _atlas.Items[buildIndex].WorkLoad;
+                cellData.WorkLoad = _atlas.GetTileData(buildIndex).BuildLoad;
 
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
 
-                Color color = _atlas.Items[buildIndex].Color;
+                Color color = _atlas.GetTileData(buildIndex).Color;
                 color.a = _buildingStaringOpacity;
 
                 _gridChangeBuffer.Add(new TileChangeData()
                 {
                     position = gridVector,
                     color = color,
-                    tile = _atlas.Items[buildIndex].Tile,
+                    tile = _atlas.GetTileData(buildIndex).Tile,
                     transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });
 
@@ -329,16 +329,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if setting was a success</returns>
         public bool Set(Vector3Int gridVector, Tile tile)
         {
-            //get tile from atlas
-            TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tile);
-
-            if (tileData == default)
-            {
-                Debug.LogError("Tile \"" + tile.name + "\" not found in Atlas");
-                return false;
-            }
-
-            return Set(gridVector, Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile));
+            return Set(gridVector, _atlas.GetTileDataIndex(tile));
         }
 
         /// <summary>
@@ -359,24 +350,18 @@ namespace Features.Building.Scripts.Grid
 
             for (int i = 0; i < gridVectors.Count; i++)
             {
-                //get tile from atlas
-                TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tiles[i]);
-
-                if (tileData == default)
-                {
-                    Debug.LogError("Tile \"" + tiles[i].name + "\" not found in Atlas");
-                    return false;
-                }
+                BaseTile tileData = _atlas.GetTileData(tiles[i]);
+                int index = _atlas.GetTileDataIndex(tiles[i]);
 
                 CellData cellData = _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z];
 
-                cellData.Tile = Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile);
+                cellData.Tile = index;
                 cellData.Rotation = rotation;
-                cellData.WorkLoad = tileData.WorkLoad;
+                cellData.WorkLoad = tileData.BuildLoad;
 
                 _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
 
-                Color color = _atlas.Items[cellData.Tile].Color;
+                Color color = tileData.Color;
                 color.a = _buildingStaringOpacity;
 
                 _gridChangeBuffer.Add(new TileChangeData()
@@ -412,7 +397,7 @@ namespace Features.Building.Scripts.Grid
                 foreach (Vector3Int item in group)
                 {
                     CellData cell = _cells[item.x, item.y, item.z];
-                    UtilityType type = _atlas.Items[cell.Tile].UtilityType;
+                    UtilityType type = _atlas.GetTileData<UtilityTile>(cell.Tile).UtilityType;
 
                     if (type != UtilityType.None)
                     {

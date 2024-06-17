@@ -8,17 +8,68 @@ namespace Features.Building.Scripts.Datatypes
     public class BuildableAtlas : ScriptableObject
     {
         public static readonly int Empty = -1;
-        public TileData[] Items;
+        //public TileData[] Items;
         
-        public TileEntry[] Tiles;
+        [SerializeField] public TileEntry[] Tiles;
+
+        public BaseTile GetTileData(int index)
+        {
+            return GetTileData<BaseTile>(index);
+        }
+        
+        public T GetTileData<T>(int index) where T: BaseTile
+        {
+            return (T)Tiles[index].TileData;
+        }
+        
+        public bool TileIsType<T>(int index) where T: BaseTile
+        {
+            return GetTileData(index) is T;
+        }
+
+        public BaseTile GetTileData(Tile tile)
+        {
+            return GetTileData<BaseTile>(tile);
+        }
+
+        public bool TileIsType<T>(Tile tile) where T: BaseTile
+        {
+            return GetTileData(tile) is T;
+        }
+
+        public T GetTileData<T>(Tile tile) where T: BaseTile
+        {
+            T tileData = GetTileData<T>(GetTileDataIndex(tile));
+            
+            if (tileData == default)
+            {
+                Debug.LogError("Tile \"" + tile.name + "\" not found in Atlas");
+                return default;
+            }
+            
+            return tileData;
+        }
+
+        public int GetTileDataIndex(Tile tile)
+        {
+            int tileData = Array.FindIndex(Tiles, x => x.TileData.Tile == tile);
+            
+            if (tileData < 0)
+            {
+                Debug.LogError("Tile \"" + tile.name + "\" not found in Atlas");
+                return default;
+            }
+            
+            return tileData;
+        }
     }
     
     [System.Serializable]
     public class TileEntry
     {
-        public TileType tileType;
+        public TileType TileType;
         [SerializeReference]
-        public BaseTile tile;
+        public BaseTile TileData;
     }
 
     public enum TileType
@@ -44,7 +95,7 @@ namespace Features.Building.Scripts.Datatypes
     [System.Serializable]
     public class UtilityTile : BaseTile
     {
-        public string UtilityType;
+        public UtilityType UtilityType;
         public int Workload;
     }
 }
