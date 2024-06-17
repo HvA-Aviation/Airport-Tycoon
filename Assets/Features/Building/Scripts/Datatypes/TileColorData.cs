@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Features.Building.Scripts.Datatypes
 {
-    public struct TileColorData
+    public class TileColorData : EventArgs
     {
         public Vector3Int Position;
-        public Color Color;
+        public float Progress;
     }
 }

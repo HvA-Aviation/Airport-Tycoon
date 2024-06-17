@@ -101,7 +101,9 @@ namespace Brushes
             }
 
             if (_grid.SetGroup(positions, indices, Rotation))
+            {
                 GameManager.Instance.FinanceManager.Balance.Subtract(price);
+            }
         }
     }
 }

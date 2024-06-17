@@ -48,7 +48,7 @@ namespace Features.Workers
         /// </summary>
         private void CheckTaskExists(Vector3Int target, Action onDone)
         {
-            if (GameManager.Instance.GridManager.Grid.IsEmpty(target)) 
+            if (GameManager.Instance.GridManager.Grid.IsEmpty(target))
                 onDone.Invoke();
         }
     }
