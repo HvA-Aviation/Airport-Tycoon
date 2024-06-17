@@ -36,7 +36,7 @@ MonoBehaviour:
       rid: 7365152698381369845
   - TileType: 0
     TileData:
-      rid: 7365152698381369846
+      rid: 7365152698381369852
   references:
     version: 2
     RefIds:
@@ -77,13 +77,6 @@ MonoBehaviour:
         Color: {r: 1, g: 1, b: 1, a: 1}
         BuildLoad: 2
         UnTraversable: 0
-    - rid: 7365152698381369846
-      type: {class: NormalTile, ns: Features.Building.Scripts.Datatypes, asm: Assembly-CSharp}
-      data:
-        Tile: {fileID: 11400000, guid: 9ec80e97310e10147a0331cc257d09ed, type: 2}
-        Color: {r: 1, g: 1, b: 1, a: 1}
-        BuildLoad: 2
-        UnTraversable: 0
     - rid: 7365152698381369848
       type: {class: UtilityTile, ns: Features.Building.Scripts.Datatypes, asm: Assembly-CSharp}
       data:
@@ -102,3 +95,10 @@ MonoBehaviour:
         UnTraversable: 0
         UtilityType: 3
         Workload: 2
+    - rid: 7365152698381369852
+      type: {class: NormalTile, ns: Features.Building.Scripts.Datatypes, asm: Assembly-CSharp}
+      data:
+        Tile: {fileID: 11400000, guid: 9ec80e97310e10147a0331cc257d09ed, type: 2}
+        Color: {r: 1, g: 1, b: 1, a: 1}
+        BuildLoad: 2
+        UnTraversable: 0

@@ -253,7 +253,6 @@ namespace Features.Building.Scripts.Grid
 
                 cellData.Tile = buildIndex;
                 cellData.Rotation = rotation;
-                cellData.Rotation = 0;
                 cellData.WorkLoad = _atlas.GetTileData(buildIndex).BuildLoad;
 
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
