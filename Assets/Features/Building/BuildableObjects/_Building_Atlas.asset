@@ -16,9 +16,27 @@ MonoBehaviour:
   - TileType: 0
     TileData:
       rid: 7365152698381369834
+  - TileType: 0
+    TileData:
+      rid: 7365152698381369839
+  - TileType: 0
+    TileData:
+      rid: 7365152698381369842
   - TileType: 1
     TileData:
       rid: 7365152698381369836
+  - TileType: 1
+    TileData:
+      rid: 7365152698381369848
+  - TileType: 1
+    TileData:
+      rid: 7365152698381369850
+  - TileType: 0
+    TileData:
+      rid: 7365152698381369845
+  - TileType: 0
+    TileData:
+      rid: 7365152698381369846
   references:
     version: 2
     RefIds:
@@ -37,4 +55,50 @@ MonoBehaviour:
         BuildLoad: 2
         UnTraversable: 0
         UtilityType: 2
+        Workload: 2
+    - rid: 7365152698381369839
+      type: {class: NormalTile, ns: Features.Building.Scripts.Datatypes, asm: Assembly-CSharp}
+      data:
+        Tile: {fileID: 11400000, guid: fbfe88272625d5c47979b613d9233838, type: 2}
+        Color: {r: 1, g: 1, b: 1, a: 1}
+        BuildLoad: 2
+        UnTraversable: 1
+    - rid: 7365152698381369842
+      type: {class: NormalTile, ns: Features.Building.Scripts.Datatypes, asm: Assembly-CSharp}
+      data:
+        Tile: {fileID: 11400000, guid: 188e4c7d9c6ce694a8392e304280d246, type: 2}
+        Color: {r: 1, g: 1, b: 1, a: 1}
+        BuildLoad: 2
+        UnTraversable: 0
+    - rid: 7365152698381369845
+      type: {class: NormalTile, ns: Features.Building.Scripts.Datatypes, asm: Assembly-CSharp}
+      data:
+        Tile: {fileID: 11400000, guid: 6c780cbf86e291d499131d526e833735, type: 2}
+        Color: {r: 1, g: 1, b: 1, a: 1}
+        BuildLoad: 2
+        UnTraversable: 0
+    - rid: 7365152698381369846
+      type: {class: NormalTile, ns: Features.Building.Scripts.Datatypes, asm: Assembly-CSharp}
+      data:
+        Tile: {fileID: 11400000, guid: 9ec80e97310e10147a0331cc257d09ed, type: 2}
+        Color: {r: 1, g: 1, b: 1, a: 1}
+        BuildLoad: 2
+        UnTraversable: 0
+    - rid: 7365152698381369848
+      type: {class: UtilityTile, ns: Features.Building.Scripts.Datatypes, asm: Assembly-CSharp}
+      data:
+        Tile: {fileID: 11400000, guid: a34c6e45faeba8a4c9340342d4aa948a, type: 2}
+        Color: {r: 1, g: 1, b: 1, a: 1}
+        BuildLoad: 2
+        UnTraversable: 0
+        UtilityType: 1
+        Workload: 2
+    - rid: 7365152698381369850
+      type: {class: UtilityTile, ns: Features.Building.Scripts.Datatypes, asm: Assembly-CSharp}
+      data:
+        Tile: {fileID: 11400000, guid: f31080f96096c074fb0adac6a5e51f4d, type: 2}
+        Color: {r: 1, g: 1, b: 1, a: 1}
+        BuildLoad: 2
+        UnTraversable: 0
+        UtilityType: 3
         Workload: 2
