@@ -153,7 +153,7 @@ namespace Features.Building.Scripts.Grid
         /// </summary>
         /// <param name="gridVector">Build position</param>
         /// <param name="speed">Build speed / work load</param>
-        /// <returns></returns>
+        /// <returns>Return if finised</returns>
         public bool BuildTile(Vector3Int gridVector, float speed)
         {
             if (IsEmpty(gridVector))
