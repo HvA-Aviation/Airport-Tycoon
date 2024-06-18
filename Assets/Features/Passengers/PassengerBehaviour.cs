@@ -66,8 +66,7 @@ public class PassengerBehaviour : MonoBehaviour
         switch (_currentUtility)
         {
             case Utilities.Gate:
-                //TODO add finance manager here
-                //GameManager.Instance.FinanceManager.Balance.Add(5);
+                GameManager.Instance.FinanceManager.Balance.Add(5);
                 Destroy(gameObject);
                 break;
         }
