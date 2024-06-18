@@ -1,4 +1,5 @@
 ﻿using Features.Building.Scripts.Datatypes;
+using Features.Building.Scripts.Datatypes.TileData;
 using UnityEngine;
 
 #if UNITY_EDITOR

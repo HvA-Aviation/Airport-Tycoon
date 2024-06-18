@@ -4,6 +4,7 @@ using Features.Managers;
 using Features.Workers.TaskCommands;
 using System.Collections.Generic;
 using System.Linq;
+using Features.Building.Scripts.Datatypes.TileData;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 

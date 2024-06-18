@@ -1,4 +1,5 @@
 ﻿using System;
+using Features.Building.Scripts.Datatypes.TileData;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -101,40 +102,5 @@ namespace Features.Building.Scripts.Datatypes
             
             return tileData;
         }
-    }
-    
-    [Serializable]
-    public class TileEntry
-    {
-        public TileType TileType;
-        [SerializeReference]
-        public BaseTile TileData;
-    }
-
-    public enum TileType
-    {
-        Normal,
-        Utility
-    }
-
-    [Serializable]
-    public class BaseTile
-    {
-        public Tile Tile;
-        public Color Color = Color.white;
-        public float BuildLoad;
-        public bool UnTraversable;
-    }
-
-    [Serializable]
-    public class NormalTile : BaseTile
-    {
-    }
-
-    [Serializable]
-    public class UtilityTile : BaseTile
-    {
-        public UtilityType UtilityType;
-        public int Workload;
     }
 }
