@@ -21,7 +21,7 @@ public class GridManager : MonoBehaviour
     private void Awake()
     {
         NodeGrid = new NativeHashMap<Vector3Int, Node>(_grid.GridSize.x * _grid.GridSize.y, Allocator.Persistent);
-        GameManager.Instance.EventManager.Subscribe(Features.EventManager.EventId.GridUpdateEvent, (args) => CreateGrid());
+        GameManager.Instance.EventManager.Subscribe(Features.EventManager.EventId.OnGridUpdateEvent, (args) => CreateGrid());
     }
 
     void Start()

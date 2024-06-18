@@ -107,7 +107,7 @@ public class PassengerBehaviour : MonoBehaviour
         if (potentialTaskDestinations.Count == 0)
         {
             Debug.LogWarning($"Missing a {currentTask} to assign to subscribing to onMissingUtility event");
-            GameManager.Instance.EventManager.SubscribeFlash(EventId.onMissingUtility, (args) => { ExecuteTasks(); });
+            GameManager.Instance.EventManager.SubscribeFlash(EventId.OnMissingUtility, (args) => { ExecuteTasks(); });
             return;
         }
 

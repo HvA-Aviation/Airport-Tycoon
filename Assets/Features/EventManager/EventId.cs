@@ -5,9 +5,10 @@
         OnDefaultEvent,
         OnChangeBrush,
         OnUnlockBuilding,
-        GridUpdateEvent,
+        OnGridUpdateEvent,
         OnMoneyAdded,
         OnMoneyRemoved,
-        onMissingUtility,
+        OnMissingUtility,
+        OnBuildingQueue
     }
 }

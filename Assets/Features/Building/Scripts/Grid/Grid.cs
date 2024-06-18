@@ -67,7 +67,7 @@ namespace Features.Building.Scripts.Grid
             TraversableTiles = new bool[_gridSize.x, _gridSize.y];
             UpdateTraversable();
 
-            GameManager.Instance.EventManager.TriggerEvent(EventId.GridUpdateEvent);
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnGridUpdateEvent);
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Features.Building.Scripts.Grid
                 }
             }
 
-            GameManager.Instance.EventManager.TriggerEvent(EventId.GridUpdateEvent);
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnGridUpdateEvent);
         }
 
         /// <summary>
@@ -445,6 +445,8 @@ namespace Features.Building.Scripts.Grid
                 GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(utilityLocation));
 
             _tempQueuePositions.Clear();
+
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
         }
 
         /// <summary>
@@ -459,6 +461,8 @@ namespace Features.Building.Scripts.Grid
             // When a utility is placed, start building the queue
             if (currentTileData.UtilityType != UtilityType.None)
             {
+                GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
+
                 if (_tempQueuePositions.Count > 0)
                     FinishQueue();
 

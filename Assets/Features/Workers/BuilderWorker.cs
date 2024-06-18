@@ -36,7 +36,7 @@ namespace Features.Workers
             onBuilt.Invoke();
 
             // Temporary solution to avoid errors when passengers dont have a utility to go to
-            GameManager.Instance.EventManager.TriggerEvent(EventManager.EventId.onMissingUtility);
+            GameManager.Instance.EventManager.TriggerEvent(EventManager.EventId.OnMissingUtility);
         }
 
         public void MoveTo(Vector3Int target, Action onReachedPosition, Action onDone)
@@ -61,7 +61,7 @@ namespace Features.Workers
         /// </summary>
         private void CheckTaskExists(Vector3Int target, Action onDone)
         {
-            if (GameManager.Instance.GridManager.Grid.IsEmpty(target)) 
+            if (GameManager.Instance.GridManager.Grid.IsEmpty(target))
                 onDone.Invoke();
         }
     }
