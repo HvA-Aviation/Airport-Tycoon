@@ -9,6 +9,7 @@
         OnMoneyAdded,
         OnMoneyRemoved,
         OnMissingUtility,
+        OnCursorSwitch,
         OnBuildingQueue
     }
 }

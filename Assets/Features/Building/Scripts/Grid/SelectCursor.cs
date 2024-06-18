@@ -12,6 +12,7 @@ public class SelectCursor : MonoBehaviour
     [SerializeField] private Grid _grid;
     [SerializeField] private EventSystem _eventSystem;
     [SerializeField] private BuildableAtlas _atlas;
+    [SerializeField] private GameObject hoverTile;
     private Vector3Int mousePosition;
 
     enum MouseButtons
@@ -21,6 +22,10 @@ public class SelectCursor : MonoBehaviour
         MIDDLE,
     }
 
+    void OnEnable() => hoverTile.SetActive(true);
+
+    void OnDisable() => hoverTile.SetActive(false);
+
     // Update is called once per frame
     void Update()
     {
@@ -29,20 +34,12 @@ public class SelectCursor : MonoBehaviour
         mousePosition.y = Mathf.Clamp(mousePosition.y, 0, _grid.GridSize.y);
         mousePosition.z = 0;
 
-        if (Input.GetMouseButtonDown((int)MouseButtons.LEFT))
+        hoverTile.transform.position = mousePosition;
+
+        if (Input.GetMouseButtonUp((int)MouseButtons.LEFT) && !_eventSystem.IsPointerOverGameObject())
         {
             print("pressed lmb");
             SelectTile();
-        }
-
-        if (Input.GetMouseButtonDown((int)MouseButtons.MIDDLE))
-        {
-            print("pressed mmb");
-        }
-
-        if (Input.GetMouseButtonDown((int)MouseButtons.RIGHT))
-        {
-            print("pressed rmb");
         }
     }
 
@@ -62,14 +59,14 @@ public class SelectCursor : MonoBehaviour
                     continue;
                 }
 
-                Dictionary<Vector3Int, List<Vector3Int>> utilites = _grid.GetUtilities(_atlas.Items[_grid.Get(mousePosition)].UtilityType);
-                foreach (var item in utilites)
+                if (_grid.GetUtilities(_atlas.Items[indexValue].UtilityType, out Dictionary<Vector3Int, List<Vector3Int>> utilities))
                 {
-                    if (item.Key == mousePosition)
+                    foreach (var item in utilities)
                     {
-                        if (item.Value.Count > 0)
+                        if (item.Key == mousePosition && item.Value.Count > 0)
                         {
                             _grid.SwitchToQueueEditorExternal(mousePosition);
+                            GameManager.Instance.EventManager.TriggerEvent(Features.EventManager.EventId.OnCursorSwitch);
                         }
                     }
                 }

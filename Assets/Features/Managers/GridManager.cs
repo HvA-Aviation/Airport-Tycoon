@@ -49,7 +49,12 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public Dictionary<Vector3Int, List<Vector3Int>> GetUtilities(Utilities utilityType) => _grid.GetUtilities(utilityType);
+    public Dictionary<Vector3Int, List<Vector3Int>> GetUtilities(Utilities utilityType)
+    {
+        _grid.GetUtilities(utilityType, out Dictionary<Vector3Int, List<Vector3Int>> keyValuePairs);
+        return keyValuePairs;
+    }
+
     public int GetRotation(Vector3Int position) => _grid.GetRotation(position);
     public Vector3Int GetPaxSpawnPoint() => _grid.PaxSpawnPosition;
 

@@ -41,7 +41,7 @@ public class QueueManager : MonoBehaviour
         }
         catch (KeyNotFoundException)
         {
-            Console.WriteLine($"Key {utilityPosition} not found");
+            Debug.Log($"Key {utilityPosition} not found");
         }
 
         return queueInfo;

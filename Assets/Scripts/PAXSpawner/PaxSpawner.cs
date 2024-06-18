@@ -8,7 +8,7 @@ public class PaxSpawner : MonoBehaviour
 
     private float _spawnRate;
 
-    private void Awake() => _spawnRate = _defaultSpawnRate;
+    private void OnEnable() => _spawnRate = _defaultSpawnRate;
 
     // private void Start() => StartCoroutine(SpawnPassengers());
 

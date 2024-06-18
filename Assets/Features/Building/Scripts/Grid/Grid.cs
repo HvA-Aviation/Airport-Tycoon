@@ -75,11 +75,9 @@ namespace Features.Building.Scripts.Grid
         /// </summary>
         /// <param name="utilityType">The type of the utility</param>
         /// <returns>A list with all the utilities</returns>
-        public Dictionary<Vector3Int, List<Vector3Int>> GetUtilities(UtilityType utilityType)
+        public bool GetUtilities(UtilityType utilityType, out Dictionary<Vector3Int, List<Vector3Int>> keyValuePairs)
         {
-            Dictionary<Vector3Int, List<Vector3Int>> value;
-            _utilityLocations.TryGetValue(utilityType, out value);
-            return value;
+            return _utilityLocations.TryGetValue(utilityType, out keyValuePairs);
         }
 
         /// <summary>
@@ -236,25 +234,6 @@ namespace Features.Building.Scripts.Grid
                 });
 
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
-
-                if (isFinished)
-                {
-                    UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
-
-                    if (utilityType != UtilityType.None)
-                    {
-                        // _utilityLocations[utilityType].Add(gridVector);
-
-                        // if (utilityType == UtilityType.Security)
-                        // {
-                        //     GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(gridVector));
-                        // }
-                        // else
-                        // {
-                        //     GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(gridVector));
-                        // }
-                    }
-                }
             }
 
             return isFinished;
@@ -354,6 +333,8 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if setting was a success</returns>
         public bool SetGroup(List<Vector3Int> gridVectors, List<Tile> tiles, int rotation)
         {
+            bool waitToCreateTask = false;
+
             //check if all the positions are available
             foreach (Vector3Int position in gridVectors)
             {
@@ -375,30 +356,27 @@ namespace Features.Building.Scripts.Grid
                     return false;
                 }
 
+                // When building a queue check wether it is possible to place queue based on neighbours
+                if (tileData.BehaviorType == BehaviourType.Queue)
+                {
+                    if (CanPlaceQueue(gridVectors[i]))
+                    {
+                        Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
+                        _tempQueuePositions[utilityLocation].Add(gridVectors[i]);
+                        waitToCreateTask = true;
+                    }
+                    else return false;
+                }
+
+                if (tileData.UtilityType != UtilityType.None)
+                {
+                    InitializeQueueBuilder(gridVectors);
+                }
+
                 CellData cellData = _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z];
                 cellData.Tile = Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile);
                 cellData.Rotation = rotation;
                 cellData.WorkLoad = tileData.WorkLoad;
-
-                // Check when trying to placing queue next to something thats not a queue
-                if (_atlas.Items[cellData.Tile].BehaviorType == BehaviourType.Queue)
-                {
-                    for (int j = 0; j < neighboursToCheckForQueue.Count; j++)
-                    {
-                        Vector3Int posToCheck = gridVectors[i] + neighboursToCheckForQueue[j];
-
-                        if (Get(posToCheck) != BuildableAtlas.Empty)
-                        {
-                            BehaviourType behaviorType = _atlas.Items[Get(posToCheck)].BehaviorType;
-                            UtilityType utilityType = _atlas.Items[Get(posToCheck)].UtilityType;
-                            if (behaviorType == BehaviourType.Queue || utilityType != UtilityType.None)
-                                break;
-                        }
-
-                        if (j == neighboursToCheckForQueue.Count - 1)
-                            return false;
-                    }
-                }
 
                 _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
 
@@ -414,16 +392,15 @@ namespace Features.Building.Scripts.Grid
                 });
 
                 // If pax spawn point is placed lock it
-                if (_atlas.Items[cellData.Tile].BehaviorType == BehaviourType.PaxSpawn)
+                if (tileData.BehaviorType == BehaviourType.PaxSpawn)
                 {
                     _paxSpawnPos = gridVectors[i];
                     GameManager.Instance.BuildingManager.LockBuilding(cellData.Tile);
                 }
-
-                HandleQueues(cellData, gridVectors);
             }
 
-            GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
+            if (!waitToCreateTask)
+                GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
             _cellGroup.Add(gridVectors);
 
             return true;
@@ -437,55 +414,68 @@ namespace Features.Building.Scripts.Grid
             Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
             int index = Get(utilityLocation);
             UtilityType utilityType = _atlas.Items[index].UtilityType;
-            _utilityLocations[utilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
 
-            if (utilityType == UtilityType.Security)
-                GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
+            // check if the queue already exists in the utility data, if it does we are adjusting the queue
+            if (_utilityLocations[utilityType].TryGetValue(utilityLocation, out List<Vector3Int> listToAddTo))
+            {
+                listToAddTo.AddRange(_tempQueuePositions[utilityLocation]);
+            }
             else
-                GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(utilityLocation));
+            {
+                _utilityLocations[utilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
+
+                if (utilityType == UtilityType.Security)
+                    GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
+                else
+                    GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(utilityLocation));
+            }
+
+            foreach (var item in _tempQueuePositions[utilityLocation])
+            {
+                GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(item));
+            }
 
             _tempQueuePositions.Clear();
 
             GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
         }
 
-        /// <summary>
-        /// When a utility is placed, start building the queue
-        /// </summary>
-        /// <param name="cellData">The celldata of the current utility placed</param>
-        /// <param name="gridVectors">Positions on grid</param>
-        private void HandleQueues(CellData cellData, List<Vector3Int> gridVectors)
+        private void InitializeQueueBuilder(List<Vector3Int> gridVectors)
         {
-            TileData currentTileData = _atlas.Items[cellData.Tile];
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
 
-            // When a utility is placed, start building the queue
-            if (currentTileData.UtilityType != UtilityType.None)
+            if (_tempQueuePositions.Count > 0)
+                FinishQueue();
+
+            if (!_tempQueuePositions.ContainsKey(gridVectors[0]))
+                _tempQueuePositions.Add(gridVectors[0], new List<Vector3Int>());
+
+            //TODO: rework to not use hard coded number
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
+        }
+
+        private bool CanPlaceQueue(Vector3Int tilePos)
+        {
+            // Check if neighbours of queue are also of queue type
+            for (int j = 0; j < neighboursToCheckForQueue.Count; j++)
             {
-                GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
+                Vector3Int posToCheck = tilePos + neighboursToCheckForQueue[j];
 
-                if (_tempQueuePositions.Count > 0)
-                    FinishQueue();
+                if (Get(posToCheck) != BuildableAtlas.Empty)
+                {
+                    BehaviourType behaviorType = _atlas.Items[Get(posToCheck)].BehaviorType;
+                    UtilityType utilityType = _atlas.Items[Get(posToCheck)].UtilityType;
 
-                if (!_tempQueuePositions.ContainsKey(gridVectors[0]))
-                    _tempQueuePositions.Add(gridVectors[0], new List<Vector3Int>());
-
-                //TODO: rework to not use hard coded number
-                GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
+                    if (behaviorType == BehaviourType.Queue || utilityType != UtilityType.None)
+                        return true;
+                }
             }
-
-            if (currentTileData.BehaviorType == BehaviourType.Queue)
-            {
-                Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
-                Vector3Int queuePosition = gridVectors[0];
-                queuePosition.z = 0;
-                _tempQueuePositions[utilityLocation].Add(queuePosition);
-            }
+            return false;
         }
 
         public void SwitchToQueueEditorExternal(Vector3Int selectedUtility)
         {
-            CellData cellData = _cells[selectedUtility.x, selectedUtility.y, selectedUtility.z];
-            HandleQueues(cellData, new List<Vector3Int> { selectedUtility });
+            InitializeQueueBuilder(new List<Vector3Int> { selectedUtility });
         }
 
         /// <summary>

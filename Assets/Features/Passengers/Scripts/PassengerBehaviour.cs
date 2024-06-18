@@ -51,41 +51,30 @@ public class PassengerBehaviour : MonoBehaviour
     {
         atCorrectPositionInQueue = false;
 
-        int totalQueueLength = queuePositions.Count - 1;
-
-        int start = alreadyInQueue ? currentPathIndex : totalQueueLength;
+        int start = alreadyInQueue ? currentPathIndex : queuePositions.Count - 1;
         int end = positionInQueue;
 
-        print("end = " + end);
+        currentPathIndex = start;
 
-        int pathIndex = start;
-
-        currentPathIndex = pathIndex;
-
-        while (true)
+        while (currentPathIndex >= end)
         {
-            if (pathIndex < end) break;
-
-            if (Vector3.Distance(queuePositions[pathIndex], transform.position) > distanceToNextPosComplete)
+            if (Vector3.Distance(queuePositions[currentPathIndex], transform.position) > distanceToNextPosComplete)
             {
-                Vector3 direction = queuePositions[pathIndex] - transform.position;
+                Vector3 direction = queuePositions[currentPathIndex] - transform.position;
                 Vector3 queueSpeed = GameManager.Instance.QueueManager.queueProgressionSpeed *
-                                     GameManager.Instance.GameTimeManager.DeltaTime *
-                                     direction.normalized;
+                             GameManager.Instance.GameTimeManager.DeltaTime *
+                             direction.normalized;
 
                 transform.position += queueSpeed;
             }
             else
             {
-                pathIndex--;
-                currentPathIndex = pathIndex;
+                currentPathIndex--;
             }
 
-            yield return null;
+            yield return new WaitForEndOfFrame();
         }
-
         atCorrectPositionInQueue = true;
-        yield return null;
     }
 
     /// <summary>
@@ -128,7 +117,7 @@ public class PassengerBehaviour : MonoBehaviour
         {
             case Utilities.Gate:
                 //TODO add finance manager here
-                //GameManager.Instance.FinanceManager.Balance.Add(5);
+                GameManager.Instance.FinanceManager.Balance.Add(25);
                 Destroy(gameObject);
                 break;
         }

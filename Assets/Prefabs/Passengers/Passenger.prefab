@@ -114,7 +114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _npcController: {fileID: 363697983247919681}
   atCorrectPositionInQueue: 0
-  distanceToNextPosComplete: 0.01
+  distanceToNextPosComplete: 0.1
   currentPathIndex: 0
 --- !u!114 &-9087887234611715720
 MonoBehaviour:

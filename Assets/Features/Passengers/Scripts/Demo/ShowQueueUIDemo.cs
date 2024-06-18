@@ -7,12 +7,12 @@ public class ShowQueueUIDemo : MonoBehaviour
 
     void Start()
     {
+        finishQueueButton.SetActive(false);
         GameManager.Instance.EventManager.Subscribe(Features.EventManager.EventId.OnBuildingQueue, (args) => ShowQueue());
     }
 
     public void ShowQueue()
     {
-        print(!finishQueueButton.activeSelf);
         finishQueueButton.SetActive(!finishQueueButton.activeSelf);
     }
 }
