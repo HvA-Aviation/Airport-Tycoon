@@ -334,12 +334,15 @@ namespace Features.Building.Scripts.Grid
                 foreach (Vector3Int position in group)
                 {
                     CellData cell = _cells[position.x, position.y, position.z];
-                    UtilityType type = _atlas.GetTileData<UtilityTile>(cell.Tile).UtilityType;
-
-                    if (type != UtilityType.None)
+                    if (_atlas.TileIsType<UtilityTile>(cell.Tile))
                     {
-                        _utilityLocations[type].Remove(position);
-                        GameManager.Instance.QueueManager.RemoveQueue(position);
+                        UtilityType type = _atlas.GetTileData<UtilityTile>(cell.Tile).UtilityType;
+
+                        if (type != UtilityType.None)
+                        {
+                            _utilityLocations[type].Remove(position);
+                            GameManager.Instance.QueueManager.RemoveQueue(position);
+                        }
                     }
 
                     _cells[position.x, position.y, position.z].Clear();

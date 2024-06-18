@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using Features.Building.Scripts.Datatypes;
-using UnityEditor;
+﻿using Features.Building.Scripts.Datatypes;
 using UnityEngine;
-using UnityEngine.UIElements;
+
+#if UNITY_EDITOR
+using UnityEditor;
 
 [CustomEditor(typeof(BuildableAtlas))]
 public class AtlasEditor : Editor
 {
-     SerializedProperty tilesProp;
-     private int indexAmount = 0;
-     
+    SerializedProperty tilesProp;
+    private int indexAmount = 0;
+
     private void OnEnable()
     {
         tilesProp = serializedObject.FindProperty("Tiles");
@@ -29,13 +29,15 @@ public class AtlasEditor : Editor
 
             TileType tileType = (TileType)tileTypeProp.enumValueIndex;
 
-            //reset values when a new list item is added
+            //reset values when a new list item is added. otherwise the new item is linked to the previous
             if (indexAmount > 0 && i >= indexAmount)
             {
                 tileType = TileType.Normal;
                 tileProp.managedReferenceValue = null;
             }
 
+            //to create a new option:
+            //copy this if and change the TileType enum and the NormalTile class to a new class inherited from BaseTile
             if (tileType == TileType.Normal)
             {
                 if (tileProp.managedReferenceValue == null || !(tileProp.managedReferenceValue is NormalTile))
@@ -53,7 +55,8 @@ public class AtlasEditor : Editor
         }
 
         indexAmount = tilesProp.arraySize;
-
         serializedObject.ApplyModifiedProperties();
     }
 }
+
+#endif
