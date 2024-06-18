@@ -1,4 +1,5 @@
 ﻿using System;
+using Features.Building.Scripts.Datatypes;
 using UnityEngine;
 
 namespace Features.Building.Scripts.Grid
@@ -11,7 +12,7 @@ namespace Features.Building.Scripts.Grid
         public float WorkLoad;
         public float CurrentWorkLoad;
         
-        public static CellData empty => new CellData(-1, 0, 0);
+        public static CellData empty => new CellData(BuildableAtlas.Empty, 0, 0);
         
         public CellData(int tile, int rotation, float workLoad)
         {
@@ -26,7 +27,7 @@ namespace Features.Building.Scripts.Grid
         /// </summary>
         public void Clear()
         {
-            Tile = -1;
+            Tile = BuildableAtlas.Empty;
             Rotation = 0;
             WorkLoad = 0;
             CurrentWorkLoad = 0;

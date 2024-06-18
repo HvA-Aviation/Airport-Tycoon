@@ -1,6 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Features.Managers;
 using UnityEngine;
 
 public class TreeDemo : MonoBehaviour
@@ -18,8 +16,8 @@ public class TreeDemo : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(_showTreeButton)) _tree.gameObject.SetActive(!_tree.activeSelf);
+        if (Input.GetKeyDown(_showTreeButton)) _tree.gameObject.SetActive(!_tree.activeSelf);
     }
 
-    private void FixedUpdate() => _treeManager.CurrentResearching?.AddValue(1);
+    private void FixedUpdate() => _treeManager.CurrentResearching?.AddValue(GameManager.Instance.GameTimeManager.DeltaTime);
 }

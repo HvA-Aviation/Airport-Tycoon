@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Features.Workers;
 using UnityEngine;
 
 public class StaffManager : MonoBehaviour
@@ -47,6 +48,7 @@ public class StaffManager : MonoBehaviour
         {
             _spawnNewStaff.DespawnEmployeeOBJ(employee.gameObject);
             Employees.Remove(employeeID);
+            employee.GetComponent<AssignableWorker>().Fire();
         }
     }
 

@@ -117,12 +117,13 @@ namespace Implementation.Pathfinding.Scripts
 
         /// <summary>
         /// Replace a node in the tree, then move it up and down so it is in the correct spot in the heap
+        /// This function is used when we find a better path to a node that is already in the heap
         /// </summary>
-        public void ReplaceNode(Vector3Int key, Node newNode)
+        public void ReplaceNode(Vector3Int positionToReplace, Node newNode)
         {
             for (int i = 0; i < items.Length; i++)
             {
-                if (key == items[i].position)
+                if (positionToReplace == items[i].position)
                 {
                     items[i] = newNode;
 

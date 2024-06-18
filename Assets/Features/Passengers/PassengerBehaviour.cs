@@ -3,8 +3,8 @@ using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using UnityEngine;
 using Utilities = Features.Building.Scripts.Datatypes.UtilityType;
-using Grid = Features.Building.Scripts.Grid;
 using System;
+using System.Linq;
 
 public class PassengerBehaviour : MonoBehaviour
 {
@@ -14,7 +14,6 @@ public class PassengerBehaviour : MonoBehaviour
     GridManager gridManager;
     private Utilities _currentUtility;
 
-    // Start is called before the first frame update
     void OnEnable()
     {
         queueManager = GameManager.Instance.QueueManager;
@@ -28,16 +27,7 @@ public class PassengerBehaviour : MonoBehaviour
     /// </summary>
     void AssignRandomTasks()
     {
-        // Uncomment this when there are more utilities than just security
-        // tasksToDo.Clear();
-        // int AmountOfUniqueTasks = System.Enum.GetValues(typeof(Utilities)).Length;
-
-        // for (int i = 0; i < AmountOfUniqueTasks - 1; i++)
-        // {
-        //     Utilities taskType = (Utilities)i;
-        //     int random = Random.Range(0, 2);
-        //     if (random == 1) tasksToDo.Enqueue(taskType);
-        // }
+        //TODO: Make a system that randomly assigns tasks when more utilities are added
 
         //Security is required
         tasksToDo.Enqueue(Utilities.CheckIn);
@@ -46,8 +36,9 @@ public class PassengerBehaviour : MonoBehaviour
     }
 
     /// <summary>
-    /// Execute the tasks that are assigned to a passenger
+    /// Executes the tasks assigned to the passenger.
     /// </summary>
+    /// <param name="dequeue">Indicates whether to dequeue the next task from the task queue.</param>
     public void ExecuteTasks(bool dequeue = true)
     {
         if (tasksToDo.Count == 0)
@@ -67,6 +58,9 @@ public class PassengerBehaviour : MonoBehaviour
             (numberInQueue, utilityPos) => { UpdatePath(utilityPos, numberInQueue); });
     }
 
+    /// <summary>
+    /// Handles the completion of tasks for the passenger.
+    /// </summary>
     private void TasksCompleted()
     {
         switch (_currentUtility)
@@ -78,6 +72,11 @@ public class PassengerBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates the path for the passenger's movement.
+    /// </summary>
+    /// <param name="utilityPos">The position of the utility the passenger is heading towards.</param>
+    /// <param name="numberInQueue">The number of passengers in the queue before this passenger.</param>
     public void UpdatePath(Vector3Int utilityPos, int numberInQueue)
     {
         _npcController.StopAllCoroutines();
@@ -101,10 +100,17 @@ public class PassengerBehaviour : MonoBehaviour
                 break;
         }
 
-        _npcController.SetTarget(
-        utilityPos + rotationVector * (numberInQueue + 1),
-        () => { },
-        () => { GameManager.Instance.QueueManager.ReachedQueue(utilityPos, this); });
+        // Calculate the target position
+        Vector3Int targetPosition = utilityPos + rotationVector * (numberInQueue + 1);
+
+        // Define the action to be performed when the target is reached
+        Action onTargetReached = () => { GameManager.Instance.QueueManager.ReachedQueue(utilityPos, this); };
+
+        // Define the action to be performed if the target cannot be reached
+        Action onTargetUnreachable = () => { };
+
+        // Set the target for the NPC controller
+        _npcController.SetTarget(targetPosition, onTargetUnreachable, onTargetReached);
     }
 
 }

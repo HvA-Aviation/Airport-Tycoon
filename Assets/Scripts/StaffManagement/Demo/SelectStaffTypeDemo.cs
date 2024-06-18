@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Features.Managers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,12 +16,19 @@ public class SelectStaffTypeDemo : MonoBehaviour
 
     private string[] _employeeTypes;
 
-    public StaffManager StaffManager;
     public UnityEvent Event = new UnityEvent();
 
     private void Awake()
     {
         _employeeTypes = Enum.GetNames(typeof(Employee.EmployeeTypes));
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            transform.GetChild(0).gameObject.SetActive(!transform.GetChild(0).gameObject.activeSelf);
+        }
     }
 
     private void Start()
@@ -37,11 +45,11 @@ public class SelectStaffTypeDemo : MonoBehaviour
 
     public void Hire()
     {
-        StaffManager.HireEmployee(_employeeTypeToHire);
-        string name = StaffManager.GetEmployeeName(StaffManager.LastEmployeeID);
+        GameManager.Instance.StaffManager.HireEmployee(_employeeTypeToHire);
+        string name = GameManager.Instance.StaffManager.GetEmployeeName(GameManager.Instance.StaffManager.LastEmployeeID);
 
         GameObject temp = Instantiate(_listObject, _parent);
-        temp.GetComponent<ShowStaffInList>().ThisEmployee = StaffManager.Employees[StaffManager.LastEmployeeID];
+        temp.GetComponent<ShowStaffInList>().ThisEmployee = GameManager.Instance.StaffManager.Employees[GameManager.Instance.StaffManager.LastEmployeeID];
         temp.GetComponent<ShowStaffInList>().Demo = this;
     }
 

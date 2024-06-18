@@ -14,6 +14,8 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private Grid _grid;
 
+    public Grid Grid => _grid;
+
     public NativeHashMap<Vector3Int, Node> NodeGrid { get; private set; }
 
     private void Awake()
