@@ -17,6 +17,7 @@ namespace Features.Managers
         [field: SerializeField] public FinanceManager FinanceManager { get; private set; }
         [field: SerializeField] public GameTimeManager GameTimeManager { get; private set; }
         [field: SerializeField] public PaxManager PaxManager { get; private set; }
+        [field: SerializeField] public PassengerVisualManager PassengerVisualManager { get; private set; }
 
         private void Awake()
         {
