@@ -35,6 +35,7 @@ namespace Features.Building.Scripts.Grid
                 { BrushType.Single, new SingleBrush(_grid) },
                 { BrushType.Outline, new OutlineBrush(_grid) },
                 { BrushType.Multi, new MultiBrush(_grid) },
+                { BrushType.Line, new LineBrush(_grid) },
                 { BrushType.Remove, new RemoveBrush(_grid) }
             };
 
