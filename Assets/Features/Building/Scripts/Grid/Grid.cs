@@ -195,26 +195,6 @@ namespace Features.Building.Scripts.Grid
                 });
 
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
-
-                //if finished and a utility type add a task
-                if (isFinished)
-                {
-                    UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
-
-                    if (utilityType != UtilityType.None)
-                    {
-                        _utilityLocations[utilityType].Add(gridVector);
-
-                        if (utilityType == UtilityType.Security)
-                        {
-                            GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(gridVector));
-                        }
-                        else
-                        {
-                            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(gridVector));
-                        }
-                    }
-                }
             }
 
             return isFinished;
@@ -320,9 +300,9 @@ namespace Features.Building.Scripts.Grid
                 if (!IsEmpty(position))
                     return false;
             }
-        }
 
-            for (int i = 0; i<gridVectors.Count; i++)
+
+            for (int i = 0; i < gridVectors.Count; i++)
             {
                 //get tile from atlas
                 TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tiles[i]);
@@ -339,229 +319,231 @@ namespace Features.Building.Scripts.Grid
                     if (CanPlaceQueue(gridVectors[i]))
                     {
                         Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
-    _tempQueuePositions[utilityLocation].Add(gridVectors[i]);
-    waitToCreateTask = true;
+                        _tempQueuePositions[utilityLocation].Add(gridVectors[i]);
+                        waitToCreateTask = true;
                     }
                     else return false;
                 }
 
                 if (tileData.UtilityType != UtilityType.None)
-{
-    InitializeQueueBuilder(gridVectors);
-}
+                {
+                    InitializeQueueBuilder(gridVectors);
+                }
 
-Set(gridVectors[i], Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile), rotation, false);
+                Set(gridVectors[i], Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile), rotation, false);
             }
 
-            GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
-if (gridVectors.Count > 1)
-    _cellGroup.Add(gridVectors);
+            if (!waitToCreateTask)
+                GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
 
-return true;
+            if (gridVectors.Count > 1)
+                _cellGroup.Add(gridVectors);
+
+            return true;
         }
 
         public void FinishQueue()
-{
-    //TODO: rework to not use hard coded number
-    GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(0, true);
-
-    Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
-    int index = Get(utilityLocation);
-    UtilityType utilityType = _atlas.Items[index].UtilityType;
-
-    // check if the queue already exists in the utility data, if it does we are adjusting the queue
-    if (_utilityLocations[utilityType].TryGetValue(utilityLocation, out List<Vector3Int> listToAddTo))
-    {
-        listToAddTo.AddRange(_tempQueuePositions[utilityLocation]);
-    }
-    else
-    {
-        _utilityLocations[utilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
-
-        if (utilityType == UtilityType.Security)
-            GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
-        else
-            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(utilityLocation));
-    }
-
-    foreach (var item in _tempQueuePositions[utilityLocation])
-    {
-        GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(item));
-    }
-
-    _tempQueuePositions.Clear();
-
-    GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
-}
-
-private void InitializeQueueBuilder(List<Vector3Int> gridVectors)
-{
-    GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
-
-    if (_tempQueuePositions.Count > 0)
-        FinishQueue();
-
-    if (!_tempQueuePositions.ContainsKey(gridVectors[0]))
-        _tempQueuePositions.Add(gridVectors[0], new List<Vector3Int>());
-
-    //TODO: rework to not use hard coded number
-    GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
-}
-
-private bool CanPlaceQueue(Vector3Int tilePos)
-{
-    // Check if neighbours of queue are also of queue type
-    for (int j = 0; j < neighboursToCheckForQueue.Count; j++)
-    {
-        Vector3Int posToCheck = tilePos + neighboursToCheckForQueue[j];
-
-        if (Get(posToCheck) != BuildableAtlas.Empty)
         {
-            BehaviourType behaviorType = _atlas.Items[Get(posToCheck)].BehaviorType;
-            UtilityType utilityType = _atlas.Items[Get(posToCheck)].UtilityType;
+            //TODO: rework to not use hard coded number
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(0, true);
 
-            if (behaviorType == BehaviourType.Queue || utilityType != UtilityType.None)
+            Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
+            int index = Get(utilityLocation);
+            UtilityType utilityType = _atlas.Items[index].UtilityType;
+
+            // check if the queue already exists in the utility data, if it does we are adjusting the queue
+            if (_utilityLocations[utilityType].TryGetValue(utilityLocation, out List<Vector3Int> listToAddTo))
+            {
+                listToAddTo.AddRange(_tempQueuePositions[utilityLocation]);
+            }
+            else
+            {
+                _utilityLocations[utilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
+
+                if (utilityType == UtilityType.Security)
+                    GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
+                else
+                    GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(utilityLocation));
+            }
+
+            foreach (var item in _tempQueuePositions[utilityLocation])
+            {
+                GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(item));
+            }
+
+            _tempQueuePositions.Clear();
+
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
+        }
+
+        private void InitializeQueueBuilder(List<Vector3Int> gridVectors)
+        {
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
+
+            if (_tempQueuePositions.Count > 0)
+                FinishQueue();
+
+            if (!_tempQueuePositions.ContainsKey(gridVectors[0]))
+                _tempQueuePositions.Add(gridVectors[0], new List<Vector3Int>());
+
+            //TODO: rework to not use hard coded number
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
+        }
+
+        private bool CanPlaceQueue(Vector3Int tilePos)
+        {
+            // Check if neighbours of queue are also of queue type
+            for (int j = 0; j < neighboursToCheckForQueue.Count; j++)
+            {
+                Vector3Int posToCheck = tilePos + neighboursToCheckForQueue[j];
+
+                if (Get(posToCheck) != BuildableAtlas.Empty)
+                {
+                    BehaviourType behaviorType = _atlas.Items[Get(posToCheck)].BehaviorType;
+                    UtilityType utilityType = _atlas.Items[Get(posToCheck)].UtilityType;
+
+                    if (behaviorType == BehaviourType.Queue || utilityType != UtilityType.None)
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        public void SwitchToQueueEditorExternal(Vector3Int selectedUtility)
+        {
+            InitializeQueueBuilder(new List<Vector3Int> { selectedUtility });
+        }
+
+        /// <summary>
+        /// Removes a tile from the grid
+        /// </summary>
+        /// <param name="gridVector">Position to be removed</param>
+        /// <returns>True if remove was successful</returns>
+        public bool Remove(Vector3Int gridVector)
+        {
+            if (!OutOfBounds(gridVector) && !IsEmpty(gridVector))
+            {
+                //checks if given tile is part of a linked group. If not only add the given position
+                List<Vector3Int> group = _cellGroup.FirstOrDefault(x => x.Any(j => j == gridVector));
+                if (group == default)
+                    group = new List<Vector3Int>() { gridVector };
+
+                //Remove from array
+                foreach (Vector3Int position in group)
+                {
+                    CellData cell = _cells[position.x, position.y, position.z];
+                    UtilityType type = _atlas.Items[cell.Tile].UtilityType;
+                    BehaviourType behaviorType = _atlas.Items[cell.Tile].BehaviorType;
+
+                    // if the tile is a pax spawn dont remove it, perhaps add more functionality to this later
+                    if (behaviorType == BehaviourType.PaxSpawn)
+                    {
+                        print("Can't remove pax spawn point");
+                        break;
+                    }
+
+                    if (type != UtilityType.None)
+                    {
+                        _utilityLocations[type].Remove(position);
+                        GameManager.Instance.QueueManager.RemoveQueue(position);
+                    }
+
+                    _cells[position.x, position.y, position.z].Clear();
+
+                    GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
+                    {
+                        Position = position,
+                        Tile = null,
+                    });
+                }
+
+                //remove from group
+                _cellGroup.Remove(group);
                 return true;
-        }
-    }
-    return false;
-}
-
-public void SwitchToQueueEditorExternal(Vector3Int selectedUtility)
-{
-    InitializeQueueBuilder(new List<Vector3Int> { selectedUtility });
-}
-
-/// <summary>
-/// Removes a tile from the grid
-/// </summary>
-/// <param name="gridVector">Position to be removed</param>
-/// <returns>True if remove was successful</returns>
-public bool Remove(Vector3Int gridVector)
-{
-    if (!OutOfBounds(gridVector) && !IsEmpty(gridVector))
-    {
-        //checks if given tile is part of a linked group. If not only add the given position
-        List<Vector3Int> group = _cellGroup.FirstOrDefault(x => x.Any(j => j == gridVector));
-        if (group == default)
-            group = new List<Vector3Int>() { gridVector };
-
-        //Remove from array
-        foreach (Vector3Int position in group)
-        {
-            CellData cell = _cells[position.x, position.y, position.z];
-            UtilityType type = _atlas.Items[cell.Tile].UtilityType;
-            BehaviourType behaviorType = _atlas.Items[cell.Tile].BehaviorType;
-
-            // if the tile is a pax spawn dont remove it, perhaps add more functionality to this later
-            if (behaviorType == BehaviourType.PaxSpawn)
-            {
-                print("Can't remove pax spawn point");
-                break;
             }
 
-            if (type != UtilityType.None)
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if given position is within the bounds of the grid
+        /// </summary>
+        /// <param name="gridVector"></param>
+        /// <returns>True when within the grid</returns>
+        private bool OutOfBounds(Vector3Int gridVector)
+        {
+            if (gridVector.x < 0 || gridVector.x > _gridSize.x - 1 || gridVector.y < 0 ||
+                gridVector.y > _gridSize.y - 1 ||
+                gridVector.z < 0 || gridVector.z > _gridSize.z - 1)
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Easy way of checking if a tile is empty. This is a seperate method, because we could easily change this in the future
+        /// </summary>
+        /// <param name="gridVector">Position in grid</param>
+        /// <returns>True if empty</returns>
+        public bool IsEmpty(Vector3Int gridVector)
+        {
+            return Get(gridVector) == BuildableAtlas.Empty;
+        }
+
+        /// <summary>
+        /// Converts the clamped world position of the cursor to a grid vector that
+        /// has the values of the position the cursor is on
+        /// </summary>
+        /// <param name="worldPosition">Clamped world position (is rounded to the closest multiple of the cell size)</param>
+        /// <param name="layer">The build layer</param>
+        /// <returns >Grid vector that has the values of the position the cursor is on</returns>
+        public Vector3Int ClampedWorldToGridPosition(Vector2 worldPosition, int layer)
+        {
+            Vector2 gridPosition = (worldPosition + (Vector2)transform.position) * (1 / _cellSize);
+            return new Vector3Int((int)gridPosition.x, (int)gridPosition.y, layer);
+        }
+
+        /// <summary>
+        /// Shows the grid and the traversable nodes
+        /// </summary>
+        private void OnDrawGizmos()
+        {
+            if (_cells == null)
             {
-                _utilityLocations[type].Remove(position);
-                GameManager.Instance.QueueManager.RemoveQueue(position);
+                _cells = new CellData[_gridSize.x, _gridSize.y, _gridSize.z];
             }
 
-            _cells[position.x, position.y, position.z].Clear();
-
-            GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
+            for (int x = 0; x < _gridSize.x; x++)
             {
-                Position = position,
-                Tile = null,
-            });
-        }
+                for (int y = 0; y < _gridSize.y; y++)
+                {
+                    Vector2 origin = new Vector2(x, y) * _cellSize - (Vector2)transform.position;
+                    float offset = _cellSize / 2;
 
-        //remove from group
-        _cellGroup.Remove(group);
-        return true;
-    }
+                    Gizmos.color = Color.gray;
+                    Gizmos.DrawLine(origin + new Vector2(-offset, offset), origin + new Vector2(offset, offset));
+                    Gizmos.DrawLine(origin + new Vector2(-offset, -offset), origin + new Vector2(offset, -offset));
 
-    return false;
-}
+                    Gizmos.DrawLine(origin + new Vector2(offset, offset), origin + new Vector2(offset, -offset));
+                    Gizmos.DrawLine(origin + new Vector2(-offset, offset), origin + new Vector2(-offset, -offset));
+                }
+            }
 
-/// <summary>
-/// Checks if given position is within the bounds of the grid
-/// </summary>
-/// <param name="gridVector"></param>
-/// <returns>True when within the grid</returns>
-private bool OutOfBounds(Vector3Int gridVector)
-{
-    if (gridVector.x < 0 || gridVector.x > _gridSize.x - 1 || gridVector.y < 0 ||
-        gridVector.y > _gridSize.y - 1 ||
-        gridVector.z < 0 || gridVector.z > _gridSize.z - 1)
-        return true;
-
-    return false;
-}
-
-/// <summary>
-/// Easy way of checking if a tile is empty. This is a seperate method, because we could easily change this in the future
-/// </summary>
-/// <param name="gridVector">Position in grid</param>
-/// <returns>True if empty</returns>
-public bool IsEmpty(Vector3Int gridVector)
-{
-    return Get(gridVector) == BuildableAtlas.Empty;
-}
-
-/// <summary>
-/// Converts the clamped world position of the cursor to a grid vector that
-/// has the values of the position the cursor is on
-/// </summary>
-/// <param name="worldPosition">Clamped world position (is rounded to the closest multiple of the cell size)</param>
-/// <param name="layer">The build layer</param>
-/// <returns >Grid vector that has the values of the position the cursor is on</returns>
-public Vector3Int ClampedWorldToGridPosition(Vector2 worldPosition, int layer)
-{
-    Vector2 gridPosition = (worldPosition + (Vector2)transform.position) * (1 / _cellSize);
-    return new Vector3Int((int)gridPosition.x, (int)gridPosition.y, layer);
-}
-
-/// <summary>
-/// Shows the grid and the traversable nodes
-/// </summary>
-private void OnDrawGizmos()
-{
-    if (_cells == null)
-    {
-        _cells = new CellData[_gridSize.x, _gridSize.y, _gridSize.z];
-    }
-
-    for (int x = 0; x < _gridSize.x; x++)
-    {
-        for (int y = 0; y < _gridSize.y; y++)
-        {
-            Vector2 origin = new Vector2(x, y) * _cellSize - (Vector2)transform.position;
-            float offset = _cellSize / 2;
-
-            Gizmos.color = Color.gray;
-            Gizmos.DrawLine(origin + new Vector2(-offset, offset), origin + new Vector2(offset, offset));
-            Gizmos.DrawLine(origin + new Vector2(-offset, -offset), origin + new Vector2(offset, -offset));
-
-            Gizmos.DrawLine(origin + new Vector2(offset, offset), origin + new Vector2(offset, -offset));
-            Gizmos.DrawLine(origin + new Vector2(-offset, offset), origin + new Vector2(-offset, -offset));
-        }
-    }
-
-    if (Application.isPlaying)
-    {
-        bool[,] traversable = TraversableTiles;
-
-        for (int x = 0; x < _gridSize.x; x++)
-        {
-            for (int y = 0; y < _gridSize.y; y++)
+            if (Application.isPlaying)
             {
-                Vector2 origin = new Vector2(x, y) * _cellSize - (Vector2)transform.position;
+                bool[,] traversable = TraversableTiles;
 
-                Gizmos.color = traversable[x, y] ? Color.green : Color.red;
-                Gizmos.DrawSphere(origin, _cellSize / 10);
+                for (int x = 0; x < _gridSize.x; x++)
+                {
+                    for (int y = 0; y < _gridSize.y; y++)
+                    {
+                        Vector2 origin = new Vector2(x, y) * _cellSize - (Vector2)transform.position;
+
+                        Gizmos.color = traversable[x, y] ? Color.green : Color.red;
+                        Gizmos.DrawSphere(origin, _cellSize / 10);
+                    }
+                }
             }
         }
-    }
-}
     }
 }
