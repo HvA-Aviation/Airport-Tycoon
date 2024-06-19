@@ -12,6 +12,12 @@ public class LoadSceneASync : MonoBehaviour
 
     [SerializeField] private Slider _loadingBarSlider;
 
+    private void Start()
+    {
+        _menuObj.SetActive(true);
+        _loadingScreenObj.SetActive(false);
+    }
+
     public void LoadLevel(int sceneIndex)
     {
         StartCoroutine(LoadAsynchronously(sceneIndex));
