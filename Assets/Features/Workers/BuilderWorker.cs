@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections;
-using Features.Building.Scripts.Datatypes;
 using Features.Managers;
 using Features.Workers.TaskCommands;
 using Implementation.Pathfinding.Scripts;
 using Implementation.TaskSystem;
 using UnityEngine;
-using Grid = Features.Building.Scripts.Grid.Grid;
 
 namespace Features.Workers
 {
@@ -14,6 +12,11 @@ namespace Features.Workers
     {
         [SerializeField] private NPCController _npcController;
         [SerializeField] private float _workLoadSpeed;
+
+        [Tooltip("Reset worker if it has been stuck for n amount of times"), Range(0, 10)]
+        [SerializeField] int ResetToSpawnPointLimit = 1;
+        [SerializeField] int ResetToSpawnPointCurrent;
+
 
         private void Start()
         {
@@ -50,9 +53,16 @@ namespace Features.Workers
 
         IEnumerator TaskUnreachable(Vector3Int target)
         {
+            ResetToSpawnPointCurrent++;
+
             Debug.LogWarning("Worker could not find path to target, releasing task and adding it to task queue");
             GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(target));
+
             yield return new WaitForSecondsRealtime(10f);
+
+            if (ResetToSpawnPointCurrent > ResetToSpawnPointLimit)
+                transform.position = GameManager.Instance.GridManager.GetPaxSpawnPoint();
+
             GameManager.Instance.TaskManager.BuilderTaskSystem.SetAvailable(this);
         }
 

@@ -5,7 +5,6 @@ using Features.Workers.TaskCommands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TileUpdateData = Features.Building.Scripts.Datatypes.TileUpdateData;
@@ -298,9 +297,10 @@ namespace Features.Building.Scripts.Grid
             foreach (Vector3Int position in gridVectors)
             {
                 if (!IsEmpty(position))
+                {
                     return false;
+                }
             }
-
 
             for (int i = 0; i < gridVectors.Count; i++)
             {
@@ -323,6 +323,11 @@ namespace Features.Building.Scripts.Grid
                         waitToCreateTask = true;
                     }
                     else return false;
+                }
+
+                if (tileData.BehaviorType == BehaviourType.PaxSpawn)
+                {
+                    _paxSpawnPos = gridVectors[i];
                 }
 
                 if (tileData.UtilityType != UtilityType.None)

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: _Building_Atlas
   m_EditorClassIdentifier: 
   Items:
-  - <Tile>k__BackingField: {fileID: 11400000, guid: 29fa9a4e0e09c14478da003d3f391e1c,
+  - <Tile>k__BackingField: {fileID: 11400000, guid: 48bb6133034089648993533b2df1b0af,
       type: 2}
     Color: {r: 1, g: 1, b: 1, a: 1}
     WorkLoad: 0.5

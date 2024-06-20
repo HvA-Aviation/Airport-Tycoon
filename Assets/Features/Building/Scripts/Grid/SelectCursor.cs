@@ -15,19 +15,12 @@ public class SelectCursor : MonoBehaviour
     [SerializeField] private GameObject hoverTile;
     private Vector3Int mousePosition;
 
-    enum MouseButtons
-    {
-        LEFT,
-        RIGHT,
-        MIDDLE,
-    }
-
     void OnEnable() => hoverTile.SetActive(true);
 
     void OnDisable() => hoverTile.SetActive(false);
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         mousePosition = Vector3Int.RoundToInt(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         mousePosition.x = Mathf.Clamp(mousePosition.x, 0, _grid.GridSize.x);
@@ -35,8 +28,11 @@ public class SelectCursor : MonoBehaviour
         mousePosition.z = 0;
 
         hoverTile.transform.position = mousePosition;
+    }
 
-        if (Input.GetMouseButtonUp((int)MouseButtons.LEFT) && !_eventSystem.IsPointerOverGameObject())
+    void Update()
+    {
+        if (Input.GetMouseButtonUp(0) && !_eventSystem.IsPointerOverGameObject())
         {
             print("pressed lmb");
             SelectTile();
@@ -49,26 +45,37 @@ public class SelectCursor : MonoBehaviour
         {
             mousePosition.z = i;
 
-            if (i == (int)GridLayer.Objects)
+            switch ((GridLayer)mousePosition.z)
             {
-                int indexValue = _grid.Get(mousePosition);
+                case GridLayer.Floor:
+                    break;
+                case GridLayer.Objects:
+                    HandleObjectSelection();
+                    break;
+                case GridLayer.Zone:
+                    break;
+            }
+        }
+    }
 
-                if (indexValue == BuildableAtlas.Empty)
-                {
-                    print("Tile is empty");
-                    continue;
-                }
+    void HandleObjectSelection()
+    {
+        int indexValue = _grid.Get(mousePosition);
 
-                if (_grid.GetUtilities(_atlas.Items[indexValue].UtilityType, out Dictionary<Vector3Int, List<Vector3Int>> utilities))
+        if (indexValue == BuildableAtlas.Empty)
+        {
+            print("Tile is empty");
+            return;
+        }
+
+        if (_grid.GetUtilities(_atlas.Items[indexValue].UtilityType, out Dictionary<Vector3Int, List<Vector3Int>> utilities))
+        {
+            foreach (var item in utilities)
+            {
+                if (item.Key == mousePosition && item.Value.Count > 0)
                 {
-                    foreach (var item in utilities)
-                    {
-                        if (item.Key == mousePosition && item.Value.Count > 0)
-                        {
-                            _grid.SwitchToQueueEditorExternal(mousePosition);
-                            GameManager.Instance.EventManager.TriggerEvent(Features.EventManager.EventId.OnCursorSwitch);
-                        }
-                    }
+                    _grid.SwitchToQueueEditorExternal(mousePosition);
+                    GameManager.Instance.EventManager.TriggerEvent(Features.EventManager.EventId.OnCursorSwitch);
                 }
             }
         }
