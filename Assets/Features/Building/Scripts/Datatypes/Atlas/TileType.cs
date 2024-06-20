@@ -3,6 +3,7 @@
     public enum TileType
     {
         Normal,
-        Utility
+        Utility,
+        Behaviour
     }
 }

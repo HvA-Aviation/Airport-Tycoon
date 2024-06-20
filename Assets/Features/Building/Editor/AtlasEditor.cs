@@ -53,6 +53,13 @@ public class AtlasEditor : Editor
                     tileProp.managedReferenceValue = new UtilityTile();
                 }
             }
+            else if (tileType == TileType.Behaviour)
+            {
+                if (tileProp.managedReferenceValue == null || !(tileProp.managedReferenceValue is BehaviourTile))
+                {
+                    tileProp.managedReferenceValue = new BehaviourTile();
+                }
+            }
         }
 
         indexAmount = tilesProp.arraySize;

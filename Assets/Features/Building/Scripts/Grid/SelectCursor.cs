@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Features.Building.Scripts.Datatypes;
+using Features.Building.Scripts.Datatypes.TileData;
 using Features.Building.Scripts.Grid;
 using Features.Managers;
 using UnityEngine;
@@ -68,13 +70,15 @@ public class SelectCursor : MonoBehaviour
             return;
         }
 
-        if (_grid.GetUtilities(_atlas.Items[indexValue].UtilityType, out Dictionary<Vector3Int, List<Vector3Int>> utilities))
+        UtilityType utilityTile = _atlas.GetTileData<UtilityTile>(indexValue).UtilityType;
+
+        if (_grid.GetUtilities(utilityTile, out Dictionary<Vector3Int, List<Vector3Int>> utilities))
         {
             foreach (var item in utilities)
             {
                 if (item.Key == mousePosition && item.Value.Count > 0)
                 {
-                    _grid.InitializeQueueBuilder(new List<Vector3Int> { mousePosition });
+                    _grid.InitializeQueueBuilderExternal(new List<Vector3Int> { mousePosition }, item.Value);
                     GameManager.Instance.EventManager.TriggerEvent(Features.EventManager.EventId.OnCursorSwitch);
                 }
             }

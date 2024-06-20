@@ -27,7 +27,7 @@ namespace Features.Building.Scripts.Grid
 
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
-        [SerializeField] List<Vector3Int> neighboursToCheckForQueue;
+        private readonly Vector3Int[] neighboursToCheckForQueue = { Vector3Int.up, Vector3Int.right, Vector3Int.down, Vector3Int.left };
         private Vector3Int _gridOffset;
         private Vector3Int _paxSpawnPos;
         private List<TileChangeData> _gridChangeBuffer = new List<TileChangeData>();
@@ -281,14 +281,11 @@ namespace Features.Building.Scripts.Grid
         public bool SetGroup(List<Vector3Int> gridVectors, List<Tile> tiles, int rotation)
         {
             bool waitToCreateTask = false;
-
             //check if all the positions are available
             foreach (Vector3Int position in gridVectors)
             {
                 if (!IsEmpty(position))
-                {
                     return false;
-                }
             }
 
             for (int i = 0; i < gridVectors.Count; i++)
@@ -296,39 +293,37 @@ namespace Features.Building.Scripts.Grid
                 BaseTile tileData = _atlas.GetTileData(tiles[i]);
                 int index = _atlas.GetTileDataIndex(tiles[i]);
 
-                Set(gridVectors[i], index, rotation, false);
-                //get tile from atlas
-                TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tiles[i]);
-
-                if (tileData == default)
+                // Logic for Behaviour type
+                if (tileData.GetType() == typeof(BehaviourTile))
                 {
-                    Debug.LogError("Tile \"" + tiles[i].name + "\" not found in Atlas");
-                    return false;
+                    BehaviourTile behaviourData = _atlas.GetTileData<BehaviourTile>(tiles[i]);
+
+                    BehaviourType behaviourType = behaviourData.BehaviourType;
+                    switch (behaviourType)
+                    {
+                        case BehaviourType.Queue:
+                            if (!CanPlaceQueue(gridVectors[i]))
+                                return false;
+
+                            Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
+                            _tempQueuePositions[utilityLocation].Add(gridVectors[i]);
+                            waitToCreateTask = true;
+
+                            break;
+                        case BehaviourType.PaxSpawn:
+                            _paxSpawnPos = gridVectors[i];
+                            GameManager.Instance.BuildingManager.LockCurrentBuilding();
+                            break;
+                    }
                 }
 
-                if (tileData.UtilityType != UtilityType.None)
+                // Logic for Utility type
+                if (tileData.GetType() == typeof(UtilityTile))
                 {
                     InitializeQueueBuilder(gridVectors);
                 }
 
-                // When building a queue check wether it is possible to place queue based on neighbours
-                if (tileData.BehaviorType == BehaviourType.Queue)
-                {
-                    if (CanPlaceQueue(gridVectors[i]))
-                    {
-                        Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
-                        _tempQueuePositions[utilityLocation].Add(gridVectors[i]);
-                        waitToCreateTask = true;
-                    }
-                    else return false;
-                }
-
-                if (tileData.BehaviorType == BehaviourType.PaxSpawn)
-                {
-                    _paxSpawnPos = gridVectors[i];
-                }
-
-                Set(gridVectors[i], Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile), rotation, false);
+                Set(gridVectors[i], index, rotation, false);
             }
 
             if (!waitToCreateTask)
@@ -347,18 +342,19 @@ namespace Features.Building.Scripts.Grid
 
             Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
             int index = Get(utilityLocation);
-            UtilityType utilityType = _atlas.Items[index].UtilityType;
+
+            UtilityTile utilityTileData = _atlas.GetTileData<UtilityTile>(index);
 
             // check if the queue already exists in the utility data, if it does we are adjusting the queue
-            if (_utilityLocations[utilityType].TryGetValue(utilityLocation, out List<Vector3Int> listToAddTo))
+            if (_utilityLocations[utilityTileData.UtilityType].TryGetValue(utilityLocation, out List<Vector3Int> listToAddTo))
             {
                 listToAddTo.AddRange(_tempQueuePositions[utilityLocation]);
             }
             else
             {
-                _utilityLocations[utilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
+                _utilityLocations[utilityTileData.UtilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
 
-                if (utilityType == UtilityType.Security)
+                if (utilityTileData.UtilityType == UtilityType.Security)
                     GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
                 else
                     GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(utilityLocation));
@@ -388,31 +384,42 @@ namespace Features.Building.Scripts.Grid
             GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
         }
 
+        public void InitializeQueueBuilderExternal(List<Vector3Int> gridVectors, List<Vector3Int> queuePositions)
+        {
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
+
+            if (_tempQueuePositions.Count > 0)
+                FinishQueue();
+
+            if (!_tempQueuePositions.ContainsKey(gridVectors[0]))
+                _tempQueuePositions.Add(gridVectors[0], queuePositions);
+
+            //TODO: rework to not use hard coded number
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
+        }
+
         private bool CanPlaceQueue(Vector3Int tilePos)
         {
             // Check if neighbours of queue are also of queue type
-            for (int j = 0; j < neighboursToCheckForQueue.Count; j++)
+            for (int i = 0; i < neighboursToCheckForQueue.Length; i++)
             {
-                Vector3Int posToCheck = tilePos + neighboursToCheckForQueue[j];
+                Vector3Int posToCheck = tilePos + neighboursToCheckForQueue[i];
 
-                if (Get(posToCheck) == BuildableAtlas.Empty)
+                int atlasIndex = Get(posToCheck);
+
+                if (atlasIndex == BuildableAtlas.Empty)
                     continue;
 
-                BehaviourType behaviorType = _atlas.Items[Get(posToCheck)].BehaviorType;
-                UtilityType utilityType = _atlas.Items[Get(posToCheck)].UtilityType;
-
+                BaseTile neighbourTileData = _atlas.GetTileData(atlasIndex);
                 int queueLength = _tempQueuePositions.First().Value.Count;
 
-                if (queueLength == 0)
-                {
-                    if (behaviorType == BehaviourType.Queue || utilityType != UtilityType.None)
-                        return true;
-                }
+                if (queueLength == 0 && neighbourTileData.GetType() == typeof(UtilityTile))
+                    return true;
 
                 var firstElement = _tempQueuePositions.First();
                 List<Vector3Int> values = firstElement.Value;
 
-                if (posToCheck == values[^1])
+                if (queueLength != 0 && posToCheck == values[^1])
                 {
                     return true;
                 }

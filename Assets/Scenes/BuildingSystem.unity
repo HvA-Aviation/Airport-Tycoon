@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e37d714561c74e4489c3014f8a4a54c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  queueProgressionSpeed: 5
+  queueProgressionSpeed: 1
 --- !u!1 &49778390
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,6 +298,7 @@ MonoBehaviour:
   <FinanceManager>k__BackingField: {fileID: 1390492149}
   <GameTimeManager>k__BackingField: {fileID: 1446644599}
   <PaxManager>k__BackingField: {fileID: 1492655485}
+  <PassengerVisualManager>k__BackingField: {fileID: 0}
 --- !u!4 &61372903
 Transform:
   m_ObjectHideFlags: 0
@@ -507,6 +508,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Builder (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 1312838241029594970, guid: d6f9a1c126ee2d84b91acce3e7516cb7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6f9a1c126ee2d84b91acce3e7516cb7, type: 3}
 --- !u!1001 &106797031
@@ -580,6 +586,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Builder (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1312838241029594970, guid: d6f9a1c126ee2d84b91acce3e7516cb7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6f9a1c126ee2d84b91acce3e7516cb7, type: 3}
@@ -1854,6 +1865,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Builder
       objectReference: {fileID: 0}
+    - target: {fileID: 1312838241029594970, guid: d6f9a1c126ee2d84b91acce3e7516cb7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6f9a1c126ee2d84b91acce3e7516cb7, type: 3}
 --- !u!1 &319065123
@@ -2017,11 +2033,6 @@ MonoBehaviour:
   _atlas: {fileID: 11400000, guid: 91fa229bfdc3991469f7ded3e05287e2, type: 2}
   _gridSize: {x: 50, y: 40, z: 3}
   _cellSize: 1
-  neighboursToCheckForQueue:
-  - {x: 1, y: 0, z: 0}
-  - {x: 0, y: 1, z: 0}
-  - {x: -1, y: 0, z: 0}
-  - {x: 0, y: -1, z: 0}
 --- !u!4 &327049623
 Transform:
   m_ObjectHideFlags: 0
@@ -4500,6 +4511,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Builder (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1312838241029594970, guid: d6f9a1c126ee2d84b91acce3e7516cb7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6f9a1c126ee2d84b91acce3e7516cb7, type: 3}

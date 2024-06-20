@@ -15,7 +15,7 @@ namespace Features.Workers
 
         [Tooltip("Reset worker if it has been stuck for n amount of times"), Range(0, 10)]
         [SerializeField] int ResetToSpawnPointLimit = 1;
-        [SerializeField] int ResetToSpawnPointCurrent;
+        int ResetToSpawnPointCurrent;
 
 
         private void Start()

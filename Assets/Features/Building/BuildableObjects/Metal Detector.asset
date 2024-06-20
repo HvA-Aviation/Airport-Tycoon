@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Metal Detector
   m_EditorClassIdentifier: 
   Name: Metal Detector
-  Price: 25
+  Price: 100
   BrushType: 0
   BuildItems:
   - <Tile>k__BackingField: {fileID: 11400000, guid: a34c6e45faeba8a4c9340342d4aa948a,

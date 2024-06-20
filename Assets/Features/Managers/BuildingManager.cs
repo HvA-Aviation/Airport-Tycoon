@@ -57,18 +57,12 @@ namespace Features.Managers
             }
         }
 
-        public void LockBuilding(int buildIndex)
+        public void LockCurrentBuilding()
         {
-            if (buildIndex != -1)
-            {
-                BuildingStatuses[buildIndex].IsUnlocked = false;
-                ChangeSelectedBuildable(0);
-                GameManager.Instance.EventManager.TriggerEvent(EventId.OnUnlockBuilding);
-            }
-            else
-            {
-                Debug.LogError(BuildingStatuses[buildIndex].BuildableObject.name + " not found in the Building Manager");
-            }
+            int index = BuildingStatuses.FindIndex(x => x.BuildableObject == CurrentBuildableObject);
+            BuildingStatuses[index].IsUnlocked = false;
+            ChangeSelectedBuildable(0);
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnUnlockBuilding);
         }
     }
 
