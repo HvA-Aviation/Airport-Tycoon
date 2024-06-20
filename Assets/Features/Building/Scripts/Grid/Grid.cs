@@ -2,13 +2,11 @@ using Features.Building.Scripts.Datatypes;
 using Features.EventManager;
 using Features.Managers;
 using Features.Workers.TaskCommands;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using Features.Building.Scripts.Datatypes.TileData;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using TileUpdateData = Features.Building.Scripts.Datatypes.TileUpdateData;
-using TileData = Features.Building.Scripts.Datatypes.TileData;
 
 namespace Features.Building.Scripts.Grid
 {
@@ -85,7 +83,7 @@ namespace Features.Building.Scripts.Grid
             if (index == BuildableAtlas.Empty)
                 return 0;
 
-            return _atlas.Items[index].WorkLoad;
+            return _atlas.GetTileData(index).BuildLoad;
         }
 
         /// <summary>
@@ -99,7 +97,7 @@ namespace Features.Building.Scripts.Grid
             if (index == -1)
                 return true;
 
-            return _atlas.Items[index].WorkLoad == 0;
+            return _atlas.GetTileData(index).BuildLoad == 0;
         }
 
         /// <summary>
@@ -120,7 +118,7 @@ namespace Features.Building.Scripts.Grid
                             continue;
 
                         if (_cells[x, y, z].CurrentWorkLoad >= _cells[x, y, z].WorkLoad)
-                            unTraversable[x, y] = _atlas.Items[_cells[x, y, z].Tile].UnTraversable;
+                            unTraversable[x, y] = _atlas.GetTileData(_cells[x, y, z].Tile).UnTraversable;
                     }
                 }
             }
@@ -241,15 +239,15 @@ namespace Features.Building.Scripts.Grid
 
                 cellData.Tile = buildIndex;
                 cellData.Rotation = rotation;
-                cellData.WorkLoad = _atlas.Items[buildIndex].WorkLoad;
+                cellData.WorkLoad = _atlas.GetTileData(buildIndex).BuildLoad;
 
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
 
                 GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
                 {
                     Position = gridVector,
-                    Color = _atlas.Items[buildIndex].Color,
-                    Tile = _atlas.Items[buildIndex].Tile,
+                    Color = _atlas.GetTileData(buildIndex).Color,
+                    Tile = _atlas.GetTileData(buildIndex).Tile,
                     Transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });
 
@@ -270,16 +268,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if setting was a success</returns>
         public bool Set(Vector3Int gridVector, Tile tile)
         {
-            //get tile from atlas
-            TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tile);
-
-            if (tileData == default)
-            {
-                Debug.LogError("Tile \"" + tile.name + "\" not found in Atlas");
-                return false;
-            }
-
-            return Set(gridVector, Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile));
+            return Set(gridVector, _atlas.GetTileDataIndex(tile));
         }
 
         /// <summary>
@@ -304,6 +293,10 @@ namespace Features.Building.Scripts.Grid
 
             for (int i = 0; i < gridVectors.Count; i++)
             {
+                BaseTile tileData = _atlas.GetTileData(tiles[i]);
+                int index = _atlas.GetTileDataIndex(tiles[i]);
+
+                Set(gridVectors[i], index, rotation, false);
                 //get tile from atlas
                 TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tiles[i]);
 
@@ -445,20 +438,15 @@ namespace Features.Building.Scripts.Grid
                 foreach (Vector3Int position in group)
                 {
                     CellData cell = _cells[position.x, position.y, position.z];
-                    UtilityType type = _atlas.Items[cell.Tile].UtilityType;
-                    BehaviourType behaviorType = _atlas.Items[cell.Tile].BehaviorType;
-
-                    // if the tile is a pax spawn dont remove it, perhaps add more functionality to this later
-                    if (behaviorType == BehaviourType.PaxSpawn)
+                    if (_atlas.TileIsType<UtilityTile>(cell.Tile))
                     {
-                        print("Can't remove pax spawn point");
-                        break;
-                    }
+                        UtilityType type = _atlas.GetTileData<UtilityTile>(cell.Tile).UtilityType;
 
-                    if (type != UtilityType.None)
-                    {
-                        _utilityLocations[type].Remove(position);
-                        GameManager.Instance.QueueManager.RemoveQueue(position);
+                        if (type != UtilityType.None)
+                        {
+                            _utilityLocations[type].Remove(position);
+                            GameManager.Instance.QueueManager.RemoveQueue(position);
+                        }
                     }
 
                     _cells[position.x, position.y, position.z].Clear();

@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Features.Workers;
 using UnityEngine;
 
 public class StaffManager : MonoBehaviour
 {
-    [SerializeField] private EmployeeSpawnManagement _spawnNewStaff;
+    [SerializeField] private List<EmployeePool> _employeePools;
 
     private int _nextEmployeeID = 0;
     public int LastEmployeeID => _nextEmployeeID - 1;
@@ -29,13 +30,20 @@ public class StaffManager : MonoBehaviour
     /// <param name="type">The type of employee you want to hire</param>
     public void HireEmployee(Employee.EmployeeTypes type)
     {
-        Employee employee = _spawnNewStaff.InstantiateEmployee(type);
-        
-        employee.SetEmployeeType(type);
+        foreach (var pool in _employeePools)
+        {
+            if (type != pool.PoolType)
+                continue;
 
-        employee.SetID(_nextEmployeeID);
+            Employee employee = pool.Pool.EmployeeObjectPool.Get();
 
-        AddEmployeeToDictionary(employee);
+            employee.SetEmployeeType(type);
+
+            employee.SetID(_nextEmployeeID);
+
+            AddEmployeeToDictionary(employee);
+            break;
+        }
     }
 
     /// <summary>
@@ -46,9 +54,9 @@ public class StaffManager : MonoBehaviour
     {
         if (Employees.TryGetValue(employeeID, out Employee employee))
         {
-            _spawnNewStaff.DespawnEmployeeOBJ(employee.gameObject);
+            employee.Return();
             Employees.Remove(employeeID);
-            employee.GetComponent<AssignableWorker>().Fire();
+            //employee.GetComponent<AssignableWorker>().Fire();
         }
     }
 
@@ -59,4 +67,11 @@ public class StaffManager : MonoBehaviour
     public string GetEmployeeName(int employeeID) => Employees[employeeID].Name;
 
     public Employee.EmployeeTypes GetEmployeeType(int employeeID) => Employees[employeeID].EmployeeType;
+
+    [Serializable]
+    public struct EmployeePool
+    {
+        public Employee.EmployeeTypes PoolType;
+        public StaffObjectPool Pool;
+    }
 }
