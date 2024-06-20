@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &363697983247919683
 Transform:
   m_ObjectHideFlags: 0
@@ -114,7 +114,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 363697983247919681}
-  _grid: {fileID: 0}
   _workLoadSpeed: 5
   _assignmentsShift: 10
 --- !u!114 &1162940037961931262
@@ -129,4 +128,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df0d492fe31806542b576cbc0f5b5969, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _staffManager: {fileID: 0}
