@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Pax Spawn
   m_EditorClassIdentifier: 
   Name: Pax Spawn
+  Price: 0
   BrushType: 0
   BuildItems:
-  - <Tile>k__BackingField: {fileID: 11400000, guid: 96db11b5d523f664b9a8f379dde15f0f,
+  - <Tile>k__BackingField: {fileID: 11400000, guid: 5016f7aa4f02227439241937c5ae1971,
       type: 2}
     <GridPosition>k__BackingField:
       <Position>k__BackingField: {x: 0, y: 0}

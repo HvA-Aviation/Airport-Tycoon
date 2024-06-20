@@ -147,11 +147,6 @@ public class QueueManager : MonoBehaviour
             }
 
             int totalAmountOfQueuers = _utilityQueue[item].inQueue.Count + _utilityQueue[item].joiningQueue.Count;
-            if (_utilityQueue[item].inQueue.Count == _utilityQueue[item].queuePositions.Count)
-            {
-                print("Queue is full, skipping...");
-                continue;
-            }
 
             if (totalAmountOfQueuers < currentBestCount)
             {
@@ -169,12 +164,6 @@ public class QueueManager : MonoBehaviour
     public void AssignToUtility(Dictionary<Vector3Int, List<Vector3Int>> utilityPos, PassengerBehaviour passenger, Action<Vector3Int, Vector3Int> OnQueueChanged)
     {
         Vector3Int optimalQueue = GetOptimalQueue(utilityPos);
-
-        if (optimalQueue == Vector3Int.zero)
-        {
-            print("No optimal queue found");
-            return;
-        }
 
         Vector3Int beginOfQueue = _utilityQueue[optimalQueue].queuePositions.Last();
 

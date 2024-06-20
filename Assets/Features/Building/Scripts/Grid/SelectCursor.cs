@@ -74,7 +74,7 @@ public class SelectCursor : MonoBehaviour
             {
                 if (item.Key == mousePosition && item.Value.Count > 0)
                 {
-                    _grid.SwitchToQueueEditorExternal(mousePosition);
+                    _grid.InitializeQueueBuilder(new List<Vector3Int> { mousePosition });
                     GameManager.Instance.EventManager.TriggerEvent(Features.EventManager.EventId.OnCursorSwitch);
                 }
             }

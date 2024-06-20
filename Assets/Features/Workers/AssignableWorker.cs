@@ -18,13 +18,13 @@ namespace Features.Workers
         protected Vector3Int _targetPosition;
         protected TaskCommand<AssignableWorker> _task;
 
-        
+
         protected virtual void Start()
         {
             // Register it to the task system by setting it available.
             TaskManager().SetAvailable(this);
         }
-        
+
         /// <summary>
         /// Gets the direction of the utility so the worker will stand behind it
         /// </summary>
@@ -123,7 +123,14 @@ namespace Features.Workers
                 _targetPosition,
                 () => CheckTaskExists(target, onDone),
                 onReachedPosition,
-                () => { print("Implement function that handles case when Assignable worker does not have path to target"); });
+                () => NoPathToTarget(target, onReachedPosition, onDone));
+        }
+
+        public void NoPathToTarget(Vector3Int target, Action onReachedPosition, Action onDone)
+        {
+            Debug.LogWarning("Assignable worker could not find path to target");
+            transform.position = GameManager.Instance.GridManager.GetPaxSpawnPoint();
+            MoveTo(target, onReachedPosition, onDone);
         }
 
         /// <summary>

@@ -313,6 +313,11 @@ namespace Features.Building.Scripts.Grid
                     return false;
                 }
 
+                if (tileData.UtilityType != UtilityType.None)
+                {
+                    InitializeQueueBuilder(gridVectors);
+                }
+
                 // When building a queue check wether it is possible to place queue based on neighbours
                 if (tileData.BehaviorType == BehaviourType.Queue)
                 {
@@ -328,11 +333,6 @@ namespace Features.Building.Scripts.Grid
                 if (tileData.BehaviorType == BehaviourType.PaxSpawn)
                 {
                     _paxSpawnPos = gridVectors[i];
-                }
-
-                if (tileData.UtilityType != UtilityType.None)
-                {
-                    InitializeQueueBuilder(gridVectors);
                 }
 
                 Set(gridVectors[i], Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile), rotation, false);
@@ -381,7 +381,7 @@ namespace Features.Building.Scripts.Grid
             GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
         }
 
-        private void InitializeQueueBuilder(List<Vector3Int> gridVectors)
+        public void InitializeQueueBuilder(List<Vector3Int> gridVectors)
         {
             GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
 
@@ -402,21 +402,29 @@ namespace Features.Building.Scripts.Grid
             {
                 Vector3Int posToCheck = tilePos + neighboursToCheckForQueue[j];
 
-                if (Get(posToCheck) != BuildableAtlas.Empty)
-                {
-                    BehaviourType behaviorType = _atlas.Items[Get(posToCheck)].BehaviorType;
-                    UtilityType utilityType = _atlas.Items[Get(posToCheck)].UtilityType;
+                if (Get(posToCheck) == BuildableAtlas.Empty)
+                    continue;
 
+                BehaviourType behaviorType = _atlas.Items[Get(posToCheck)].BehaviorType;
+                UtilityType utilityType = _atlas.Items[Get(posToCheck)].UtilityType;
+
+                int queueLength = _tempQueuePositions.First().Value.Count;
+
+                if (queueLength == 0)
+                {
                     if (behaviorType == BehaviourType.Queue || utilityType != UtilityType.None)
                         return true;
                 }
+
+                var firstElement = _tempQueuePositions.First();
+                List<Vector3Int> values = firstElement.Value;
+
+                if (posToCheck == values[^1])
+                {
+                    return true;
+                }
             }
             return false;
-        }
-
-        public void SwitchToQueueEditorExternal(Vector3Int selectedUtility)
-        {
-            InitializeQueueBuilder(new List<Vector3Int> { selectedUtility });
         }
 
         /// <summary>
