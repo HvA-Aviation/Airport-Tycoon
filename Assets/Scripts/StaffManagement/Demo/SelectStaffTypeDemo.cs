@@ -1,6 +1,6 @@
+using Features.Managers;
 using System;
 using System.Linq;
-using Features.Managers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -46,6 +46,7 @@ public class SelectStaffTypeDemo : MonoBehaviour
     public void Hire()
     {
         GameManager.Instance.StaffManager.HireEmployee(_employeeTypeToHire);
+
         string name = GameManager.Instance.StaffManager.GetEmployeeName(GameManager.Instance.StaffManager.LastEmployeeID);
 
         GameObject temp = Instantiate(_listObject, _parent);
