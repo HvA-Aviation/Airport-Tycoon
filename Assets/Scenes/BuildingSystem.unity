@@ -4891,6 +4891,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Guard
       objectReference: {fileID: 0}
+    - target: {fileID: 363697983247919692, guid: bfedb5b88ba1c574eaf22c7ca42d3f8e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bfedb5b88ba1c574eaf22c7ca42d3f8e, type: 3}
 --- !u!1 &753890462
@@ -12218,7 +12223,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1767608966}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.81333333
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
