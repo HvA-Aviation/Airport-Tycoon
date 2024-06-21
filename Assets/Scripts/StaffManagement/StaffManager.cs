@@ -65,7 +65,10 @@ public class StaffManager : MonoBehaviour
         {
             employee.Return();
             Employees.Remove(employeeID);
-            employee.GetComponent<AssignableWorker>().Fire();
+            
+            //TODO fix this monstrosity. I'm sorry I don't have enough time :(
+            employee.GetComponent<AssignableWorker>()?.Fire();
+            employee.GetComponent<BuilderWorker>()?.Fire();
         }
     }
 

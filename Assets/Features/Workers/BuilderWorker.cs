@@ -16,7 +16,13 @@ namespace Features.Workers
         [Tooltip("Reset worker if it has been stuck for n amount of times"), Range(0, 10)]
         [SerializeField] int ResetToSpawnPointLimit = 1;
         int ResetToSpawnPointCurrent;
-
+        
+        protected TaskCommand<BuilderWorker> _task;
+        
+        public void SetTask(TaskCommand<BuilderWorker> taskCommand)
+        {
+            _task = taskCommand;
+        }
 
         private void Start()
         {
@@ -73,6 +79,17 @@ namespace Features.Workers
         {
             if (GameManager.Instance.GridManager.Grid.IsEmpty(target))
                 onDone.Invoke();
+        }
+        
+        /// <summary>
+        /// Stop all current routines and add the current task back to the task list
+        /// </summary>
+        public void Fire()
+        {
+            StopAllCoroutines();
+            _npcController.StopAllCoroutines();
+            if (_task != null)
+                GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(_task);
         }
     }
 }
