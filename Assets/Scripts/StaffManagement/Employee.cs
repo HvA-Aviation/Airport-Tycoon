@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 
 public class Employee : MonoBehaviour
 {
+    private Action<Employee> _returnCallback;
+
     public string Name { get; private set; }
     public int SalaryAmount { get; private set; }
     public int EmployeeID { get; private set; }
@@ -17,6 +20,10 @@ public class Employee : MonoBehaviour
     public void SetSalaryAmount(int amount) => SalaryAmount = amount;
 
     public void SetID(int id) => EmployeeID = id;
+
+    public void SetCallback(Action<Employee> callback) => _returnCallback = callback;
+
+    public void Return() => _returnCallback?.Invoke(this);
 
     public enum EmployeeTypes
     {
