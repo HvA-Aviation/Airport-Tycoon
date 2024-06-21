@@ -12,6 +12,8 @@
                 OnChangeColorTile,
                 OnMissingUtility,
                 OnCursorSwitch,
-                OnBuildingQueue
+                OnBuildingQueue,
+                OnEmployeeHire,
+                OnEmployeeFire,
         }
 }
