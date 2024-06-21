@@ -2,12 +2,11 @@ using Features.Building.Scripts.Datatypes;
 using Features.EventManager;
 using Features.Managers;
 using Features.Workers.TaskCommands;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using Features.Building.Scripts.Datatypes.TileData;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using TileData = Features.Building.Scripts.Datatypes.TileData;
 
 namespace Features.Building.Scripts.Grid
 {
@@ -22,17 +21,12 @@ namespace Features.Building.Scripts.Grid
         private CellData[,,] _cells;
 
         [SerializeField] private BuildableAtlas _atlas;
-        [SerializeField] private Tilemap _tilemap;
 
         [SerializeField] private Vector3Int _gridSize;
         [SerializeField] private float _cellSize;
-        [SerializeField] private float _buildingStaringOpacity;
 
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
-        private Vector3Int _gridOffset;
-        private List<TileChangeData> _gridChangeBuffer = new List<TileChangeData>();
-        private List<TileColorData> _gridColorBuffer = new List<TileColorData>();
 
         private Dictionary<UtilityType, List<Vector3Int>> _utilityLocations =
             new Dictionary<UtilityType, List<Vector3Int>>()
@@ -49,10 +43,6 @@ namespace Features.Building.Scripts.Grid
         {
             if (_atlas == null)
                 Debug.LogError("No atlas is assigned!");
-
-            _gridOffset = new Vector3Int(Mathf.RoundToInt(_tilemap.transform.position.x),
-                Mathf.RoundToInt(_tilemap.transform.position.y),
-                Mathf.RoundToInt(_tilemap.transform.position.z));
 
             _cells = new CellData[_gridSize.x, _gridSize.y, _gridSize.z];
             _cellGroup = new List<List<Vector3Int>>();
@@ -88,7 +78,21 @@ namespace Features.Building.Scripts.Grid
             if (index == BuildableAtlas.Empty)
                 return 0;
 
-            return _atlas.Items[index].WorkLoad;
+            return _atlas.GetTileData(index).BuildLoad;
+        }
+
+        /// <summary>
+        /// Checks if work needs to be done 
+        /// </summary>
+        /// <param name="target">Position of the utility</param>
+        /// <returns>Workload as a float</returns>
+        public bool IsWorkDone(Vector3Int target)
+        {
+            int index = Get(target);
+            if (index == -1)
+                return true;
+
+            return _atlas.GetTileData(index).BuildLoad == 0;
         }
 
         /// <summary>
@@ -109,7 +113,7 @@ namespace Features.Building.Scripts.Grid
                             continue;
 
                         if (_cells[x, y, z].CurrentWorkLoad >= _cells[x, y, z].WorkLoad)
-                            unTraversable[x, y] = _atlas.Items[_cells[x, y, z].Tile].UnTraversable;
+                            unTraversable[x, y] = _atlas.GetTileData(_cells[x, y, z].Tile).UnTraversable;
                     }
                 }
             }
@@ -143,48 +147,17 @@ namespace Features.Building.Scripts.Grid
         }
 
         /// <summary>
-        /// If the map update was called this frame update it
+        /// Used by a worker when they are at a build position. This updates the data and enables the utilities when done
         /// </summary>
-        private void LateUpdate()
-        {
-            if (_gridChangeBuffer.Count > 0 || _gridColorBuffer.Count > 0)
-            {
-                UpdateMap();
-            }
-        }
-
-        /// <summary>
-        /// Loops through the whole grid and sets all the cells to what they are supposed to be
-        /// </summary>
-        private void UpdateMap()
-        {
-            bool traversableChanged = false;
-            foreach (TileChangeData tileChangeData in _gridChangeBuffer)
-            {
-                _tilemap.SetTile(tileChangeData, true);
-            }
-
-            if (_gridChangeBuffer.Count > 0)
-            {
-                //Update Traversable
-                UpdateTraversable();
-            }
-
-            foreach (TileColorData tileChangeData in _gridColorBuffer)
-            {
-                _tilemap.SetTileFlags(tileChangeData.Position, TileFlags.None);
-                _tilemap.SetColor(tileChangeData.Position, tileChangeData.Color);
-            }
-
-            _gridChangeBuffer.Clear();
-            _gridColorBuffer.Clear();
-        }
-
+        /// <param name="gridVector">Build position</param>
+        /// <param name="speed">Build speed / work load</param>
+        /// <returns>Return if finised</returns>
         public bool BuildTile(Vector3Int gridVector, float speed)
         {
             if (IsEmpty(gridVector))
                 return true;
 
+            //get all the build tiles of a group
             List<Vector3Int> buildTiles = new List<Vector3Int>() { gridVector };
             for (int i = 0; i < _cellGroup.Count; i++)
             {
@@ -206,22 +179,19 @@ namespace Features.Building.Scripts.Grid
                     _cells[tile.x, tile.y, tile.z].WorkLoad);
 
                 CellData cellData = _cells[tile.x, tile.y, tile.z];
-
-                float buildAmount = _buildingStaringOpacity + (cellData.CurrentWorkLoad / cellData.WorkLoad * (1 - _buildingStaringOpacity));
-
-                Color color = _tilemap.GetColor(tile);
-                color.a = buildAmount;
-                _gridColorBuffer.Add(new TileColorData()
+                
+                GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeColorTile, new TileColorData()
                 {
                     Position = tile,
-                    Color = color,
+                    Progress = cellData.CurrentWorkLoad / cellData.WorkLoad,
                 });
 
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
 
-                if (isFinished)
+                //if finished and a utility type add a task
+                if (isFinished && _atlas.TileIsType<UtilityTile>(cellData.Tile))
                 {
-                    UtilityType utilityType = _atlas.Items[cellData.Tile].UtilityType;
+                    UtilityType utilityType = _atlas.GetTileData<UtilityTile>(cellData.Tile).UtilityType;
 
                     if (utilityType != UtilityType.None)
                     {
@@ -276,30 +246,28 @@ namespace Features.Building.Scripts.Grid
         /// <param name="gridVector">Position on grid</param>
         /// <param name="buildIndex">Build index of the tile found in BuildableAtlas</param>
         /// <returns>True if setting was a success</returns>
-        public bool Set(Vector3Int gridVector, int buildIndex)
+        public bool Set(Vector3Int gridVector, int buildIndex, int rotation = 0, bool addTask = true)
         {
             if (IsEmpty(gridVector))
             {
                 CellData cellData = _cells[gridVector.x, gridVector.y, gridVector.z];
 
                 cellData.Tile = buildIndex;
-                cellData.Rotation = 0;
-                cellData.WorkLoad = _atlas.Items[buildIndex].WorkLoad;
+                cellData.Rotation = rotation;
+                cellData.WorkLoad = _atlas.GetTileData(buildIndex).BuildLoad;
 
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
-
-                Color color = _atlas.Items[buildIndex].Color;
-                color.a = _buildingStaringOpacity;
-
-                _gridChangeBuffer.Add(new TileChangeData()
+                
+                GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
                 {
-                    position = gridVector,
-                    color = color,
-                    tile = _atlas.Items[buildIndex].Tile,
-                    transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
+                    Position = gridVector,
+                    Color = _atlas.GetTileData(buildIndex).Color,
+                    Tile = _atlas.GetTileData(buildIndex).Tile,
+                    Transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
                 });
 
-                GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVector));
+                if (addTask)
+                    GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVector));
 
                 return true;
             }
@@ -315,16 +283,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if setting was a success</returns>
         public bool Set(Vector3Int gridVector, Tile tile)
         {
-            //get tile from atlas
-            TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tile);
-
-            if (tileData == default)
-            {
-                Debug.LogError("Tile \"" + tile.name + "\" not found in Atlas");
-                return false;
-            }
-
-            return Set(gridVector, Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile));
+            return Set(gridVector, _atlas.GetTileDataIndex(tile));
         }
 
         /// <summary>
@@ -339,43 +298,21 @@ namespace Features.Building.Scripts.Grid
             //check if all the positions are available
             foreach (Vector3Int position in gridVectors)
             {
-                if (IsEmpty(position))
+                if (!IsEmpty(position))
                     return false;
             }
 
             for (int i = 0; i < gridVectors.Count; i++)
             {
-                //get tile from atlas
-                TileData tileData = _atlas.Items.FirstOrDefault(x => x.Tile == tiles[i]);
+                BaseTile tileData = _atlas.GetTileData(tiles[i]);
+                int index = _atlas.GetTileDataIndex(tiles[i]);
 
-                if (tileData == default)
-                {
-                    Debug.LogError("Tile \"" + tiles[i].name + "\" not found in Atlas");
-                    return false;
-                }
-
-                CellData cellData = _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z];
-
-                cellData.Tile = Array.FindIndex(_atlas.Items, x => x.Tile == tileData.Tile);
-                cellData.Rotation = rotation;
-                cellData.WorkLoad = tileData.WorkLoad;
-
-                _cells[gridVectors[i].x, gridVectors[i].y, gridVectors[i].z] = cellData;
-
-                Color color = _atlas.Items[cellData.Tile].Color;
-                color.a = _buildingStaringOpacity;
-
-                _gridChangeBuffer.Add(new TileChangeData()
-                {
-                    position = gridVectors[i],
-                    color = color,
-                    tile = tileData.Tile,
-                    transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, cellData.Rotation * -90))
-                });
+                Set(gridVectors[i], index, rotation, false);
             }
 
             GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
-            _cellGroup.Add(gridVectors);
+            if (gridVectors.Count > 1)
+                _cellGroup.Add(gridVectors);
 
             return true;
         }
@@ -387,7 +324,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if remove was successful</returns>
         public bool Remove(Vector3Int gridVector)
         {
-            if (!OutOfBounds(gridVector) && IsEmpty(gridVector))
+            if (!OutOfBounds(gridVector) && !IsEmpty(gridVector))
             {
                 //checks if given tile is part of a linked group. If not only add the given position
                 List<Vector3Int> group = _cellGroup.FirstOrDefault(x => x.Any(j => j == gridVector));
@@ -395,25 +332,28 @@ namespace Features.Building.Scripts.Grid
                     group = new List<Vector3Int>() { gridVector };
 
                 //Remove from array
-                foreach (Vector3Int item in group)
+                foreach (Vector3Int position in group)
                 {
-                    CellData cell = _cells[item.x, item.y, item.z];
-                    UtilityType type = _atlas.Items[cell.Tile].UtilityType;
-
-                    if (type != UtilityType.None)
+                    CellData cell = _cells[position.x, position.y, position.z];
+                    if (_atlas.TileIsType<UtilityTile>(cell.Tile))
                     {
-                        _utilityLocations[type].Remove(item);
-                        GameManager.Instance.QueueManager.RemoveQueue(item);
+                        UtilityType type = _atlas.GetTileData<UtilityTile>(cell.Tile).UtilityType;
+
+                        if (type != UtilityType.None)
+                        {
+                            _utilityLocations[type].Remove(position);
+                            GameManager.Instance.QueueManager.RemoveQueue(position);
+                        }
                     }
 
-                    _cells[item.x, item.y, item.z].Clear();
+                    _cells[position.x, position.y, position.z].Clear();
+                    
+                    GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
+                    {
+                        Position = position,
+                        Tile = null,
+                    });
                 }
-
-                _gridChangeBuffer.Add(new TileChangeData()
-                {
-                    position = gridVector,
-                    tile = null,
-                });
 
                 //remove from group
                 _cellGroup.Remove(group);

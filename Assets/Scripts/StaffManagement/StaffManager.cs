@@ -1,13 +1,13 @@
 using Features.Managers;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class StaffManager : MonoBehaviour
 {
+    [SerializeField] private List<EmployeePool> _employeePools;
     [SerializeField, Tooltip("The cost to hire new staff")]
     private int _recruitmentCost;
-
-    [SerializeField] private EmployeeSpawnManagement _spawnNewStaff;
 
     private int _nextEmployeeID = 0;
     public int LastEmployeeID => _nextEmployeeID - 1;
@@ -37,15 +37,21 @@ public class StaffManager : MonoBehaviour
             return;
         }
 
-        GameManager.Instance.FinanceManager.Balance.Subtract(_recruitmentCost);
+        foreach (var pool in _employeePools)
+        {
+            if (type != pool.PoolType)
+                continue;
 
-        Employee employee = _spawnNewStaff.InstantiateEmployee(type);
+            Employee employee = pool.Pool.EmployeeObjectPool.Get();
 
-        employee.SetEmployeeType(type);
+            employee.SetEmployeeType(type);
 
-        employee.SetID(_nextEmployeeID);
+            employee.SetID(_nextEmployeeID);
 
-        AddEmployeeToDictionary(employee);
+            AddEmployeeToDictionary(employee);
+
+            break;
+        }
     }
 
     /// <summary>
@@ -56,7 +62,7 @@ public class StaffManager : MonoBehaviour
     {
         if (Employees.TryGetValue(employeeID, out Employee employee))
         {
-            _spawnNewStaff.DespawnEmployeeOBJ(employee.gameObject);
+            employee.Return();
             Employees.Remove(employeeID);
             //employee.GetComponent<AssignableWorker>().Fire();
         }
@@ -87,4 +93,11 @@ public class StaffManager : MonoBehaviour
     public string GetEmployeeName(int employeeID) => Employees[employeeID].Name;
 
     public Employee.EmployeeTypes GetEmployeeType(int employeeID) => Employees[employeeID].EmployeeType;
+
+    [Serializable]
+    public struct EmployeePool
+    {
+        public Employee.EmployeeTypes PoolType;
+        public StaffObjectPool Pool;
+    }
 }

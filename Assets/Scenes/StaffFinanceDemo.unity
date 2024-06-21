@@ -518,10 +518,11 @@ MonoBehaviour:
   <BuildingManager>k__BackingField: {fileID: 940424793}
   <GridManager>k__BackingField: {fileID: 494020287}
   <QueueManager>k__BackingField: {fileID: 0}
-  <StaffManager>k__BackingField: {fileID: 1951720785}
+  <StaffManager>k__BackingField: {fileID: 0}
   <FinanceManager>k__BackingField: {fileID: 1390492149}
   <GameTimeManager>k__BackingField: {fileID: 1446644599}
   <PaxManager>k__BackingField: {fileID: 0}
+  <PassengerVisualManager>k__BackingField: {fileID: 0}
 --- !u!4 &61372903
 Transform:
   m_ObjectHideFlags: 0
@@ -2425,10 +2426,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _atlas: {fileID: 11400000, guid: 91fa229bfdc3991469f7ded3e05287e2, type: 2}
-  _tilemap: {fileID: 488230465}
   _gridSize: {x: 50, y: 40, z: 3}
   _cellSize: 1
-  _buildingStaringOpacity: 0.4
 --- !u!4 &327049623
 Transform:
   m_ObjectHideFlags: 0
@@ -13160,6 +13159,7 @@ MonoBehaviour:
   - Type: 2
     Object: {fileID: 6704580746237784752, guid: 4035bb26a3c472f49b3c94d095873d0d,
       type: 3}
+  _parentOBJ: {fileID: 0}
 --- !u!114 &1951720785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13172,8 +13172,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e415f422023aaac4caa86f42bd196ace, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _recruitmentCost: 500
-  _spawnNewStaff: {fileID: 1951720784}
+  _employeePools: []
+  _recruitmentCost: 0
 --- !u!4 &1951720786
 Transform:
   m_ObjectHideFlags: 0

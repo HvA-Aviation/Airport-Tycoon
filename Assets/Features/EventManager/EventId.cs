@@ -8,5 +8,7 @@
         GridUpdateEvent,
         OnMoneyAdded,
         OnMoneyRemoved,
+        OnChangeTile,
+        OnChangeColorTile,
     }
 }
