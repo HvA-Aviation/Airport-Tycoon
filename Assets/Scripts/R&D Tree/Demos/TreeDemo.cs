@@ -11,7 +11,7 @@ public class TreeDemo : MonoBehaviour
 
     private void Start()
     {
-        _tree.gameObject.SetActive(false);
+        //_tree.gameObject.SetActive(false);
     }
 
     void Update()

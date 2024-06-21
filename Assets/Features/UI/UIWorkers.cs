@@ -13,6 +13,7 @@ namespace Features.UI
         {
             GameManager.Instance.EventManager.Subscribe(EventId.OnEmployeeHire, UpdateAmount);
             GameManager.Instance.EventManager.Subscribe(EventId.OnEmployeeFire, UpdateAmount);
+            UpdateAmount(default);
         }
 
         private void UpdateAmount(EventArgs args)
