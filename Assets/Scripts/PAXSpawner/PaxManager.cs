@@ -5,6 +5,9 @@ public class PaxManager : MonoBehaviour
     [SerializeField, Tooltip("The amount of new object needs to be spawned when pool is empty")]
     private int _spawnAmount;
 
+    private int amountOfRecordedPax;
+    private float totalTimeSpent;
+
     [SerializeField, Tooltip("The passenger gameobject")]
     private GameObject _paxObject;
 
@@ -12,14 +15,10 @@ public class PaxManager : MonoBehaviour
 
     public ObjectPool<Pax> Pool => _pool;
 
-    private void Awake() => _pool = new ObjectPool<Pax>(CreateFunction, OnGetAction, OnReturnAction, _spawnAmount);
+    public float AverageTimeInAirport => amountOfRecordedPax == 0 ? 0 : totalTimeSpent / amountOfRecordedPax;
+    public int AmountOfPaxInAirport => _pool.GetAmountOfActivePax();
 
-    private void Start()
-    {
-        //Instantiate object when scene is loaded
-        var pax = _pool.Get();
-        pax.Return();
-    }
+    private void Awake() => _pool = new ObjectPool<Pax>(CreateFunction, OnGetAction, OnReturnAction, _spawnAmount);
 
     /// <summary>
     /// This function is called when there are not enough objects in the pool so it will create new objects
@@ -55,5 +54,10 @@ public class PaxManager : MonoBehaviour
     /// Function that needs to be called by the pax script when it wants to return to the pool
     /// </summary>
     /// <param name="pax">The pax script it needs to return</param>
-    private void ReturnToPool(Pax pax) => _pool.Return(pax);
+    private void ReturnToPool(Pax pax)
+    {
+        amountOfRecordedPax++;
+        totalTimeSpent += pax.timeElapsed;
+        _pool.Return(pax);
+    }
 }

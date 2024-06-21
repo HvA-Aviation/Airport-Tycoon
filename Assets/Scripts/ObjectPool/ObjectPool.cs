@@ -57,4 +57,13 @@ public class ObjectPool<T>
 
         _objectPool.Enqueue(element);
     }
+
+    /// <summary>
+    /// Get amount of current active pax in the scene
+    /// </summary>
+    /// <returns>int value of current active pax</returns>
+    public int GetAmountOfActivePax()
+    {
+        return _spawnAmount - _objectPool.Count;
+    }
 }

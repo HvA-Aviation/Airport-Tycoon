@@ -101,6 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 5
+  _ignoreCollision: 0
 --- !u!114 &2024982485645527823
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,6 +115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 363697983247919681}
+  pax: {fileID: -9087887234611715720}
   atCorrectPositionInQueue: 0
   distanceToNextPosComplete: 0.1
   currentPathIndex: 0
@@ -129,6 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a93a9745435b4f04d8f62f8bb3f31842, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeElapsed: 0
 --- !u!1001 &1657445603528802977
 PrefabInstance:
   m_ObjectHideFlags: 0
