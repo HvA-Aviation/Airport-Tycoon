@@ -8,6 +8,7 @@ public class FinanceManager : MonoBehaviour
     [Header("Loans")]
     [SerializeField]
     private int _startingMoney;
+    [SerializeField]
     private List<LoanType> _listOfLoans;
 
     public LoanManager<LoanType> _loanManager;

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Queue
   m_EditorClassIdentifier: 
   Name: Queue
+  Price: 0
   BrushType: 0
   BuildItems:
   - <Tile>k__BackingField: {fileID: 11400000, guid: a6aead7df04db46488cb4855ffc732ba,
