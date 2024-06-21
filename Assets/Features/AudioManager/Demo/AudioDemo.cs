@@ -7,7 +7,7 @@ namespace Features.AudioManager.Demo
     {
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Q))
+           /* if (Input.GetKeyDown(KeyCode.Q))
                 GameManager.Instance.AudioManager.PlaySFX("Complete");
 
             if (Input.GetKeyDown(KeyCode.W))
@@ -17,7 +17,7 @@ namespace Features.AudioManager.Demo
                 GameManager.Instance.AudioManager.PlaySFX("Tab");
 
             if (Input.GetKeyDown(KeyCode.R))
-                GameManager.Instance.AudioManager.PlaySFX("Bonus");
+                GameManager.Instance.AudioManager.PlaySFX("Bonus");*/
         }
     }
 }
