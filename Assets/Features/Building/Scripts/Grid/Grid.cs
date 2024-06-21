@@ -293,6 +293,12 @@ namespace Features.Building.Scripts.Grid
                 BaseTile tileData = _atlas.GetTileData(tiles[i]);
                 int index = _atlas.GetTileDataIndex(tiles[i]);
 
+                // Logic for Utility type
+                if (tileData.GetType() == typeof(UtilityTile))
+                {
+                    InitializeQueueBuilder(gridVectors);
+                }
+
                 // Logic for Behaviour type
                 if (tileData.GetType() == typeof(BehaviourTile))
                 {
@@ -307,6 +313,7 @@ namespace Features.Building.Scripts.Grid
 
                             Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
                             _tempQueuePositions[utilityLocation].Add(gridVectors[i]);
+
                             waitToCreateTask = true;
 
                             break;
@@ -315,12 +322,6 @@ namespace Features.Building.Scripts.Grid
                             GameManager.Instance.BuildingManager.LockCurrentBuilding();
                             break;
                     }
-                }
-
-                // Logic for Utility type
-                if (tileData.GetType() == typeof(UtilityTile))
-                {
-                    InitializeQueueBuilder(gridVectors);
                 }
 
                 Set(gridVectors[i], index, rotation, false);
@@ -345,14 +346,12 @@ namespace Features.Building.Scripts.Grid
 
             UtilityTile utilityTileData = _atlas.GetTileData<UtilityTile>(index);
 
-            // check if the queue already exists in the utility data, if it does we are adjusting the queue
-            if (_utilityLocations[utilityTileData.UtilityType].TryGetValue(utilityLocation, out List<Vector3Int> listToAddTo))
+            if (_utilityLocations.TryGetValue(utilityTileData.UtilityType, out var value))
             {
-                listToAddTo.AddRange(_tempQueuePositions[utilityLocation]);
-            }
-            else
-            {
-                _utilityLocations[utilityTileData.UtilityType].Add(utilityLocation, _tempQueuePositions[utilityLocation]);
+                if (!value.ContainsKey(utilityLocation))
+                    value.Add(utilityLocation, new List<Vector3Int>());
+
+                value[utilityLocation].AddRange(_tempQueuePositions[utilityLocation]);
 
                 if (utilityTileData.UtilityType == UtilityType.Security)
                     GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
@@ -364,6 +363,7 @@ namespace Features.Building.Scripts.Grid
             {
                 GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(item));
             }
+
 
             _tempQueuePositions.Clear();
 
@@ -377,22 +377,7 @@ namespace Features.Building.Scripts.Grid
             if (_tempQueuePositions.Count > 0)
                 FinishQueue();
 
-            if (!_tempQueuePositions.ContainsKey(gridVectors[0]))
-                _tempQueuePositions.Add(gridVectors[0], new List<Vector3Int>());
-
-            //TODO: rework to not use hard coded number
-            GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
-        }
-
-        public void InitializeQueueBuilderExternal(List<Vector3Int> gridVectors, List<Vector3Int> queuePositions)
-        {
-            GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
-
-            if (_tempQueuePositions.Count > 0)
-                FinishQueue();
-
-            if (!_tempQueuePositions.ContainsKey(gridVectors[0]))
-                _tempQueuePositions.Add(gridVectors[0], queuePositions);
+            _tempQueuePositions.Add(gridVectors[0], new List<Vector3Int>());
 
             //TODO: rework to not use hard coded number
             GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
@@ -412,6 +397,17 @@ namespace Features.Building.Scripts.Grid
 
                 BaseTile neighbourTileData = _atlas.GetTileData(atlasIndex);
                 int queueLength = _tempQueuePositions.First().Value.Count;
+
+                UtilityTile idk = _atlas.GetTileData<UtilityTile>(Get(_tempQueuePositions.First().Key));
+
+                if (queueLength == 0 && _utilityLocations[idk.UtilityType].ContainsKey(_tempQueuePositions.First().Key))
+                {
+                    if (posToCheck == _utilityLocations[idk.UtilityType][_tempQueuePositions.First().Key][^1])
+                    {
+                        return true;
+                    }
+                    else continue;
+                }
 
                 if (queueLength == 0 && neighbourTileData.GetType() == typeof(UtilityTile))
                     return true;
