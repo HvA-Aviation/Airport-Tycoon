@@ -40,12 +40,6 @@ public class FinanceDemo : MonoBehaviour
             TryAcceptLoan(2);
             UpdateUI();
         }
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            GameManager.Instance.FinanceManager.AdvancePeriod();
-            UpdateUI();
-        }
     }
 
     private void TryAcceptLoan(int index)

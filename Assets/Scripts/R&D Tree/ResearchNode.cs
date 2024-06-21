@@ -14,6 +14,9 @@ public class ResearchNode : MonoBehaviour
     public ResearchStates CurrentResearchState { get; private set; }
 
     public UnityEvent ResearchDoneEvent;
+    
+    //TODO clean up quick fix
+    private bool _paid;
 
     private void Start()
     {
@@ -81,7 +84,12 @@ public class ResearchNode : MonoBehaviour
             return;
         }
 
-        GameManager.Instance.FinanceManager.Balance.Subtract(NodeSetting.ResearchPrice);
+        if (!_paid)
+        {
+            GameManager.Instance.FinanceManager.Balance.Subtract(NodeSetting.ResearchPrice);
+            _paid = true;
+        }
+
         _treeManager.ChooseNewResearch(this);
     }
 
