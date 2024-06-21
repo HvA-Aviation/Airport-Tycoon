@@ -22,4 +22,13 @@ public class PassengerVisualManager : MonoBehaviour
             _clothes[Random.Range(0, _clothes.Count)], _misc[Random.Range(0, _misc.Count)],
             _body[Random.Range(0, _body.Count)]);
     }
+
+    /// <summary>
+    /// Takes a staff visual and assigns a random skin color to it
+    /// </summary>
+    /// <param name="staffVisual">A staff with the sprites seperated</param>
+    public void UpdateRace(StaffVisual staffVisual)
+    {
+        staffVisual.SetSkinColor(_body[Random.Range(0, _body.Count)]);
+    }
 }
