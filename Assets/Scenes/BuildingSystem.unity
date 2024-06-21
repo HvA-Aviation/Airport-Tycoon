@@ -298,7 +298,7 @@ MonoBehaviour:
   <FinanceManager>k__BackingField: {fileID: 1390492149}
   <GameTimeManager>k__BackingField: {fileID: 1446644599}
   <PaxManager>k__BackingField: {fileID: 1492655485}
-  <PassengerVisualManager>k__BackingField: {fileID: 0}
+  <PassengerVisualManager>k__BackingField: {fileID: 884867961}
 --- !u!4 &61372903
 Transform:
   m_ObjectHideFlags: 0
@@ -321,6 +321,7 @@ Transform:
   - {fileID: 9991255}
   - {fileID: 1492655484}
   - {fileID: 592851870}
+  - {fileID: 884867960}
   m_Father: {fileID: 815534689}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5383,6 +5384,89 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 177e55328d7846aca6542d31fb2263bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &884867959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 884867960}
+  - component: {fileID: 884867961}
+  m_Layer: 0
+  m_Name: PassengerVisualManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &884867960
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 884867959}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 61372903}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &884867961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 884867959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 569d8e2531e43704caecf25d2fab6217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hair:
+  - {fileID: -1015585574, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -1314855518, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 1021367803, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -1777313807, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 228022445, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -1467216959, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 855257425, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 1943932115, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 480766200, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 244283078, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -911502615, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -105460217, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  _clothes:
+  - {fileID: 1369591530, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -1269582282, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -608619738, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 1241605201, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 2017609875, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 489637775, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -1625956276, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 1670700524, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -1318644201, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 1392470196, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 958425607, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -1819814057, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 589904772, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  _misc:
+  - {fileID: 1806595822, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 2039641586, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 495715923, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  _body:
+  - {fileID: -14443666, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 1670359494, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 1761360808, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 2107022476, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 1204783087, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: 1462976679, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
+  - {fileID: -1598041982, guid: 4862352df38797d42b1e6c71ac314936, type: 3}
 --- !u!4 &932148335 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1312838241029594967, guid: d6f9a1c126ee2d84b91acce3e7516cb7,
