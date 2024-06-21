@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Features.RandomPassenger.Scripts
 {
-    public class PassengerVisual : MonoBehaviour
+    public class StaffVisual : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer _hair;
         [SerializeField] private SpriteRenderer _clothes;
@@ -16,7 +16,7 @@ namespace Features.RandomPassenger.Scripts
         /// </summary>
         private void OnEnable()
         {
-            GameManager.Instance.PassengerVisualManager.UpdateSkin(this);
+            GameManager.Instance.PassengerVisualManager.UpdateRace(this);
         }
 
         /// <summary>
@@ -26,14 +26,6 @@ namespace Features.RandomPassenger.Scripts
         /// <param name="clothes">clothes sprite</param>
         /// <param name="body">Skin color sprite</param>
         /// <param name="misc">Hand held sprite</param>
-        public void SetVisuals(Sprite hair, Sprite clothes, Sprite body, Sprite misc)
-        {
-            _hair.sprite = hair;
-            _clothes.sprite = clothes;
-            _body.sprite = body;
-            _misc.sprite = misc;
-        }
-        
         public void SetSkinColor(Sprite body)
         {
             _body.sprite = body;

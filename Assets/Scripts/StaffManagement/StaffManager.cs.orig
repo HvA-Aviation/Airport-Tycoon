@@ -1,13 +1,21 @@
+<<<<<<< HEAD
 using Features.Managers;
+=======
 using System;
+>>>>>>> development
 using System.Collections.Generic;
 using UnityEngine;
 
 public class StaffManager : MonoBehaviour
 {
-    [SerializeField] private List<EmployeePool> _employeePools;
+<<<<<<< HEAD
     [SerializeField, Tooltip("The cost to hire new staff")]
     private int _recruitmentCost;
+
+    [SerializeField] private EmployeeSpawnManagement _spawnNewStaff;
+=======
+    [SerializeField] private List<EmployeePool> _employeePools;
+>>>>>>> development
 
     private int _nextEmployeeID = 0;
     public int LastEmployeeID => _nextEmployeeID - 1;
@@ -32,22 +40,31 @@ public class StaffManager : MonoBehaviour
     /// <param name="type">The type of employee you want to hire</param>
     public void HireEmployee(Employee.EmployeeTypes type)
     {
+<<<<<<< HEAD
         if (GameManager.Instance.FinanceManager.Balance.Value < _recruitmentCost)
         {
             return;
         }
 
+        GameManager.Instance.FinanceManager.Balance.Subtract(_recruitmentCost);
+
+        Employee employee = _spawnNewStaff.InstantiateEmployee(type);
+
+        employee.SetEmployeeType(type);
+=======
         foreach (var pool in _employeePools)
         {
             if (type != pool.PoolType)
                 continue;
+>>>>>>> development
 
             Employee employee = pool.Pool.EmployeeObjectPool.Get();
+
+            employee.SetEmployeeType(type);
 
             employee.SetID(_nextEmployeeID);
 
             AddEmployeeToDictionary(employee);
-
             break;
         }
     }

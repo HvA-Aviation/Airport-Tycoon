@@ -1,14 +1,23 @@
+<<<<<<< HEAD
+using Features.Managers;
+using System.Diagnostics;
+=======
+using System;
+>>>>>>> development
 using UnityEngine;
 
 public class Employee : MonoBehaviour
 {
+<<<<<<< HEAD
     [SerializeField] private int _minimumSalary, _maximumSalary;
-    private System.Action<Employee> _returnCallback;
+=======
+    private Action<Employee> _returnCallback;
 
+>>>>>>> development
     public string Name { get; private set; }
     public int SalaryAmount { get; private set; }
     public int EmployeeID { get; private set; }
-    [field: SerializeField] public EmployeeTypes EmployeeType { get; private set; }
+    public EmployeeTypes EmployeeType { get; private set; }    
 
     public void SetEmployeeSettings()
     {
@@ -16,13 +25,13 @@ public class Employee : MonoBehaviour
         SalaryAmount = Random.Range(_minimumSalary, _maximumSalary);
     }
 
-    //public void SetEmployeeType(EmployeeTypes type) => EmployeeType = type;
+    public void SetEmployeeType(EmployeeTypes type) => EmployeeType = type;
 
     public void SetSalaryAmount(int amount) => SalaryAmount = amount;
 
     public void SetID(int id) => EmployeeID = id;
 
-    public void SetCallback(System.Action<Employee> callback) => _returnCallback = callback;
+    public void SetCallback(Action<Employee> callback) => _returnCallback = callback;
 
     public void Return() => _returnCallback?.Invoke(this);
 
