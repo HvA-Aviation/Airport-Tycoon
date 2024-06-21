@@ -10,6 +10,13 @@ public class CheckWinLoseCondition : MonoBehaviour
     private int _loseAmount;
 
     [SerializeField] private int _sceneIndex;
+
+    private void Start()
+    {
+        GameManager.Instance.EventManager.Subscribe(Features.EventManager.EventId.OnMoneyAdded, (args) => CheckWinCondition());
+        GameManager.Instance.EventManager.Subscribe(Features.EventManager.EventId.OnMoneyRemoved, (args) => CheckLoseCondition());
+    }
+
     public void CheckWinCondition()
     {
         if (GameManager.Instance.FinanceManager.Balance.Value >= _winAmount)
