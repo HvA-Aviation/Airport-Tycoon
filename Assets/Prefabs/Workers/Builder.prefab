@@ -63,7 +63,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1312838241029594964}
-  _workLoadSpeed: 10
+  _defaultWorkLoadSpeed: 5
   ResetToSpawnPointLimit: 1
 --- !u!114 &6436263092387129790
 MonoBehaviour:
@@ -79,6 +79,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _minimumSalary: 100
   _maximumSalary: 1000
+  <EmployeeType>k__BackingField: 0
 --- !u!114 &-7417421310216618740
 MonoBehaviour:
   m_ObjectHideFlags: 0
