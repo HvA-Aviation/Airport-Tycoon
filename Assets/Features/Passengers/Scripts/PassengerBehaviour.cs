@@ -9,6 +9,7 @@ using System.Collections;
 public class PassengerBehaviour : MonoBehaviour
 {
     [SerializeField] NPCController _npcController;
+    [SerializeField] Pax pax;
     Queue<Utilities> tasksToDo = new Queue<Utilities>();
     QueueManager queueManager;
     GridManager gridManager;
@@ -62,7 +63,7 @@ public class PassengerBehaviour : MonoBehaviour
             {
                 Vector3 direction = queuePositions[currentPathIndex] - transform.position;
                 _npcController.Direction = direction.normalized;
-                
+
                 Vector3 queueSpeed = GameManager.Instance.QueueManager.queueProgressionSpeed *
                              GameManager.Instance.GameTimeManager.DeltaTime *
                              direction.normalized;
@@ -76,7 +77,7 @@ public class PassengerBehaviour : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
-        
+
         //TODO make direction private and place movement in npc controller so 
         _npcController.Direction = Vector3.zero;
         atCorrectPositionInQueue = true;
@@ -123,7 +124,7 @@ public class PassengerBehaviour : MonoBehaviour
             case Utilities.Gate:
                 //TODO add finance manager here
                 GameManager.Instance.FinanceManager.Balance.Add(25);
-                Destroy(gameObject);
+                pax.Return();
                 break;
         }
     }
