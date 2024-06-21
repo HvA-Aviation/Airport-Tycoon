@@ -1,3 +1,4 @@
+using Features.Managers;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -72,7 +73,17 @@ public class ResearchNode : MonoBehaviour
     /// <summary>
     /// This function is called when you want to start the research
     /// </summary>
-    public void StartResearch() => _treeManager.ChooseNewResearch(this);
+    public void StartResearch()
+    {
+        if (GameManager.Instance.FinanceManager.Balance.Value < NodeSetting.ResearchPrice)
+        {
+            Debug.Log("Not enough money");
+            return;
+        }
+
+        GameManager.Instance.FinanceManager.Balance.Subtract(NodeSetting.ResearchPrice);
+        _treeManager.ChooseNewResearch(this);
+    }
 
     /// <summary>
     /// This function is called when the research is finished

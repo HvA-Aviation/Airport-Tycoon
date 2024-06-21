@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections;
-using Features.Building.Scripts.Datatypes;
-using Features.Managers;
+﻿using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using Implementation.TaskSystem;
+using System;
+using System.Collections;
 using UnityEngine;
-using Grid = Features.Building.Scripts.Grid.Grid;
 
 namespace Features.Workers
 {
     public abstract class AssignableWorker : Worker
     {
         [SerializeField] protected NPCController _npcController;
-        [SerializeField] protected float _workLoadSpeed;
+        [SerializeField] protected float _defaultWorkLoadSpeed;
         [SerializeField] protected int _assignmentsShift;
         protected Vector3Int _assignment;
         protected Vector3Int _targetPosition;
         protected TaskCommand<AssignableWorker> _task;
 
-
+        private float _currentWorkLoadSpeed;
+        
         protected virtual void Start()
         {
             // Register it to the task system by setting it available.
             TaskManager().SetAvailable(this);
+            _currentWorkLoadSpeed = _defaultWorkLoadSpeed;
         }
 
         /// <summary>
@@ -53,6 +53,12 @@ namespace Features.Workers
 
             return new Vector3Int(target.x, target.y, 0) + rotationVector;
         }
+
+        /// <summary>
+        /// call this function to multiply the currentworkspeed with the multiplier
+        /// </summary>
+        /// <param name="multiplier">The amount the workspeed will change from the default speed</param>
+        public void SetWorkSpeed(float multiplier) => _currentWorkLoadSpeed = _defaultWorkLoadSpeed * multiplier;
 
         public abstract TaskSystem<AssignableWorker> TaskManager();
 
@@ -86,7 +92,7 @@ namespace Features.Workers
 
                 if (GameManager.Instance.QueueManager.HasQueuers(_assignment))
                 {
-                    if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _workLoadSpeed, workload))
+                    if (GameManager.Instance.QueueManager.WorkOnQueue(_assignment, _currentWorkLoadSpeed, workload))
                     {
                         GameManager.Instance.QueueManager.RemoveFromQueue(_assignment);
                         times++;

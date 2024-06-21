@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Collections;
 using Features.Managers;
 using Features.Workers.TaskCommands;
 using Implementation.Pathfinding.Scripts;
 using Implementation.TaskSystem;
+using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Features.Workers
@@ -11,7 +13,9 @@ namespace Features.Workers
     public class BuilderWorker : Worker
     {
         [SerializeField] private NPCController _npcController;
-        [SerializeField] private float _workLoadSpeed;
+        [SerializeField] private float _defaultWorkLoadSpeed;
+
+        public float WorkLoadSpeed { get; private set; }
 
         [Tooltip("Reset worker if it has been stuck for n amount of times"), Range(0, 10)]
         [SerializeField] int ResetToSpawnPointLimit = 1;
@@ -28,6 +32,7 @@ namespace Features.Workers
         {
             // Register it to the task system by setting it available.
             GameManager.Instance.TaskManager.BuilderTaskSystem.SetAvailable(this);
+            WorkLoadSpeed = _defaultWorkLoadSpeed;
         }
 
         public void Build(Vector3Int target, Action onBuilt)
@@ -37,7 +42,7 @@ namespace Features.Workers
 
         private IEnumerator CheckBuild(Vector3Int target, Action onBuilt)
         {
-            while (!GameManager.Instance.GridManager.Grid.BuildTile(target, _workLoadSpeed))
+            while (!GameManager.Instance.GridManager.Grid.BuildTile(target, WorkLoadSpeed))
             {
                 yield return null;
             }
@@ -71,6 +76,12 @@ namespace Features.Workers
 
             GameManager.Instance.TaskManager.BuilderTaskSystem.SetAvailable(this);
         }
+
+        /// <summary>
+        /// Call this function to change the workSpeed
+        /// </summary>
+        /// <param name="mulitplier">The amount the workspeed will change from the default speed</param>
+        public void SetWorkSpeed(float mulitplier) => WorkLoadSpeed = _defaultWorkLoadSpeed * mulitplier;
 
         /// <summary>
         /// Checks if task is still needed
