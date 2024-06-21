@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class LoanCard : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class LoanCard : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI _status;
+    
+    [SerializeField]
+    private Button _button;
 
     public void UpdateCard(Loan<LoanSO> loan)
     {
@@ -25,5 +29,6 @@ public class LoanCard : MonoBehaviour
         _interest.text = $"Interest: {loan.Information.Interest}%";
         _period.text = $"Period: {loan.Information.PaymentPeriod} periods";
         _status.text = $"Status: {loan.State}";
+        _button.interactable = loan.State == LoanState.Idle;
     }
 }

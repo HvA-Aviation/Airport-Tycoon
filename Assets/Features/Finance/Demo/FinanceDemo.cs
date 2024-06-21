@@ -42,7 +42,7 @@ public class FinanceDemo : MonoBehaviour
         }
     }
 
-    private void TryAcceptLoan(int index)
+    public void TryAcceptLoan(int index)
     {
         if (GameManager.Instance.FinanceManager.GetLoan(index).State == LoanState.Idle)
         {
@@ -52,11 +52,12 @@ public class FinanceDemo : MonoBehaviour
         {
             Debug.Log($"Loan {index} is already in progress.");
         }
+        
+        UpdateUI();
     }
 
     private void UpdateUI()
     {
-        _demoManager.SetMoney(GameManager.Instance.FinanceManager.Balance.Value);
         for (int i = 0; i < 3; i++)
         {
             _demoManager.UpdateLoanCard(i, GameManager.Instance.FinanceManager.GetLoan(i));
