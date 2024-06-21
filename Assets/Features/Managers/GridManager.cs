@@ -17,16 +17,30 @@ public class GridManager : MonoBehaviour
     public Grid Grid => _grid;
 
     public NativeHashMap<Vector3Int, Node> NodeGrid { get; private set; }
+    public NativeHashMap<Vector3Int, Node> NoClipNodeGrid { get; private set; }
 
     private void Awake()
     {
         NodeGrid = new NativeHashMap<Vector3Int, Node>(_grid.GridSize.x * _grid.GridSize.y, Allocator.Persistent);
+        NoClipNodeGrid = new NativeHashMap<Vector3Int, Node>(_grid.GridSize.x * _grid.GridSize.y, Allocator.Persistent);
         GameManager.Instance.EventManager.Subscribe(Features.EventManager.EventId.OnGridUpdateEvent, (args) => CreateGrid());
     }
 
     void Start()
     {
         CreateGrid();
+        for (int x = 0; x < _grid.GridSize.x; x++)
+        {
+            for (int y = 0; y < _grid.GridSize.y; y++)
+            {
+                Node node = new Node()
+                {
+                    position = new Vector3Int(x, y, 0),
+                    untraversable = false
+                };
+                NoClipNodeGrid.Add(new Vector3Int(x, y, 0), node);
+            }
+        }
     }
 
     /// <summary>
@@ -61,5 +75,7 @@ public class GridManager : MonoBehaviour
     private void OnApplicationQuit()
     {
         NodeGrid.Dispose();
+        NoClipNodeGrid.Dispose();
+
     }
 }

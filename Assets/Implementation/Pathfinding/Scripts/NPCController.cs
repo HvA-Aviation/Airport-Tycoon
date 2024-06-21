@@ -18,6 +18,7 @@ namespace Implementation.Pathfinding.Scripts
         private List<Node> _backtrackedPath = new List<Node>();
         private Vector3Int _endNode;
         private Node[] open, closed;
+        [SerializeField] private bool _ignoreCollision;
 
         public Vector3 Direction { get; set; }
 
@@ -34,7 +35,7 @@ namespace Implementation.Pathfinding.Scripts
             _backtrackedPath.Clear();
 
             _endNode = new Vector3Int(position.x, position.y, 0);
-            FindPath(_endNode, GameManager.Instance.GridManager.NodeGrid);
+            FindPath(_endNode, !_ignoreCollision ? GameManager.Instance.GridManager.NodeGrid : GameManager.Instance.GridManager.NoClipNodeGrid);
             StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached, onTaskUnreachable));
         }
 

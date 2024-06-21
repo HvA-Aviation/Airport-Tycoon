@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 10
+  _ignoreCollision: 1
 --- !u!114 &1312838241029594966
 MonoBehaviour:
   m_ObjectHideFlags: 0
