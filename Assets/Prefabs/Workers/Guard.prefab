@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 363697983247919681}
   - component: {fileID: 363697983247919682}
   - component: {fileID: 1162940037961931262}
+  - component: {fileID: -1662604189804906047}
   m_Layer: 0
   m_Name: Guard
   m_TagString: Untagged
@@ -30,8 +31,7 @@ Transform:
   m_LocalPosition: {x: 0, y: -5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 5885857480280131095}
+  m_Children: [{fileID: 5885857480280131095}]
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -73,6 +73,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: df0d492fe31806542b576cbc0f5b5969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _minimumSalary: 100
+  _maximumSalary: 1000
+--- !u!114 &-1662604189804906047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363697983247919692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a05681a6171242428bbba499683c50d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &2099418001133755136
