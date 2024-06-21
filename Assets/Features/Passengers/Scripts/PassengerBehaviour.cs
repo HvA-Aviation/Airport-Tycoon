@@ -61,6 +61,8 @@ public class PassengerBehaviour : MonoBehaviour
             if (Vector3.Distance(queuePositions[currentPathIndex], transform.position) > distanceToNextPosComplete)
             {
                 Vector3 direction = queuePositions[currentPathIndex] - transform.position;
+                _npcController.Direction = direction.normalized;
+                
                 Vector3 queueSpeed = GameManager.Instance.QueueManager.queueProgressionSpeed *
                              GameManager.Instance.GameTimeManager.DeltaTime *
                              direction.normalized;
@@ -74,6 +76,9 @@ public class PassengerBehaviour : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
+        
+        //TODO make direction private and place movement in npc controller so 
+        _npcController.Direction = Vector3.zero;
         atCorrectPositionInQueue = true;
     }
 

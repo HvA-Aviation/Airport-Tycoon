@@ -19,6 +19,8 @@ namespace Implementation.Pathfinding.Scripts
         private Vector3Int _endNode;
         private Node[] open, closed;
 
+        public Vector3 Direction { get; set; }
+
         /// <summary>
         /// Use this function to set the target of an NPC
         /// </summary>
@@ -63,13 +65,15 @@ namespace Implementation.Pathfinding.Scripts
 
                 while (Vector3.Distance(node.position, transform.position) > 0.1f)
                 {
-                    Vector3 direction = node.position - transform.position;
-                    transform.position += _moveSpeed * GameManager.Instance.GameTimeManager.DeltaTime * direction.normalized;
+                    Direction = node.position - transform.position;
+                    transform.position += _moveSpeed * GameManager.Instance.GameTimeManager.DeltaTime * Direction.normalized;
                     checkIfTaskIsStillNeeded.Invoke();
                     yield return null;
                 }
                 transform.position = node.position;
             }
+            
+            Direction = Vector3.zero;
             onDestinationReached.Invoke();
         }
 
