@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 8733849235347580867}
-  _workLoadSpeed: 2
+  _defaultWorkLoadSpeed: 2
   _assignmentsShift: 10
 --- !u!114 &54878557061452864
 MonoBehaviour:
@@ -128,3 +128,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df0d492fe31806542b576cbc0f5b5969, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <EmployeeType>k__BackingField: 2

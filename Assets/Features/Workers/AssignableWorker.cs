@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
-using Features.Building.Scripts.Datatypes;
-using Features.Managers;
+﻿using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using Implementation.TaskSystem;
+using System;
+using System.Collections;
 using UnityEngine;
-using Grid = Features.Building.Scripts.Grid.Grid;
 
 namespace Features.Workers
 {
@@ -19,14 +17,14 @@ namespace Features.Workers
         protected TaskCommand<AssignableWorker> _task;
 
         private float _currentWorkLoadSpeed;
-        
+
         protected virtual void Start()
         {
             // Register it to the task system by setting it available.
             TaskManager().SetAvailable(this);
             _currentWorkLoadSpeed = _defaultWorkLoadSpeed;
         }
-        
+
         /// <summary>
         /// Gets the direction of the utility so the worker will stand behind it
         /// </summary>
@@ -59,8 +57,8 @@ namespace Features.Workers
         /// <summary>
         /// call this function to multiply the currentworkspeed with the multiplier
         /// </summary>
-        /// <param name="multiplier">The value the workspeed needs to be multiplied</param>
-        public void SetWorkSpeed(float multiplier) => _currentWorkLoadSpeed *= multiplier;
+        /// <param name="multiplier">The amount the workspeed will change from the default speed</param>
+        public void SetWorkSpeed(float multiplier) => _currentWorkLoadSpeed = _defaultWorkLoadSpeed * multiplier;
 
         public abstract TaskSystem<AssignableWorker> TaskManager();
 
@@ -123,7 +121,7 @@ namespace Features.Workers
                 onDone.Invoke();
                 return;
             }
-            
+
             _assignment = target;
             _targetPosition = GetRotationAddition(target);
 

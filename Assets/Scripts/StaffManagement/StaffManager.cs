@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Features.Workers;
 using UnityEngine;
 
 public class StaffManager : MonoBehaviour
@@ -36,8 +35,6 @@ public class StaffManager : MonoBehaviour
                 continue;
 
             Employee employee = pool.Pool.EmployeeObjectPool.Get();
-
-            employee.SetEmployeeType(type);
 
             employee.SetID(_nextEmployeeID);
 
