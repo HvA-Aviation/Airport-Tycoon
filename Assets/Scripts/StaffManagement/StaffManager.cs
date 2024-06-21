@@ -1,6 +1,5 @@
-using System.Collections.Generic;
 using Features.Managers;
-using Features.Workers;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class StaffManager : MonoBehaviour
@@ -33,7 +32,7 @@ public class StaffManager : MonoBehaviour
     /// <param name="type">The type of employee you want to hire</param>
     public void HireEmployee(Employee.EmployeeTypes type)
     {
-        if(GameManager.Instance.FinanceManager.Balance.Value < _recruitmentCost)
+        if (GameManager.Instance.FinanceManager.Balance.Value < _recruitmentCost)
         {
             return;
         }
@@ -41,7 +40,7 @@ public class StaffManager : MonoBehaviour
         GameManager.Instance.FinanceManager.Balance.Subtract(_recruitmentCost);
 
         Employee employee = _spawnNewStaff.InstantiateEmployee(type);
-        
+
         employee.SetEmployeeType(type);
 
         employee.SetID(_nextEmployeeID);
@@ -64,13 +63,18 @@ public class StaffManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Call this function to pay the salary
+    /// </summary>
+    public void PayAllSalary() => GameManager.Instance.FinanceManager.Balance.Subtract(GetSalaryOwed());
+
+    /// <summary>
     /// Get all the total owed salary from all the employees
     /// </summary>
     /// <returns>The total owed salary</returns>
     public int GetSalaryOwed()
     {
         int totalSalary = 0;
-        for(int i = 0; i < Employees.Count; i++)
+        for (int i = 0; i < Employees.Count; i++)
             totalSalary += Employees[i].SalaryAmount;
 
         return totalSalary;

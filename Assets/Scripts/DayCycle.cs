@@ -1,7 +1,5 @@
 using Features.Managers;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,13 +12,15 @@ public class DayCycle : MonoBehaviour
     [SerializeField, Tooltip("A list with all the periodnames")] private List<string> _periodNames;
 
     public float SecondsPassed { get; private set; }
-    public int DaysPassed { get; private set; }    
-    public int PeriodsPassed{  get; private set; }
-    public int YearsPassed {  get; private set; }
+    public int DaysPassed { get; private set; }
+    public int PeriodsPassed { get; private set; }
+    public int YearsPassed { get; private set; }
+
+    public UnityEvent OnPeriodPassed = new UnityEvent();
 
     private void FixedUpdate()
     {
-        SecondsPassed += (1 * GameManager.Instance.GameTimeManager.DeltaTime);
+        SecondsPassed += GameManager.Instance.GameTimeManager.DeltaTime;
 
         if (SecondsPassed >= _secondsInADay)
         {
@@ -35,7 +35,7 @@ public class DayCycle : MonoBehaviour
     {
         DaysPassed++;
         SecondsPassed = 0;
-        if(DaysPassed >= _daysInAPeriod)
+        if (DaysPassed >= _daysInAPeriod)
         {
             ProceedToNextPeriod();
         }
@@ -47,8 +47,9 @@ public class DayCycle : MonoBehaviour
     public void ProceedToNextPeriod()
     {
         PeriodsPassed++;
-        GameManager.Instance.FinanceManager.Balance.Subtract(GameManager.Instance.StaffManager.GetSalaryOwed());
-        if(PeriodsPassed >= _periodsInAYear)
+        OnPeriodPassed?.Invoke();
+
+        if (PeriodsPassed >= _periodsInAYear)
         {
             ProceedToNextYear();
         }
