@@ -13,7 +13,7 @@ public class FinanceDemo : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Alpha1) && Input.GetKeyDown(KeyCode.Alpha2))
+       /* if (Input.GetKey(KeyCode.Alpha1) && Input.GetKeyDown(KeyCode.Alpha2))
         {
             GameManager.Instance.FinanceManager.Balance.Add(100);
         }
@@ -39,7 +39,7 @@ public class FinanceDemo : MonoBehaviour
         {
             TryAcceptLoan(2);
             UpdateUI();
-        }
+        }*/
     }
 
     public void TryAcceptLoan(int index)

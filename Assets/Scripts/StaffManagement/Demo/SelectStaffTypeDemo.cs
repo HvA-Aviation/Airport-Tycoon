@@ -25,10 +25,10 @@ public class SelectStaffTypeDemo : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        /*if (Input.GetKeyDown(KeyCode.B))
         {
             transform.GetChild(0).gameObject.SetActive(!transform.GetChild(0).gameObject.activeSelf);
-        }
+        }*/
     }
 
     private void Start()

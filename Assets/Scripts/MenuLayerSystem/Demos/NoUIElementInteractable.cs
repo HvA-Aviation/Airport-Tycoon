@@ -25,8 +25,8 @@ public class NoUIElementInteractable : MonoBehaviour, IInteractable
 
     public void Update()
     {
-        if (_isInteractable && Input.GetKeyDown(KeyCode.Space))
-            Debug.Log("Interactable");
+        /*if (_isInteractable && Input.GetKeyDown(KeyCode.Space))
+            Debug.Log("Interactable");*/
 
     }
 }
