@@ -24,6 +24,7 @@ public class StaffObjectPool : MonoBehaviour
     private Employee CreateFunction()
     {
         GameObject staffObj = Instantiate(_staffObject, transform);
+        staffObj.transform.position = Vector3.zero;
         Employee employee = staffObj.GetComponent<Employee>();
         employee.SetCallback(ReturnToPool);
         return employee;

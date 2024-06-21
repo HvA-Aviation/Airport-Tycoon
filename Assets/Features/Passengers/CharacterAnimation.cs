@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using UnityEngine;
 
@@ -39,7 +40,7 @@ namespace Features.Passengers
                 if (_npcController.Direction.x != 0)
                     transform.localScale = new Vector3(_npcController.Direction.x < 0 ? -1 : 1, 1, 1);
                 
-                elapsedTime = Mathf.Clamp(elapsedTime + Time.deltaTime * _speed, 0, 1);
+                elapsedTime = Mathf.Clamp(elapsedTime + GameManager.Instance.GameTimeManager.DeltaTime * _speed, 0, 1);
 
                 Vector3 localPos = transform.localPosition;
                 localPos.y = _curve.Evaluate(elapsedTime * 2) * _power;
