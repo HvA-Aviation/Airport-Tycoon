@@ -1,5 +1,4 @@
-﻿using System;
-using Features.Building.Scripts.Datatypes;
+﻿using Features.Building.Scripts.Datatypes;
 using Features.Managers;
 using UnityEngine;
 using Cursor = Features.Building.Scripts.Grid.Cursor;
@@ -29,7 +28,8 @@ namespace Features.Building.Scripts.Demos
             if (Input.GetMouseButton(0))
             {
                 _cursor.Press(position);
-            } else if (Input.GetMouseButtonUp(0))
+            }
+            else if (Input.GetMouseButtonUp(0))
             {
                 _cursor.Release(position);
             }
@@ -37,7 +37,7 @@ namespace Features.Building.Scripts.Demos
             {
                 _cursor.Hover(position);
             }
-            
+
             _cursor.UpdateVisuals();
         }
     }

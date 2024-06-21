@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections;
-using Features.Building.Scripts.Datatypes;
-using Features.Managers;
+﻿using Features.Managers;
 using Implementation.Pathfinding.Scripts;
 using Implementation.TaskSystem;
+using System;
+using System.Collections;
 using UnityEngine;
-using Grid = Features.Building.Scripts.Grid.Grid;
 
 namespace Features.Workers
 {
     public class BuilderWorker : Worker
     {
         [SerializeField] private NPCController _npcController;
-        [SerializeField] private float _workLoadSpeed;
+        [SerializeField] private float _defaultWorkLoadSpeed;
+
+        public float WorkLoadSpeed { get; private set; }
 
         private void Start()
         {
             // Register it to the task system by setting it available.
             GameManager.Instance.TaskManager.BuilderTaskSystem.SetAvailable(this);
+            WorkLoadSpeed = _defaultWorkLoadSpeed;
         }
 
         public void Build(Vector3Int target, Action onBuilt)
@@ -27,7 +28,7 @@ namespace Features.Workers
 
         private IEnumerator CheckBuild(Vector3Int target, Action onBuilt)
         {
-            while (!GameManager.Instance.GridManager.Grid.BuildTile(target, _workLoadSpeed))
+            while (!GameManager.Instance.GridManager.Grid.BuildTile(target, WorkLoadSpeed))
             {
                 yield return null;
             }
@@ -42,6 +43,12 @@ namespace Features.Workers
                 () => CheckTaskExists(target, onDone),
                 onReachedPosition);
         }
+
+        /// <summary>
+        /// Call this function to change the workSpeed
+        /// </summary>
+        /// <param name="mulitplier">The amount the workspeed will change from the default speed</param>
+        public void SetWorkSpeed(float mulitplier) => WorkLoadSpeed = _defaultWorkLoadSpeed * mulitplier;
 
         /// <summary>
         /// Checks if task is still needed
