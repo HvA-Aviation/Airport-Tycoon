@@ -129,9 +129,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df0d492fe31806542b576cbc0f5b5969, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
+  <EmployeeType>k__BackingField: 1
+=======
   _minimumSalary: 100
   _maximumSalary: 1000
-  <EmployeeType>k__BackingField: 1
 --- !u!114 &-1662604189804906047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,3 +146,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a05681a6171242428bbba499683c50d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+>>>>>>> development

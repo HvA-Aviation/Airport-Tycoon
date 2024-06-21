@@ -6,12 +6,12 @@ public class TreeNodeDemo : MonoBehaviour
 {
     public TMP_Text Title;
     public TMP_Text Description;
+    public TMP_Text Price;
     public Button ActivateButton;
     public Button QueueButton;
     public Slider slider;
 
     public ResearchNode researchNode;
-    public RDTreeManager treeManager;
 
     bool addedEvents = false;
 
@@ -26,7 +26,7 @@ public class TreeNodeDemo : MonoBehaviour
 
             Title.text = researchNode.NodeSetting.Title;
             Description.text = researchNode.NodeSetting.Description;
-
+            Price.text = "$" + researchNode.NodeSetting.ResearchPrice;
             addedEvents = true;
         }
 

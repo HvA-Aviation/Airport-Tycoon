@@ -115,7 +115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1312838241029594964}
-  _workLoadSpeed: 10
+  _defaultWorkLoadSpeed: 2
 --- !u!114 &6436263092387129790
 MonoBehaviour:
   m_ObjectHideFlags: 0

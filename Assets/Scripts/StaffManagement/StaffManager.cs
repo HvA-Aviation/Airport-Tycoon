@@ -44,8 +44,6 @@ public class StaffManager : MonoBehaviour
 
             Employee employee = pool.Pool.EmployeeObjectPool.Get();
 
-            employee.SetEmployeeType(type);
-
             employee.SetID(_nextEmployeeID);
 
             AddEmployeeToDictionary(employee);
