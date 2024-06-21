@@ -1,6 +1,7 @@
 using Features.Managers;
 using System;
 using System.Collections.Generic;
+using Features.Workers;
 using UnityEngine;
 
 public class StaffManager : MonoBehaviour
@@ -64,7 +65,7 @@ public class StaffManager : MonoBehaviour
         {
             employee.Return();
             Employees.Remove(employeeID);
-            //employee.GetComponent<AssignableWorker>().Fire();
+            employee.GetComponent<AssignableWorker>().Fire();
         }
     }
 
