@@ -120,7 +120,7 @@ MonoBehaviour:
       type: {class: BehaviourTile, ns: Features.Building.Scripts.Datatypes.TileData,
         asm: Assembly-CSharp}
       data:
-        Tile: {fileID: 11400000, guid: a6aead7df04db46488cb4855ffc732ba, type: 2}
+        Tile: {fileID: 11400000, guid: dc8e31dd098ab3946b78ca873e7a0a8e, type: 2}
         Color: {r: 1, g: 1, b: 1, a: 1}
         BuildLoad: 1
         UnTraversable: 1

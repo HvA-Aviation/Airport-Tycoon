@@ -5,6 +5,7 @@ public class PaxManager : MonoBehaviour
     [SerializeField, Tooltip("The amount of new object needs to be spawned when pool is empty")]
     private int _spawnAmount;
 
+    private int amountOfPaxEntered;
     private int amountOfRecordedPax;
     private float totalTimeSpent;
 
@@ -16,7 +17,9 @@ public class PaxManager : MonoBehaviour
     public ObjectPool<Pax> Pool => _pool;
 
     public float AverageTimeInAirport => amountOfRecordedPax == 0 ? 0 : totalTimeSpent / amountOfRecordedPax;
-    public int AmountOfPaxInAirport => _pool.GetAmountOfActivePax();
+    public int AmountOfPaxInAirport => _pool.GetAmountOfActivePax() == _spawnAmount ? 0 : _pool.GetAmountOfActivePax();
+    public int TotalAmountOfRecordedPax => amountOfRecordedPax;
+    public int AmountOfPaxEntered => amountOfPaxEntered;
 
     private void Awake() => _pool = new ObjectPool<Pax>(CreateFunction, OnGetAction, OnReturnAction, _spawnAmount);
 
@@ -38,6 +41,7 @@ public class PaxManager : MonoBehaviour
     /// <param name="pax">The pax script that is of that object</param>
     private void OnGetAction(Pax pax)
     {
+        amountOfPaxEntered++;
         pax.gameObject.SetActive(true);
     }
 

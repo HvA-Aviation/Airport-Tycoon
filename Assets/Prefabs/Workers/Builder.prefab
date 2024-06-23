@@ -64,7 +64,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _npcController: {fileID: 1312838241029594964}
   _defaultWorkLoadSpeed: 5
-  ResetToSpawnPointLimit: 1
+  ResetToSpawnPointLimit: 5
 --- !u!114 &6436263092387129790
 MonoBehaviour:
   m_ObjectHideFlags: 0

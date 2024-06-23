@@ -26,7 +26,7 @@ public class QueueManager : MonoBehaviour
 {
     private Dictionary<Vector3Int, QueueInfo> _utilityQueue = new Dictionary<Vector3Int, QueueInfo>();
     private Dictionary<Vector3Int, float> _queueProgression = new Dictionary<Vector3Int, float>();
-    private Dictionary<Vector3Int, float> _queueTimeEstimate = new Dictionary<Vector3Int, float>();
+    [HideInInspector] public Dictionary<Vector3Int, float> QueueTimeEstimate = new Dictionary<Vector3Int, float>();
 
     [Header("Settings")]
     [Tooltip("Speed at which the queuers move to their next position in queue")]
@@ -42,15 +42,15 @@ public class QueueManager : MonoBehaviour
     {
         foreach (var item in _utilityQueue)
         {
-            if (!_queueTimeEstimate.ContainsKey(item.Key))
+            if (!QueueTimeEstimate.ContainsKey(item.Key))
             {
-                _queueTimeEstimate.Add(item.Key, 0f);
+                QueueTimeEstimate.Add(item.Key, 0f);
             }
 
             int amountOfPeopleInQueue = item.Value.inQueue.Count;
             int amountOfWalkingToQueue = item.Value.joiningQueue.Count;
 
-            _queueTimeEstimate[item.Key] = (amountOfPeopleInQueue + amountOfWalkingToQueue) / 0.5f;
+            QueueTimeEstimate[item.Key] = (amountOfPeopleInQueue + amountOfWalkingToQueue) / 0.5f;
         }
     }
 

@@ -16,7 +16,7 @@ MonoBehaviour:
   Price: 0
   BrushType: 0
   BuildItems:
-  - <Tile>k__BackingField: {fileID: 11400000, guid: a6aead7df04db46488cb4855ffc732ba,
+  - <Tile>k__BackingField: {fileID: 11400000, guid: dc8e31dd098ab3946b78ca873e7a0a8e,
       type: 2}
     <GridPosition>k__BackingField:
       <Position>k__BackingField: {x: 0, y: 0}

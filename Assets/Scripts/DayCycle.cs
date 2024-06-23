@@ -1,22 +1,37 @@
 using Features.Managers;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[Serializable]
+public struct MonthAndDays
+{
+    public string monthName;
+    public int daysInMonth;
+}
+
 public class DayCycle : MonoBehaviour
 {
-    [SerializeField, Tooltip("How many days need to be passed before a new period starts")] private int _daysInAPeriod;
     [SerializeField, Tooltip("How many seconds need to be passed before a new day starts")] private int _secondsInADay;
+    [SerializeField, Tooltip("How many days need to be passed before a new period starts")] private int _daysInAMonth;
     [SerializeField, Tooltip("How many periods need to be passed before a new year starts")] private int _periodsInAYear;
 
-    [SerializeField, Tooltip("A list with all the periodnames")] private List<string> _periodNames;
+    [SerializeField, Tooltip("A list with all the periodnames")] private List<MonthAndDays> _periodNames;
 
     public float SecondsPassed { get; private set; }
     public int DaysPassed { get; private set; }
     public int PeriodsPassed { get; private set; }
     public int YearsPassed { get; private set; }
 
+    public string GetDayMonthDay => $"{GetMonthName()} {DaysPassed}, Year {YearsPassed}";
+
     public UnityEvent OnPeriodPassed = new UnityEvent();
+
+    void Start()
+    {
+        DaysPassed = 1;
+    }
 
     private void FixedUpdate()
     {
@@ -35,16 +50,16 @@ public class DayCycle : MonoBehaviour
     {
         DaysPassed++;
         SecondsPassed = 0;
-        if (DaysPassed >= _daysInAPeriod)
+        if (DaysPassed > GetDaysInCurrentMonth())
         {
-            ProceedToNextPeriod();
+            ProceedToNextMonth();
         }
     }
 
     /// <summary>
     /// Call This Function to Proceed to the next period
     /// </summary>
-    public void ProceedToNextPeriod()
+    public void ProceedToNextMonth()
     {
         PeriodsPassed++;
         OnPeriodPassed?.Invoke();
@@ -69,9 +84,18 @@ public class DayCycle : MonoBehaviour
     /// Call this function when you want to get the period name it is currently in
     /// </summary>
     /// <returns>The name of the period</returns>
-    public string GetPeriodName()
+    public string GetMonthName()
     {
-        return _periodNames[PeriodsPassed];
+        return _periodNames[PeriodsPassed].monthName;
+    }
+
+    /// <summary>
+    /// Returns the number of days in the current month.
+    /// </summary>
+    /// <returns>The number of days in the current month.</returns>
+    public int GetDaysInCurrentMonth()
+    {
+        return _periodNames[PeriodsPassed].daysInMonth;
     }
 
     /// <summary>
@@ -80,7 +104,7 @@ public class DayCycle : MonoBehaviour
     /// <returns>The total amount of days that has passed</returns>
     public int TotalDaysPassed()
     {
-        return PeriodsPassed * _daysInAPeriod + DaysPassed;
+        return PeriodsPassed * _daysInAMonth + DaysPassed;
     }
 
     /// <summary>
