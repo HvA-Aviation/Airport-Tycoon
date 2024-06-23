@@ -72,10 +72,10 @@ public class GridManager : MonoBehaviour
     public int GetRotation(Vector3Int position) => _grid.GetRotation(position);
     public Vector3Int GetPaxSpawnPoint() => _grid.PaxSpawnPosition;
 
-    private void OnApplicationQuit()
+    private void OnDisable()
     {
         NodeGrid.Dispose();
         NoClipNodeGrid.Dispose();
-
     }
+
 }

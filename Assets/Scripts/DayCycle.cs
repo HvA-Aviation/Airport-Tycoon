@@ -39,6 +39,7 @@ public class DayCycle : MonoBehaviour
 
         if (SecondsPassed >= _secondsInADay)
         {
+            GameManager.Instance.FinanceManager.AdvancePeriod();
             ProceedToNextDay();
         }
     }
