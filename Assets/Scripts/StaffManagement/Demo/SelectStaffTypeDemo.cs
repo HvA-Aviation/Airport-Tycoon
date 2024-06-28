@@ -25,10 +25,10 @@ public class SelectStaffTypeDemo : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        /*if (Input.GetKeyDown(KeyCode.B))
         {
             transform.GetChild(0).gameObject.SetActive(!transform.GetChild(0).gameObject.activeSelf);
-        }
+        }*/
     }
 
     private void Start()
@@ -47,7 +47,7 @@ public class SelectStaffTypeDemo : MonoBehaviour
     {
         GameManager.Instance.StaffManager.HireEmployee(_employeeTypeToHire);
 
-        string name = GameManager.Instance.StaffManager.GetEmployeeName(GameManager.Instance.StaffManager.LastEmployeeID);
+//        string name = GameManager.Instance.StaffManager.GetEmployeeName(GameManager.Instance.StaffManager.LastEmployeeID);
 
         GameObject temp = Instantiate(_listObject, _parent);
         temp.GetComponent<ShowStaffInList>().ThisEmployee = GameManager.Instance.StaffManager.Employees[GameManager.Instance.StaffManager.LastEmployeeID];

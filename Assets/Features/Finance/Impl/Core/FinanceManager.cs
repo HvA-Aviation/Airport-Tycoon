@@ -7,6 +7,8 @@ public class FinanceManager : MonoBehaviour
 {
     [Header("Loans")]
     [SerializeField]
+    private int _startingMoney;
+    [SerializeField]
     private List<LoanType> _listOfLoans;
 
     public LoanManager<LoanType> _loanManager;
@@ -16,6 +18,7 @@ public class FinanceManager : MonoBehaviour
     private void Awake()
     {
         _loanManager = new LoanManager<LoanType>(_listOfLoans);
+        Balance.Add(_startingMoney);
     }
 
     public void AdvancePeriod()

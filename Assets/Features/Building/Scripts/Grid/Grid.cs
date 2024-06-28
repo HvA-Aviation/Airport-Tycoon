@@ -27,17 +27,24 @@ namespace Features.Building.Scripts.Grid
 
         [SerializeField] private List<List<Vector3Int>> _cellGroup;
         [SerializeField] public bool[,] TraversableTiles { get; private set; }
+        private readonly Vector3Int[] neighboursToCheckForQueue = { Vector3Int.up, Vector3Int.right, Vector3Int.down, Vector3Int.left };
+        private Vector3Int _gridOffset;
+        private Vector3Int _paxSpawnPos;
+        private List<TileChangeData> _gridChangeBuffer = new List<TileChangeData>();
+        private List<TileColorData> _gridColorBuffer = new List<TileColorData>();
+        private Dictionary<Vector3Int, List<Vector3Int>> _tempQueuePositions = new Dictionary<Vector3Int, List<Vector3Int>>();
 
-        private Dictionary<UtilityType, List<Vector3Int>> _utilityLocations =
-            new Dictionary<UtilityType, List<Vector3Int>>()
+        private Dictionary<UtilityType, Dictionary<Vector3Int, List<Vector3Int>>> _utilityLocations =
+            new Dictionary<UtilityType, Dictionary<Vector3Int, List<Vector3Int>>>()
             {
-                { UtilityType.Security, new List<Vector3Int>() },
-                { UtilityType.CheckIn, new List<Vector3Int>() },
-                { UtilityType.Gate, new List<Vector3Int>() }
+                { UtilityType.Security, new Dictionary<Vector3Int, List<Vector3Int>>() },
+                { UtilityType.CheckIn, new Dictionary<Vector3Int, List<Vector3Int>>() },
+                { UtilityType.Gate, new Dictionary<Vector3Int, List<Vector3Int>>() },
             };
 
         public Vector3Int GridSize => _gridSize;
         public float CellSize => _cellSize;
+        public Vector3Int PaxSpawnPosition => _paxSpawnPos;
 
         void Start()
         {
@@ -51,8 +58,8 @@ namespace Features.Building.Scripts.Grid
             //create and populate traversabletiles
             TraversableTiles = new bool[_gridSize.x, _gridSize.y];
             UpdateTraversable();
-            
-            GameManager.Instance.EventManager.TriggerEvent(EventId.GridUpdateEvent);
+
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnGridUpdateEvent);
         }
 
         /// <summary>
@@ -60,11 +67,9 @@ namespace Features.Building.Scripts.Grid
         /// </summary>
         /// <param name="utilityType">The type of the utility</param>
         /// <returns>A list with all the utilities</returns>
-        public List<Vector3Int> GetUtilities(UtilityType utilityType)
+        public bool GetUtilities(UtilityType utilityType, out Dictionary<Vector3Int, List<Vector3Int>> keyValuePairs)
         {
-            List<Vector3Int> utilities = new List<Vector3Int>();
-            utilities.AddRange(_utilityLocations[utilityType]);
-            return utilities;
+            return _utilityLocations.TryGetValue(utilityType, out keyValuePairs);
         }
 
         /// <summary>
@@ -126,7 +131,7 @@ namespace Features.Building.Scripts.Grid
                 }
             }
 
-            GameManager.Instance.EventManager.TriggerEvent(EventId.GridUpdateEvent);
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnGridUpdateEvent);
         }
 
         /// <summary>
@@ -179,7 +184,7 @@ namespace Features.Building.Scripts.Grid
                     _cells[tile.x, tile.y, tile.z].WorkLoad);
 
                 CellData cellData = _cells[tile.x, tile.y, tile.z];
-                
+
                 GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeColorTile, new TileColorData()
                 {
                     Position = tile,
@@ -187,26 +192,6 @@ namespace Features.Building.Scripts.Grid
                 });
 
                 isFinished = _cells[tile.x, tile.y, tile.z].CurrentWorkLoad == _cells[tile.x, tile.y, tile.z].WorkLoad;
-
-                //if finished and a utility type add a task
-                if (isFinished && _atlas.TileIsType<UtilityTile>(cellData.Tile))
-                {
-                    UtilityType utilityType = _atlas.GetTileData<UtilityTile>(cellData.Tile).UtilityType;
-
-                    if (utilityType != UtilityType.None)
-                    {
-                        _utilityLocations[utilityType].Add(gridVector);
-
-                        if (utilityType == UtilityType.Security)
-                        {
-                            GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(gridVector));
-                        }
-                        else
-                        {
-                            GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(gridVector));
-                        }
-                    }
-                }
             }
 
             return isFinished;
@@ -257,7 +242,7 @@ namespace Features.Building.Scripts.Grid
                 cellData.WorkLoad = _atlas.GetTileData(buildIndex).BuildLoad;
 
                 _cells[gridVector.x, gridVector.y, gridVector.z] = cellData;
-                
+
                 GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
                 {
                     Position = gridVector,
@@ -295,6 +280,7 @@ namespace Features.Building.Scripts.Grid
         /// <returns>True if setting was a success</returns>
         public bool SetGroup(List<Vector3Int> gridVectors, List<Tile> tiles, int rotation)
         {
+            bool waitToCreateTask = false;
             //check if all the positions are available
             foreach (Vector3Int position in gridVectors)
             {
@@ -307,14 +293,134 @@ namespace Features.Building.Scripts.Grid
                 BaseTile tileData = _atlas.GetTileData(tiles[i]);
                 int index = _atlas.GetTileDataIndex(tiles[i]);
 
+                // Logic for Utility type
+                if (tileData.GetType() == typeof(UtilityTile))
+                {
+                    InitializeQueueBuilder(gridVectors);
+                }
+
+                // Logic for Behaviour type
+                if (tileData.GetType() == typeof(BehaviourTile))
+                {
+                    BehaviourTile behaviourData = _atlas.GetTileData<BehaviourTile>(tiles[i]);
+
+                    BehaviourType behaviourType = behaviourData.BehaviourType;
+                    switch (behaviourType)
+                    {
+                        case BehaviourType.Queue:
+                            if (!CanPlaceQueue(gridVectors[i]))
+                                return false;
+
+                            Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
+                            _tempQueuePositions[utilityLocation].Add(gridVectors[i]);
+
+                            waitToCreateTask = true;
+
+                            break;
+                        case BehaviourType.PaxSpawn:
+                            _paxSpawnPos = gridVectors[i];
+                            GameManager.Instance.BuildingManager.LockCurrentBuilding();
+                            break;
+                    }
+                }
+
                 Set(gridVectors[i], index, rotation, false);
             }
 
-            GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
+            if (!waitToCreateTask)
+                GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(gridVectors[0]));
+
             if (gridVectors.Count > 1)
                 _cellGroup.Add(gridVectors);
 
             return true;
+        }
+
+        public void FinishQueue()
+        {
+            //TODO: rework to not use hard coded number
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(0, true);
+
+            Vector3Int utilityLocation = _tempQueuePositions.Keys.First();
+            int index = Get(utilityLocation);
+
+            UtilityTile utilityTileData = _atlas.GetTileData<UtilityTile>(index);
+
+            if (_utilityLocations.TryGetValue(utilityTileData.UtilityType, out var value))
+            {
+                if (!value.ContainsKey(utilityLocation))
+                    value.Add(utilityLocation, new List<Vector3Int>());
+
+                value[utilityLocation].AddRange(_tempQueuePositions[utilityLocation]);
+
+                if (utilityTileData.UtilityType == UtilityType.Security)
+                    GameManager.Instance.TaskManager.SecurityTaskSystem.AddTask(new OperateTask(utilityLocation));
+                else
+                    GameManager.Instance.TaskManager.GeneralTaskSystem.AddTask(new OperateTask(utilityLocation));
+            }
+
+            foreach (var item in _tempQueuePositions[utilityLocation])
+            {
+                GameManager.Instance.TaskManager.BuilderTaskSystem.AddTask(new BuildTask(item));
+            }
+
+
+            _tempQueuePositions.Clear();
+
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
+        }
+
+        public void InitializeQueueBuilder(List<Vector3Int> gridVectors)
+        {
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnBuildingQueue);
+
+            if (_tempQueuePositions.Count > 0)
+                FinishQueue();
+
+            _tempQueuePositions.Add(gridVectors[0], new List<Vector3Int>());
+
+            //TODO: rework to not use hard coded number
+            GameManager.Instance.BuildingManager.ChangeSelectedBuildableLocked(9);
+        }
+
+        private bool CanPlaceQueue(Vector3Int tilePos)
+        {
+            // Check if neighbours of queue are also of queue type
+            for (int i = 0; i < neighboursToCheckForQueue.Length; i++)
+            {
+                Vector3Int posToCheck = tilePos + neighboursToCheckForQueue[i];
+
+                int atlasIndex = Get(posToCheck);
+
+                if (atlasIndex == BuildableAtlas.Empty)
+                    continue;
+
+                BaseTile neighbourTileData = _atlas.GetTileData(atlasIndex);
+                int queueLength = _tempQueuePositions.First().Value.Count;
+
+                UtilityTile idk = _atlas.GetTileData<UtilityTile>(Get(_tempQueuePositions.First().Key));
+
+                if (queueLength == 0 && _utilityLocations[idk.UtilityType].ContainsKey(_tempQueuePositions.First().Key))
+                {
+                    if (posToCheck == _utilityLocations[idk.UtilityType][_tempQueuePositions.First().Key][^1])
+                    {
+                        return true;
+                    }
+                    else continue;
+                }
+
+                if (queueLength == 0 && neighbourTileData.GetType() == typeof(UtilityTile))
+                    return true;
+
+                var firstElement = _tempQueuePositions.First();
+                List<Vector3Int> values = firstElement.Value;
+
+                if (queueLength != 0 && posToCheck == values[^1])
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -347,7 +453,7 @@ namespace Features.Building.Scripts.Grid
                     }
 
                     _cells[position.x, position.y, position.z].Clear();
-                    
+
                     GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeTile, new TileUpdateData()
                     {
                         Position = position,

@@ -1,6 +1,8 @@
 using Features.Managers;
 using System;
 using System.Collections.Generic;
+using Features.EventManager;
+using Features.Workers;
 using UnityEngine;
 
 public class StaffManager : MonoBehaviour
@@ -14,6 +16,22 @@ public class StaffManager : MonoBehaviour
     public Dictionary<int, Employee> Employees { get; private set; }
 
     private void Awake() => Employees = new Dictionary<int, Employee>();
+
+    public int GetActiveAmountOfWorkers()
+    {
+        int amount = 0;
+
+        foreach (EmployeePool pool in _employeePools)
+        {
+            for (int i = 0; i < pool.Pool.transform.childCount; i++)
+            {
+                if (pool.Pool.transform.GetChild(i).gameObject.activeSelf)
+                    amount++;
+            }
+        }
+
+        return amount;
+    }
 
     /// <summary>
     /// Adds an employee to the dictionary with the employeesID connected to it
@@ -50,6 +68,8 @@ public class StaffManager : MonoBehaviour
 
             break;
         }
+        
+        GameManager.Instance.EventManager.TriggerEvent(EventId.OnEmployeeHire);
     }
 
     /// <summary>
@@ -62,8 +82,13 @@ public class StaffManager : MonoBehaviour
         {
             employee.Return();
             Employees.Remove(employeeID);
-            //employee.GetComponent<AssignableWorker>().Fire();
+            
+            //TODO fix this monstrosity. I'm sorry I don't have enough time :(
+            employee.GetComponent<AssignableWorker>()?.Fire();
+            employee.GetComponent<BuilderWorker>()?.Fire();
         }
+        
+        GameManager.Instance.EventManager.TriggerEvent(EventId.OnEmployeeHire);
     }
 
     /// <summary>

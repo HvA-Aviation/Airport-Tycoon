@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Features.Building.Scripts.Datatypes;
 using Features.EventManager;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace Features.Managers
 {
@@ -33,6 +33,15 @@ namespace Features.Managers
             GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeBrush);
         }
 
+        public void ChangeSelectedBuildableLocked(int index, bool switchToDefaultTile = false)
+        {
+            CurrentBuildableObject = BuildingStatuses[index].BuildableObject;
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnChangeBrush);
+
+            if (switchToDefaultTile)
+                GameManager.Instance.EventManager.TriggerEvent(EventId.OnUnlockBuilding);
+        }
+
         public void UnlockBuilding(BuildableObject buildableObject)
         {
             int index = BuildingStatuses.FindIndex(x => x.BuildableObject == buildableObject);
@@ -46,6 +55,14 @@ namespace Features.Managers
             {
                 Debug.LogError(buildableObject.name + " not found in the Building Manager");
             }
+        }
+
+        public void LockCurrentBuilding()
+        {
+            int index = BuildingStatuses.FindIndex(x => x.BuildableObject == CurrentBuildableObject);
+            BuildingStatuses[index].IsUnlocked = false;
+            ChangeSelectedBuildable(0);
+            GameManager.Instance.EventManager.TriggerEvent(EventId.OnUnlockBuilding);
         }
     }
 

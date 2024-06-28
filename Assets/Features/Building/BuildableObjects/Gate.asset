@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Gate
   m_EditorClassIdentifier: 
   Name: Gate
+  Price: 100
   BrushType: 0
   BuildItems:
   - <Tile>k__BackingField: {fileID: 11400000, guid: f31080f96096c074fb0adac6a5e51f4d,

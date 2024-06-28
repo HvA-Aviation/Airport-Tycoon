@@ -17,7 +17,7 @@ namespace Features.Workers
         protected TaskCommand<AssignableWorker> _task;
 
         private float _currentWorkLoadSpeed;
-
+        
         protected virtual void Start()
         {
             // Register it to the task system by setting it available.
@@ -128,7 +128,15 @@ namespace Features.Workers
             _npcController.SetTarget(
                 _targetPosition,
                 () => CheckTaskExists(target, onDone),
-                onReachedPosition);
+                onReachedPosition,
+                () => NoPathToTarget(target, onReachedPosition, onDone));
+        }
+
+        public void NoPathToTarget(Vector3Int target, Action onReachedPosition, Action onDone)
+        {
+            Debug.LogWarning("Assignable worker could not find path to target");
+            transform.position = GameManager.Instance.GridManager.GetPaxSpawnPoint();
+            MoveTo(target, onReachedPosition, onDone);
         }
 
         /// <summary>

@@ -14,7 +14,7 @@ namespace Features.RandomPassenger.Scripts
         /// <summary>
         /// Updates all the sprites when enabled
         /// </summary>
-        private void OnEnable()
+        private void Start()
         {
             GameManager.Instance.PassengerVisualManager.UpdateRace(this);
         }

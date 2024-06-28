@@ -19,7 +19,7 @@ namespace Features.Finance
 
         private void UpdateBalance()
         {
-            _textMesh.text = "€" + GameManager.Instance.FinanceManager.Balance.Value;
+            _textMesh.text = GameManager.Instance.FinanceManager.Balance.Value.ToString();
         }
     }
 }

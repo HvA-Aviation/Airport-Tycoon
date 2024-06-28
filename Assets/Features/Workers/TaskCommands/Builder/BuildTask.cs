@@ -21,6 +21,9 @@ namespace Features.Workers.TaskCommands
         // Set task instructions.
         protected override void ExecuteInternal(BuilderWorker worker, Action onTaskDone)
         {
+            BuildTask task = new BuildTask(_targetPosition);
+            worker.SetTask(task);
+            
             worker.MoveTo(_targetPosition, () => { worker.Build(_targetPosition, onTaskDone); }, onTaskDone);
         }
     }

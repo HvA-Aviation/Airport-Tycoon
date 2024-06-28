@@ -13,16 +13,16 @@ public class FinanceDemo : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Alpha1) && Input.GetKeyDown(KeyCode.Alpha2))
+       /* if (Input.GetKey(KeyCode.Alpha1) && Input.GetKeyDown(KeyCode.Alpha2))
         {
             GameManager.Instance.FinanceManager.Balance.Add(100);
         }
-        
+
         if (Input.GetKey(KeyCode.Alpha1) && Input.GetKeyDown(KeyCode.Alpha3))
         {
             GameManager.Instance.FinanceManager.Balance.Subtract(100);
         }
-        
+
         if (Input.GetKeyDown(KeyCode.J))
         {
             TryAcceptLoan(0);
@@ -39,32 +39,26 @@ public class FinanceDemo : MonoBehaviour
         {
             TryAcceptLoan(2);
             UpdateUI();
-        }
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            GameManager.Instance.FinanceManager.AdvancePeriod();
-            UpdateUI();
-        }
+        }*/
     }
 
-    private void TryAcceptLoan(int index)
+    public void TryAcceptLoan(int index)
     {
         if (GameManager.Instance.FinanceManager.GetLoan(index).State == LoanState.Idle)
         {
             GameManager.Instance.FinanceManager.AcceptLoan(index);
-            Debug.Log($"Loan {index} is accepted.");
         }
         else
         {
             Debug.Log($"Loan {index} is already in progress.");
         }
+        
+        UpdateUI();
     }
 
     private void UpdateUI()
     {
-        _demoManager.SetMoney(GameManager.Instance.FinanceManager.Balance.Value);
-        for(int i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
             _demoManager.UpdateLoanCard(i, GameManager.Instance.FinanceManager.GetLoan(i));
         }

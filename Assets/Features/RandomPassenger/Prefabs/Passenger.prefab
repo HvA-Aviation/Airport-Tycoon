@@ -178,9 +178,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5515895506415328535}
   - component: {fileID: 4800280885237465061}
-  - component: {fileID: 6847116760962337073}
-  - component: {fileID: -5932008750101695390}
-  - component: {fileID: -5701943736062840014}
   m_Layer: 0
   m_Name: Passenger
   m_TagString: Untagged
@@ -223,45 +220,6 @@ MonoBehaviour:
   _clothes: {fileID: 5515895506134304179}
   _body: {fileID: 5515895507489438536}
   _misc: {fileID: 4789630964805180816}
---- !u!114 &6847116760962337073
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5515895506415328534}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a93a9745435b4f04d8f62f8bb3f31842, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &-5932008750101695390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5515895506415328534}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a110485a6c0a354790f046aedc516ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _npcController: {fileID: -5701943736062840014}
---- !u!114 &-5701943736062840014
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5515895506415328534}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2503bfd8d805b224bbafac23472f80fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _grid: {fileID: 0}
-  _moveSpeed: 1
 --- !u!1 &5515895507489438542
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,20 +12,15 @@ namespace Implementation.Pathfinding.Scripts
 {
     public class NPCController : MonoBehaviour
     {
-        [Header("Dependecies")]
-        [SerializeField] private Grid _grid;
-
         [Header("Movement variables")]
         [SerializeField] private float _moveSpeed = 1f;
 
         private List<Node> _backtrackedPath = new List<Node>();
         private Vector3Int _endNode;
         private Node[] open, closed;
+        [SerializeField] private bool _ignoreCollision;
 
-        private void OnEnable()
-        {
-            _grid = GameManager.Instance.GridManager.Grid;
-        }
+        public Vector3 Direction { get; set; }
 
         /// <summary>
         /// Use this function to set the target of an NPC
@@ -33,40 +28,53 @@ namespace Implementation.Pathfinding.Scripts
         /// <param name="position">destination of path</param>
         /// <param name="checkIfTaskIsStillNeeded">Callback to check if task is still needed</param>
         /// <param name="onDestinationReached">Callback to handle what to do when the destination has been reached</param>
-        public void SetTarget(Vector3Int position, Action checkIfTaskIsStillNeeded, Action onDestinationReached)
+        public void SetTarget(Vector3Int position, Action checkIfTaskIsStillNeeded, Action onDestinationReached, Action onTaskUnreachable)
         {
             StopAllCoroutines();
 
             _backtrackedPath.Clear();
 
             _endNode = new Vector3Int(position.x, position.y, 0);
-            FindPath(_endNode, GameManager.Instance.GridManager.NodeGrid);
-            StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached));
+            FindPath(_endNode, !_ignoreCollision ? GameManager.Instance.GridManager.NodeGrid : GameManager.Instance.GridManager.NoClipNodeGrid);
+            StartCoroutine(MoveToTarget(_backtrackedPath, checkIfTaskIsStillNeeded, onDestinationReached, onTaskUnreachable));
         }
 
         /// <summary>
         /// Move the NPC to the target
         /// </summary>
-        private IEnumerator MoveToTarget(List<Node> path, Action checkIfTaskIsStillNeeded, Action onDestinationReached)
+        private IEnumerator MoveToTarget(List<Node> path, Action checkIfTaskIsStillNeeded, Action onDestinationReached, Action onTaskUnreachable)
         {
             // if there is no path break out of this coroutine
-            if (path.Count <= 0) yield break;
+            if (path.Count <= 0)
+            {
+                onTaskUnreachable?.Invoke();
+                Debug.LogWarning("No path found, breaking out of coroutine");
+                yield break;
+            };
 
-            // Path starts at path.count - 2 because the we want to skip the first node, which is the current position of the NPC
-            for (int i = path.Count - 2; i >= 0; i--)
+            // Reverse the path so we can iterate over it with a foreach loop
+            List<Node> reversedPath = new List<Node>(path);
+            reversedPath.Reverse();
+
+            // skip the first entry to avoid the npc to jitter back to a badly rounded pos
+            reversedPath.RemoveAt(0);
+
+            foreach (Node node in reversedPath)
             {
                 // Backtracked gets initialized with empty nodes, sometimes they get through and end up here. Could look into this
-                if (path[i].position == Vector3Int.zero) continue;
+                if (node.position == Vector3Int.zero) continue;
 
-                while (Vector3.Distance(path[i].position, transform.position) > 0.1f)
+                while (Vector3.Distance(node.position, transform.position) > 0.1f)
                 {
-                    Vector3 direction = path[i].position - transform.position;
-                    transform.position += direction.normalized * _moveSpeed * GameManager.Instance.GameTimeManager.DeltaTime;
-                    yield return new WaitForEndOfFrame();
+                    Direction = node.position - transform.position;
+                    transform.position += _moveSpeed * GameManager.Instance.GameTimeManager.DeltaTime * Direction.normalized;
+                    checkIfTaskIsStillNeeded.Invoke();
+                    yield return null;
                 }
-                transform.position = path[i].position;
-                checkIfTaskIsStillNeeded.Invoke();
+                transform.position = node.position;
             }
+            
+            Direction = Vector3.zero;
             onDestinationReached.Invoke();
         }
 
@@ -75,6 +83,7 @@ namespace Implementation.Pathfinding.Scripts
         /// </summary>
         void FindPath(Vector3Int destination, NativeHashMap<Vector3Int, Node> nodeGrid)
         {
+            Grid _grid = GameManager.Instance.GridManager.Grid;
             int arraySize = _grid.GridSize.x * _grid.GridSize.y;
 
             // Declare the variables
@@ -85,7 +94,11 @@ namespace Implementation.Pathfinding.Scripts
             NativeArray<int> _backtrackedPathLength = new NativeArray<int>(1, Allocator.TempJob);
 
             // Get the start and end nodes from the node grid
-            nodeGrid.TryGetValue(new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z), out Node _startNode);
+            nodeGrid.TryGetValue(new Vector3Int(Mathf.RoundToInt(transform.position.x),
+                                                Mathf.RoundToInt(transform.position.y),
+                                                0),
+                                                out Node _startNode);
+
             nodeGrid.TryGetValue(destination, out Node _endNode);
 
             // Create a new instance of the AStar job and assign its variables

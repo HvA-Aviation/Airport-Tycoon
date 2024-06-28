@@ -7,10 +7,31 @@ public class PaxSpawner : MonoBehaviour
     [SerializeField] private float _defaultSpawnRate;
 
     private float _spawnRate;
+    private bool _spawning;
 
-    private void Awake() => _spawnRate = _defaultSpawnRate;
+    private void OnEnable() => _spawnRate = _defaultSpawnRate;
 
-    private void Start() => StartCoroutine(SpawnPassengers());
+    // private void Start() => StartCoroutine(SpawnPassengers());
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.H))
+            StartCoroutine(SpawnPassengers());
+    }
+
+    public void ToggleSpawning()
+    {
+        if (!_spawning)
+        {
+            _spawning = true;
+            StartCoroutine(SpawnPassengers());
+        }
+        else
+        {
+            _spawning = false;
+            StopAllCoroutines();
+        }
+    }
 
     public void SetSpawnTime(float rateMultiplier, bool resetSpawnRate)
     {
